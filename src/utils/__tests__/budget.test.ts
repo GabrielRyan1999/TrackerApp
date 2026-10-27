@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { parseIDR, formatIDR, formatCompactIDR } from '../idr';
 import { buildPlan, calculateMonthBudget } from '../calculator';
+import { parseCSV } from '../storage';
 import { DEFAULT_CATEGORIES, categorize } from '../categorizer';
 import type { Transaction, MonthPlan } from '../../types/budget';
 
@@ -128,5 +129,45 @@ describe('Aline Budget Tracker Acceptance Criteria', () => {
     expect(summary.savingsSaved).toBe(1_000_000);
     expect(summary.totalSpent).toBe(686_000);
     expect(summary.remainingToSpend).toBe(8_000_000 - 686_000);
+  });
+});
+
+describe('CSV Parser', () => {
+  it('parses valid exported CSV correctly', () => {
+    const csvData = [
+      'ID,Date,Description,Amount (IDR),Type,Category,Bucket,Auto Categorized,Note',
+      'tx-1,2026-10-01,"Monthly Salary",10000000,income,"Uncategorized",none,No,"Payroll"',
+      'tx-2,2026-10-02,"Weekly Groceries (Indomaret)",350000,expense,"Groceries (Daily Needs)",needs,Yes,""',
+    ].join('\n');
+
+    const result = parseCSV(csvData, DEFAULT_CATEGORIES);
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe('tx-1');
+    expect(result[0].date).toBe('2026-10-01');
+    expect(result[0].description).toBe('Monthly Salary');
+    expect(result[0].amount).toBe(10_000_000);
+    expect(result[0].type).toBe('income');
+    expect(result[0].note).toBe('Payroll');
+
+    expect(result[1].id).toBe('tx-2');
+    expect(result[1].amount).toBe(350_000);
+    expect(result[1].categoryId).toBe('groceries');
+    expect(result[1].type).toBe('expense');
+  });
+
+  it('handles formatted amounts, dates, and auto-categorization', () => {
+    const csvData = [
+      'Date,Description,Amount,Type',
+      '05/10/2026,"Indomaret Snack","Rp 45.000,00",expense',
+      '2026-10-10,"Bibit Reksadana",500000,savings',
+    ].join('\n');
+
+    const result = parseCSV(csvData, DEFAULT_CATEGORIES);
+    expect(result).toHaveLength(2);
+    expect(result[0].date).toBe('2026-10-05');
+    expect(result[0].amount).toBe(45_000);
+    expect(result[0].categoryId).toBe('groceries'); // auto-categorized
+    expect(result[1].type).toBe('savings');
+    expect(result[1].amount).toBe(500_000);
   });
 });

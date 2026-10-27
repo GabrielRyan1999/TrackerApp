@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import type { Category, Bucket } from '../types/budget';
+import type { Category, Bucket, Transaction } from '../types/budget';
 import type { AppData } from '../utils/storage';
-import { exportToJSON, exportToCSV } from '../utils/storage';
+import { exportToCSV, parseCSV } from '../utils/storage';
 import { CategoryIcon } from './CategoryIcon';
 import {
   X,
@@ -12,6 +12,7 @@ import {
   Settings as SettingsIcon,
   Sun,
   Moon,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface SettingsModalProps {
@@ -23,7 +24,7 @@ interface SettingsModalProps {
   merchantMemory: Record<string, string>;
   onRemoveMerchantMemory: (merchant: string) => void;
   appData: AppData;
-  onImportData: (data: AppData) => void;
+  onImportTransactions: (transactions: Transaction[], mode: 'replace' | 'merge') => void;
   onResetData: () => void;
   isDark: boolean;
   onToggleTheme: () => void;
@@ -38,7 +39,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   merchantMemory,
   onRemoveMerchantMemory,
   appData,
-  onImportData,
+  onImportTransactions,
   onResetData,
   isDark,
   onToggleTheme,
@@ -51,6 +52,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [newCatIcon, setNewCatIcon] = useState('🏷️');
   const [newCatColor, setNewCatColor] = useState('#ec4899');
   const [newCatKeywords, setNewCatKeywords] = useState('');
+
+  // CSV Import states
+  const [csvPreview, setCsvPreview] = useState<{
+    filename: string;
+    count: number;
+    transactions: Transaction[];
+  } | null>(null);
+  const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge');
 
   if (!isOpen) return null;
 
@@ -78,26 +87,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setNewCatKeywords('');
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const json = JSON.parse(event.target?.result as string);
-        if (json.plans && json.transactions && json.categories) {
-          onImportData(json);
-          alert('Data successfully restored from backup!');
-          onClose();
+        const text = event.target?.result as string;
+        const parsed = parseCSV(text, categories);
+        if (parsed.length > 0) {
+          setCsvPreview({
+            filename: file.name,
+            count: parsed.length,
+            transactions: parsed,
+          });
         } else {
-          alert('Invalid JSON backup file structure.');
+          alert('No valid transactions found in CSV. Please ensure the file has Date, Description, and Amount columns.');
         }
       } catch (err) {
-        alert('Failed to parse backup JSON file.');
+        alert('Failed to parse CSV file. Please check its formatting.');
       }
     };
     reader.readAsText(file);
+    // Reset input so same file can be re-selected if needed
+    e.target.value = '';
+  };
+
+  const handleConfirmImport = () => {
+    if (!csvPreview) return;
+    onImportTransactions(csvPreview.transactions, importMode);
+    alert(`Successfully imported ${csvPreview.count} transactions!`);
+    setCsvPreview(null);
+    onClose();
   };
 
   return (
@@ -111,7 +133,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">Settings</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Custom categories, merchant memory & data backup</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Custom categories, merchant memory & CSV backup</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -325,50 +347,102 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {activeTab === 'data' && (
             <div className="space-y-4">
+              {/* Export Data */}
               <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
                 <span className="text-xs font-bold text-slate-900 dark:text-white block">
-                  Export Data
+                  Export Data (CSV)
                 </span>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Save a local backup file so your financial data is never lost.
+                  Download all your recorded transactions as a clean CSV spreadsheet. Compatible with Microsoft Excel, Google Sheets, or re-importing anytime.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <button
-                    onClick={() => exportToJSON(appData)}
-                    className="flex-1 py-2.5 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download JSON Backup</span>
-                  </button>
-                  <button
-                    onClick={() => exportToCSV(appData.transactions, categories)}
-                    className="flex-1 py-2.5 px-3 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 text-slate-700 dark:text-slate-300"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download CSV</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => exportToCSV(appData.transactions, categories)}
+                  className="w-full py-2.5 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download Transactions CSV ({appData.transactions.length} rows)</span>
+                </button>
               </div>
 
+              {/* Import Data */}
               <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
                 <span className="text-xs font-bold text-slate-900 dark:text-white block">
-                  Import Data
+                  Import Data (CSV)
                 </span>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Restore previously exported JSON backup file.
+                  Upload a CSV spreadsheet with your transactions. Automatically maps categories, dates, and amounts.
                 </p>
-                <label className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold cursor-pointer text-slate-700 dark:text-slate-300">
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Choose JSON File</span>
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                  />
-                </label>
+
+                {csvPreview ? (
+                  <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 rounded-xl space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                      <div className="flex items-center gap-1.5 truncate">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <span className="truncate">{csvPreview.filename}</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 text-xs shrink-0">
+                        {csvPreview.count} transactions found
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300 bg-white/70 dark:bg-slate-900/50 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900/50">
+                      <span className="font-bold text-slate-900 dark:text-white block">Choose Import Mode:</span>
+                      <label className="flex items-start gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="importMode"
+                          checked={importMode === 'merge'}
+                          onChange={() => setImportMode('merge')}
+                          className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                        />
+                        <span>
+                          <strong className="text-slate-900 dark:text-white">Merge</strong> — Keep existing transactions and append new ones without duplicates.
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="importMode"
+                          checked={importMode === 'replace'}
+                          onChange={() => setImportMode('replace')}
+                          className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                        />
+                        <span>
+                          <strong className="text-slate-900 dark:text-white">Replace</strong> — Overwrite all current transactions with this CSV file.
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="flex gap-2 pt-1">
+                      <button
+                        onClick={handleConfirmImport}
+                        className="flex-1 py-2 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg shadow-xs transition"
+                      >
+                        Confirm Import ({csvPreview.count} items)
+                      </button>
+                      <button
+                        onClick={() => setCsvPreview(null)}
+                        className="py-2 px-3 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-300 transition"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold cursor-pointer text-slate-700 dark:text-slate-300 transition shadow-xs">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload CSV File</span>
+                    <input
+                      type="file"
+                      accept=".csv,text/csv"
+                      onChange={handleCSVUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )}
               </div>
 
+              {/* Reset Data */}
               <div className="p-4 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-200 dark:border-rose-900 space-y-3">
                 <span className="text-xs font-bold text-rose-800 dark:text-rose-200 block">
                   Reset All Data

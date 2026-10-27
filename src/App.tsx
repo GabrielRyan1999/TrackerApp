@@ -197,6 +197,23 @@ export function App() {
     setAppData(loadAppData());
   };
 
+  const handleImportTransactions = (importedTransactions: Transaction[], mode: 'replace' | 'merge') => {
+    setAppData((prev) => {
+      let nextTx: Transaction[];
+      if (mode === 'replace') {
+        nextTx = importedTransactions;
+      } else {
+        const existingIds = new Set(prev.transactions.map((t) => t.id));
+        const newItems = importedTransactions.filter((t) => !existingIds.has(t.id));
+        nextTx = [...newItems, ...prev.transactions];
+      }
+      return {
+        ...prev,
+        transactions: nextTx,
+      };
+    });
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-[#080d1a] ambient-glow text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200">
       {/* Top Navbar */}
@@ -284,7 +301,7 @@ export function App() {
         merchantMemory={appData.settings.merchantMemory}
         onRemoveMerchantMemory={handleRemoveMerchantMemory}
         appData={appData}
-        onImportData={setAppData}
+        onImportTransactions={handleImportTransactions}
         onResetData={handleResetData}
         isDark={isDark}
         onToggleTheme={() => setIsDark((prev) => !prev)}

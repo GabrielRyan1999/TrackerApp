@@ -1,5 +1,5 @@
-import type { Transaction, MonthPlan, Category, Settings } from '../types/budget';
-import { DEFAULT_CATEGORIES } from './categorizer';
+import type { Transaction, MonthPlan, Category, Settings, TransactionType } from '../types/budget';
+import { DEFAULT_CATEGORIES, categorize } from './categorizer';
 
 const STORAGE_KEY_PREFIX = 'budget_tracker_503020_';
 
@@ -230,4 +230,143 @@ export function exportToCSV(transactions: Transaction[], categories: Category[])
   a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+
+    if (char === '"') {
+      if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
+        current += '"';
+        i++; // skip escaped quote
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+export function parseCSV(csvText: string, categories: Category[]): Transaction[] {
+  if (!csvText || !csvText.trim()) return [];
+
+  const lines = csvText.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length < 2) return [];
+
+  const headers = parseCSVLine(lines[0]).map((h) => h.toLowerCase().trim());
+
+  // Find column indices
+  const idIdx = headers.findIndex((h) => h === 'id');
+  const dateIdx = headers.findIndex((h) => /date|tanggal|waktu/i.test(h));
+  const descIdx = headers.findIndex((h) => /desc|description|deskripsi|keterangan|memo|title|name/i.test(h));
+  const amountIdx = headers.findIndex((h) => /amount|nominal|jumlah|total|harga/i.test(h));
+  const typeIdx = headers.findIndex((h) => /type|tipe|jenis/i.test(h));
+  const catIdx = headers.findIndex((h) => /cat|category|kategori/i.test(h));
+  const autoIdx = headers.findIndex((h) => /auto/i.test(h));
+  const noteIdx = headers.findIndex((h) => /note|catatan/i.test(h));
+
+  if (amountIdx === -1 && descIdx === -1) {
+    return [];
+  }
+
+  const transactions: Transaction[] = [];
+  const catMap = new Map<string, Category>();
+  categories.forEach((c) => {
+    catMap.set(c.id.toLowerCase(), c);
+    catMap.set(c.name.toLowerCase(), c);
+  });
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVLine(lines[i]);
+    if (cols.length === 0 || cols.every((c) => !c)) continue;
+
+    // Date parsing
+    let dateStr = dateIdx >= 0 && cols[dateIdx] ? cols[dateIdx] : '';
+    if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(dateStr)) {
+      const parts = dateStr.split(/[\/\-]/);
+      dateStr = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    } else if (/^\d{4}[\/\.]\d{1,2}[\/\.]\d{1,2}$/.test(dateStr)) {
+      const parts = dateStr.split(/[\/\.]/);
+      dateStr = `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      dateStr = new Date().toISOString().split('T')[0];
+    }
+
+    // Description
+    const description = descIdx >= 0 && cols[descIdx] ? cols[descIdx] : 'Imported Transaction';
+
+    // Amount
+    let amount = 0;
+    if (amountIdx >= 0 && cols[amountIdx]) {
+      const cleaned = cols[amountIdx].replace(/(\.00|,00)$/, '').replace(/[^0-9-]/g, '');
+      const parsedAmt = parseInt(cleaned, 10);
+      if (!isNaN(parsedAmt)) {
+        amount = Math.abs(parsedAmt);
+      }
+    }
+
+    // Type
+    let type: TransactionType = 'expense';
+    if (typeIdx >= 0 && cols[typeIdx]) {
+      const rawType = cols[typeIdx].toLowerCase();
+      if (rawType.includes('income') || rawType.includes('masuk') || rawType.includes('gaji')) {
+        type = 'income';
+      } else if (rawType.includes('saving') || rawType.includes('tabung') || rawType.includes('invest')) {
+        type = 'savings';
+      }
+    }
+
+    // Category
+    let categoryId: string | null = null;
+    let autoCategorized = false;
+    if (catIdx >= 0 && cols[catIdx]) {
+      const rawCat = cols[catIdx].toLowerCase();
+      const matchedCat = catMap.get(rawCat);
+      if (matchedCat) {
+        categoryId = matchedCat.id;
+      }
+    }
+
+    if (!categoryId && type === 'expense') {
+      const autoCatId = categorize(description, categories);
+      if (autoCatId) {
+        categoryId = autoCatId;
+        autoCategorized = true;
+      }
+    }
+
+    if (autoIdx >= 0 && cols[autoIdx]) {
+      const rawAuto = cols[autoIdx].toLowerCase();
+      autoCategorized = rawAuto === 'yes' || rawAuto === 'true' || rawAuto === 'ya';
+    }
+
+    const note = noteIdx >= 0 && cols[noteIdx] ? cols[noteIdx] : undefined;
+    const id = idIdx >= 0 && cols[idIdx] && cols[idIdx].trim().length > 0
+      ? cols[idIdx].trim()
+      : `tx-import-${Date.now()}-${i}`;
+
+    transactions.push({
+      id,
+      date: dateStr,
+      description,
+      amount,
+      type,
+      categoryId,
+      autoCategorized,
+      note,
+    });
+  }
+
+  return transactions;
 }
