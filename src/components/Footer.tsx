@@ -35,8 +35,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy, onOpenTerms }) =>
           >
             Terms
           </button>
-          <span>•</span>
-          <span className="font-mono-num">50/30/20</span>
         </div>
       </div>
     </footer>
