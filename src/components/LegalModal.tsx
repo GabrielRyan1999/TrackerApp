@@ -40,7 +40,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, type })
             <div>
               <strong className="text-stone-950 dark:text-stone-100 block mb-1">1. Private & Isolated Data</strong>
               <p>
-                Your financial transactions, monthly plans, and categories are strictly private. Each account is isolated using PostgreSQL Row-Level Security (RLS) so that only you can access your records.
+                Your financial transactions, monthly plans, and categories are strictly private. Each account is protected by strict database-level security and access controls, ensuring only you can view and access your personal records.
               </p>
             </div>
             <div>
