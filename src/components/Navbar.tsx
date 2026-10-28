@@ -121,21 +121,21 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Editorial Action Bar (Print Navigation Controls) */}
       <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
         {/* Left: Issue / Month selector */}
-        <div className="flex items-center border border-stone-900 dark:border-stone-400 bg-stone-100 dark:bg-stone-900">
+        <div className="flex items-center h-8 border border-stone-900 dark:border-stone-400 bg-stone-100 dark:bg-stone-900">
           <button
             onClick={handlePrevMonth}
-            className="w-7 h-7 flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-r border-stone-900 dark:border-stone-400"
+            className="w-8 h-full flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-r border-stone-900 dark:border-stone-400"
             title="Previous Issue"
             aria-label="Previous Issue"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="px-3 font-headline font-bold text-xs uppercase text-stone-900 dark:text-stone-100">
+          <span className="px-3 font-headline font-bold text-xs uppercase tracking-wider text-stone-900 dark:text-stone-100">
             {monthName}
           </span>
           <button
             onClick={handleNextMonth}
-            className="w-7 h-7 flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-l border-stone-900 dark:border-stone-400"
+            className="w-8 h-full flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-l border-stone-900 dark:border-stone-400"
             title="Next Issue"
             aria-label="Next Issue"
           >
@@ -148,7 +148,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Plan Modal Button */}
           <button
             onClick={onOpenPlanModal}
-            className="h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 font-bold uppercase tracking-wider text-[11px] transition"
+            className="h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 font-bold uppercase tracking-wider text-xs transition"
             title="Configure Allocation Ratios"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -159,7 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Add Transaction Button */}
           <button
             onClick={onOpenAddModal}
-            className="h-8 px-3 sm:px-4 flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-200 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-[11px] border border-stone-900 dark:border-stone-300 transition"
+            className="h-8 px-3 sm:px-4 flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-200 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-300 transition"
             title="Record New Entry"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />

@@ -34,29 +34,30 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
   const needleAngle = -90 + clampedRatio * 180;
 
   return (
-    <section className="border border-stone-900 dark:border-stone-400 bg-stone-100/50 dark:bg-stone-900/40 p-3.5 sm:p-4">
-      {/* Editorial Figure Header */}
-      <div className="flex items-start justify-between border-b border-stone-900 dark:border-stone-400 pb-2 mb-3">
-        <div>
-          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-500 dark:text-stone-400 block">
-            FIGURE I. — TECHNICAL BAROMETER
-          </span>
-          <h3 className="font-headline text-base sm:text-lg font-bold text-stone-950 dark:text-stone-50 leading-tight">
-            Financial Burn Rate Meter
-          </h3>
+    <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5 h-full flex flex-col justify-between">
+      <div>
+        {/* Editorial Figure Header */}
+        <div className="flex items-start justify-between border-b-2 border-stone-900 dark:border-stone-400 pb-2 mb-3">
+          <div>
+            <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
+              FIGURE I. — TECHNICAL BAROMETER
+            </span>
+            <h3 className="font-headline text-base sm:text-lg font-bold text-stone-950 dark:text-stone-50 leading-tight">
+              Financial Burn Rate Meter
+            </h3>
+          </div>
+          <div className="text-right shrink-0">
+            <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 border ${
+              ratio > 1
+                ? 'border-red-800 text-red-800 dark:text-red-400'
+                : ratio >= 0.8
+                ? 'border-amber-800 text-amber-800 dark:text-amber-400'
+                : 'border-stone-900 dark:border-stone-300 text-stone-900 dark:text-stone-100'
+            }`}>
+              {ratio > 1 ? `DEFICIT (+${percentNumber - 100}%)` : `SOLVENT (${percentNumber}%)`}
+            </span>
+          </div>
         </div>
-        <div className="text-right shrink-0">
-          <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 border ${
-            ratio > 1
-              ? 'border-red-800 text-red-800 dark:text-red-400'
-              : ratio >= 0.8
-              ? 'border-amber-800 text-amber-800 dark:text-amber-400'
-              : 'border-stone-900 dark:border-stone-300 text-stone-900 dark:text-stone-100'
-          }`}>
-            {ratio > 1 ? `DEFICIT (+${percentNumber - 100}%)` : `SOLVENT (${percentNumber}%)`}
-          </span>
-        </div>
-      </div>
 
       {/* Engraved Semicircle Gauge SVG */}
       <div className="relative flex flex-col items-center justify-center py-1">
@@ -190,6 +191,7 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
           })}
         </div>
       )}
+      </div>
     </section>
   );
 };

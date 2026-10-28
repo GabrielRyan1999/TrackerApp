@@ -32,21 +32,22 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
   const totalSpentOrSaved = summary.totalSpent + summary.savingsSaved;
 
   return (
-    <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5">
-      {/* Editorial Section Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-stone-900 dark:border-stone-400 pb-2.5 mb-3">
-        <div>
-          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-            SECTION IV. — COMMODITY & EXPENDITURE CENSUS
-          </span>
-          <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
-            Classification of Outflows by Commodity
-          </h3>
+    <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5 h-full flex flex-col justify-between">
+      <div>
+        {/* Editorial Section Header */}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-stone-900 dark:border-stone-400 pb-2.5 mb-3">
+          <div>
+            <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
+              SECTION IV. — COMMODITY & EXPENDITURE CENSUS
+            </span>
+            <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+              Classification of Outflows by Commodity
+            </h3>
+          </div>
+          <div className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 border border-stone-900 dark:border-stone-400 bg-stone-200/70 dark:bg-stone-800/70 text-stone-900 dark:text-stone-100">
+            RANKED BY VOLUME
+          </div>
         </div>
-        <div className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 border border-stone-900 dark:border-stone-400 bg-stone-200/70 dark:bg-stone-800/70 text-stone-900 dark:text-stone-100">
-          RANKED BY AGGREGATE SPEND
-        </div>
-      </div>
 
       {activeCategories.length === 0 ? (
         <div className="py-8 text-center text-xs italic text-stone-500 dark:text-stone-400 border border-dashed border-stone-400 dark:border-stone-600 p-4">
@@ -117,6 +118,7 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
           )}
         </div>
       )}
+      </div>
     </section>
   );
 };

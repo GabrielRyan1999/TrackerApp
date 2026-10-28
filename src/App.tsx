@@ -264,23 +264,24 @@ export function App() {
         {/* Front-Page Lead Story & "DISPATCH TODAY" Box */}
         <SmartInsight summary={summary} />
 
-        {/* Top Section: Figure I Technical Barometer & 3-Pillar Allocation Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
-          {/* Spending Gauge (5 cols on lg) */}
-          <div className="lg:col-span-5">
-            <SpendingGauge summary={summary} categories={appData.categories} />
-          </div>
-
-          {/* 50/30/20 Continuous Broadsheet Block & Table II Cash Flow (7 cols on lg) */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
-            <BucketCards summary={summary} planSplit={monthPlan.split} />
-            <CashFlowSummary summary={summary} />
-          </div>
+        {/* 1. Full-Width Table I: Official Financial Ledger (Inflow, Outflow, Savings, Buffer) */}
+        <div>
+          <CashFlowSummary summary={summary} />
         </div>
 
-        {/* Middle Section: Section IV Commodity Census */}
+        {/* 2. Full-Width Tripartite Allocation (Section I, II, III: Living Necessities, Discretionary Desires, Capital Reserves) */}
         <div>
-          <CategoryBreakdown summary={summary} categories={appData.categories} />
+          <BucketCards summary={summary} planSplit={monthPlan.split} />
+        </div>
+
+        {/* 3. Middle Section: Figure I Technical Barometer (5 cols) & Section IV Commodity Census (7 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+          <div className="lg:col-span-5 flex flex-col">
+            <SpendingGauge summary={summary} categories={appData.categories} />
+          </div>
+          <div className="lg:col-span-7 flex flex-col">
+            <CategoryBreakdown summary={summary} categories={appData.categories} />
+          </div>
         </div>
 
         {/* Bottom Section: Section V The Public Record & Barcode Colophon */}

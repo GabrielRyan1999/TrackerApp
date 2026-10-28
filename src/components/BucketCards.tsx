@@ -31,7 +31,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
   return (
     <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30">
       {/* Editorial Header Strip */}
-      <div className="border-b border-stone-900 dark:border-stone-400 px-3.5 py-1.5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 bg-stone-200/60 dark:bg-stone-800/60">
+      <div className="border-b border-stone-900 dark:border-stone-400 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 bg-stone-200/60 dark:bg-stone-800/60">
         <span>TRIPARTITE FINANCIAL ALLOCATION • THREE PILLARS</span>
         <span>STANDARD RATIO: {targetNeeds}% / {targetWants}% / {targetSavings}%</span>
       </div>
@@ -39,22 +39,19 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
       {/* 3-Column Broadsheet Continuous Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-stone-900 dark:divide-stone-400">
         {/* SECTION I: NEEDS */}
-        <div className="p-3.5 sm:p-4 flex flex-col justify-between">
+        <div className="p-4 sm:p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-start justify-between gap-1 border-b border-stone-300 dark:border-stone-700 pb-2 mb-2">
+            <div className="flex items-center justify-between border-b border-stone-300 dark:border-stone-700 pb-2 mb-2.5">
               <div>
-                <span className="text-[11px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-                  SECTION I.
+                <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
+                  SECTION I • {targetNeeds}% QUOTA
                 </span>
-                <h3 className="font-headline text-base font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+                <h3 className="font-headline text-base sm:text-lg font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
                   Living Necessities
                 </h3>
-                <span className="text-[11px] italic text-stone-600 dark:text-stone-400">
-                  Target Quota: {targetNeeds}%
-                </span>
               </div>
               <span
-                className={`font-mono-num text-sm sm:text-base font-black px-1.5 py-0.5 border ${
+                className={`font-mono-num text-sm sm:text-base font-black px-2 py-0.5 border ${
                   needsRatio > 1
                     ? 'border-red-800 text-red-800 dark:border-red-400 dark:text-red-400'
                     : needsRatio >= 0.8
@@ -67,8 +64,8 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Remaining / Overbudget Figure */}
-            <div className="my-2.5">
-              <span className="text-[11px] uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
+            <div className="my-3">
+              <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
                 {needsRemaining >= 0 ? 'Operating Balance Remaining:' : 'Budget Deficit Incurred:'}
               </span>
               <div
@@ -83,7 +80,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Progress Bar (Etched Print Rule) */}
-            <div className="my-2">
+            <div className="my-2.5">
               <div className="w-full bg-stone-200 dark:bg-stone-800 h-2.5 border border-stone-900 dark:border-stone-400 p-[1px]">
                 <div
                   className={`h-full transition-all duration-500 ${
@@ -100,35 +97,32 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
           </div>
 
           {/* Ledger Numbers */}
-          <div className="pt-2 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
+          <div className="pt-2.5 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
-              <span className="text-[11px] font-sans uppercase">Outflow:</span>
+              <span className="font-sans uppercase text-xs">Outflow:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.needsSpent)}</span>
             </div>
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
-              <span className="text-[11px] font-sans uppercase">Ceiling:</span>
+              <span className="font-sans uppercase text-xs">Ceiling:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.needsBudget)}</span>
             </div>
           </div>
         </div>
 
         {/* SECTION II: WANTS */}
-        <div className="p-3.5 sm:p-4 flex flex-col justify-between">
+        <div className="p-4 sm:p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-start justify-between gap-1 border-b border-stone-300 dark:border-stone-700 pb-2 mb-2">
+            <div className="flex items-center justify-between border-b border-stone-300 dark:border-stone-700 pb-2 mb-2.5">
               <div>
-                <span className="text-[11px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-                  SECTION II.
+                <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
+                  SECTION II • {targetWants}% QUOTA
                 </span>
-                <h3 className="font-headline text-base font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+                <h3 className="font-headline text-base sm:text-lg font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
                   Discretionary Desires
                 </h3>
-                <span className="text-[11px] italic text-stone-600 dark:text-stone-400">
-                  Target Quota: {targetWants}%
-                </span>
               </div>
               <span
-                className={`font-mono-num text-sm sm:text-base font-black px-1.5 py-0.5 border ${
+                className={`font-mono-num text-sm sm:text-base font-black px-2 py-0.5 border ${
                   wantsRatio > 1
                     ? 'border-red-800 text-red-800 dark:border-red-400 dark:text-red-400'
                     : wantsRatio >= 0.8
@@ -141,8 +135,8 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Remaining / Overbudget Figure */}
-            <div className="my-2.5">
-              <span className="text-[11px] uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
+            <div className="my-3">
+              <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
                 {wantsRemaining >= 0 ? 'Operating Balance Remaining:' : 'Budget Deficit Incurred:'}
               </span>
               <div
@@ -157,7 +151,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Progress Bar (Etched Print Rule) */}
-            <div className="my-2">
+            <div className="my-2.5">
               <div className="w-full bg-stone-200 dark:bg-stone-800 h-2.5 border border-stone-900 dark:border-stone-400 p-[1px]">
                 <div
                   className={`h-full transition-all duration-500 ${
@@ -174,35 +168,32 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
           </div>
 
           {/* Ledger Numbers */}
-          <div className="pt-2 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
+          <div className="pt-2.5 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
-              <span className="text-[11px] font-sans uppercase">Outflow:</span>
+              <span className="font-sans uppercase text-xs">Outflow:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.wantsSpent)}</span>
             </div>
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
-              <span className="text-[11px] font-sans uppercase">Ceiling:</span>
+              <span className="font-sans uppercase text-xs">Ceiling:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.wantsBudget)}</span>
             </div>
           </div>
         </div>
 
         {/* SECTION III: SAVINGS */}
-        <div className="p-3.5 sm:p-4 flex flex-col justify-between">
+        <div className="p-4 sm:p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-start justify-between gap-1 border-b border-stone-300 dark:border-stone-700 pb-2 mb-2">
+            <div className="flex items-center justify-between border-b border-stone-300 dark:border-stone-700 pb-2 mb-2.5">
               <div>
-                <span className="text-[11px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-                  SECTION III.
+                <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
+                  SECTION III • {targetSavings}% QUOTA
                 </span>
-                <h3 className="font-headline text-base font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+                <h3 className="font-headline text-base sm:text-lg font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
                   Capital Reserves
                 </h3>
-                <span className="text-[11px] italic text-stone-600 dark:text-stone-400">
-                  Target Quota: {targetSavings}%
-                </span>
               </div>
               <span
-                className={`font-mono-num text-sm sm:text-base font-black px-1.5 py-0.5 border ${
+                className={`font-mono-num text-sm sm:text-base font-black px-2 py-0.5 border ${
                   savingsPct >= 100
                     ? 'border-emerald-800 text-emerald-800 dark:border-emerald-400 dark:text-emerald-400'
                     : 'border-stone-900 dark:border-stone-400 text-stone-900 dark:text-stone-100'
@@ -213,8 +204,8 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Remaining / Fulfilled Figure */}
-            <div className="my-2.5">
-              <span className="text-[11px] uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
+            <div className="my-3">
+              <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
                 {savingsRemaining <= 0 ? 'Statutory Reserve Target Met:' : 'Deficit to Full Quota:'}
               </span>
               <div className="font-headline text-xl sm:text-2xl font-black tracking-tight text-stone-950 dark:text-stone-50">
@@ -223,7 +214,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Progress Bar (Etched Print Rule) */}
-            <div className="my-2">
+            <div className="my-2.5">
               <div className="w-full bg-stone-200 dark:bg-stone-800 h-2.5 border border-stone-900 dark:border-stone-400 p-[1px]">
                 <div
                   className="h-full bg-stone-900 dark:bg-stone-200 transition-all duration-500"
@@ -234,13 +225,13 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
           </div>
 
           {/* Ledger Numbers */}
-          <div className="pt-2 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
+          <div className="pt-2.5 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
-              <span className="text-[11px] font-sans uppercase">Archived:</span>
+              <span className="font-sans uppercase text-xs">Archived:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.savingsSaved)}</span>
             </div>
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
-              <span className="text-[11px] font-sans uppercase">Statutory Goal:</span>
+              <span className="font-sans uppercase text-xs">Statutory Goal:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.savingsBudget)}</span>
             </div>
           </div>
