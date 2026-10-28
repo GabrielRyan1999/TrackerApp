@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import type { BudgetSummary, Category, Bucket } from '../types/budget';
 import { formatIDR } from '../utils/idr';
 import { CategoryIcon } from './CategoryIcon';
-import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 
 interface CategoryBreakdownProps {
   summary: BudgetSummary;
@@ -32,112 +31,92 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
   const displayedCategories = showAll ? activeCategories : activeCategories.slice(0, 5);
   const totalSpentOrSaved = summary.totalSpent + summary.savingsSaved;
 
-  const getBucketBadgeStyle = (bucket: Bucket | 'none') => {
-    switch (bucket) {
-      case 'needs':
-        return 'bg-blue-50 dark:bg-blue-950/70 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800';
-      case 'wants':
-        return 'bg-pink-50 dark:bg-pink-950/70 text-pink-800 dark:text-pink-200 border-pink-200 dark:border-pink-800';
-      case 'savings':
-        return 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800';
-      default:
-        return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700';
-    }
-  };
-
-  const getIconContainerStyle = (bucket: Bucket | 'none') => {
-    switch (bucket) {
-      case 'needs':
-        return 'bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800';
-      case 'wants':
-        return 'bg-pink-50 dark:bg-pink-950/80 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-800';
-      case 'savings':
-        return 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
-      default:
-        return 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700';
-    }
-  };
-
   return (
-    <div className="bg-white dark:bg-[#0f172a] border border-slate-200/90 dark:border-slate-800/90 rounded-2xl p-4 sm:p-6 transition">
-      <div className="flex items-center justify-between mb-4 sm:mb-5">
+    <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5">
+      {/* Editorial Section Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-stone-900 dark:border-stone-400 pb-2.5 mb-3">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-            Spending by Category
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Expense distribution ranked from highest to lowest
-          </p>
+          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
+            SECTION IV. — COMMODITY & EXPENDITURE CENSUS
+          </span>
+          <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+            Classification of Outflows by Commodity
+          </h3>
         </div>
-        <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 shrink-0">
-          <Layers className="w-4 h-4" />
+        <div className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 border border-stone-900 dark:border-stone-400 bg-stone-200/70 dark:bg-stone-800/70 text-stone-900 dark:text-stone-100">
+          RANKED BY AGGREGATE SPEND
         </div>
       </div>
 
       {activeCategories.length === 0 ? (
-        <div className="py-8 text-center text-xs text-slate-400">
-          No expense transactions recorded this month
+        <div className="py-8 text-center text-xs italic text-stone-500 dark:text-stone-400 border border-dashed border-stone-400 dark:border-stone-600 p-4">
+          No mercantile disbursements or commodity expenses have been registered for this issue.
         </div>
       ) : (
-        <div className="space-y-3.5 sm:space-y-4">
-          {displayedCategories.map((cat) => {
-            const share = totalSpentOrSaved > 0 ? (cat.spent / totalSpentOrSaved) * 100 : 0;
-            return (
-              <div key={cat.id} className="space-y-1.5">
-                <div className="flex justify-between items-center text-xs gap-2">
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${getIconContainerStyle(
-                        cat.bucket
-                      )}`}
-                    >
+        <div className="space-y-3">
+          {/* Table Header Bar */}
+          <div className="hidden sm:grid sm:grid-cols-12 text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 border-b border-stone-300 dark:border-stone-700 pb-1 px-1">
+            <span className="col-span-6">Commodity & Classification Pillar</span>
+            <span className="col-span-3 text-center">Share of Total Outflow</span>
+            <span className="col-span-3 text-right">Disbursed Sum</span>
+          </div>
+
+          {/* List of categories */}
+          <div className="divide-y divide-stone-300 dark:divide-stone-700">
+            {displayedCategories.map((cat) => {
+              const share = totalSpentOrSaved > 0 ? (cat.spent / totalSpentOrSaved) * 100 : 0;
+              return (
+                <div key={cat.id} className="py-2.5 px-1 flex flex-col sm:grid sm:grid-cols-12 gap-2 sm:items-center">
+                  {/* Left: Name and Pillar */}
+                  <div className="sm:col-span-6 flex items-center gap-2.5 min-w-0">
+                    <div className="w-7 h-7 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-200 dark:bg-stone-800 shrink-0 text-sm">
                       <CategoryIcon name={cat.icon} className="text-sm" />
                     </div>
-                    <span className="font-bold text-slate-900 dark:text-white text-xs truncate">
-                      {cat.name}
-                    </span>
-                    <span
-                      className={`uppercase text-xs font-bold px-1.5 py-0.5 rounded border shrink-0 ${getBucketBadgeStyle(
-                        cat.bucket
-                      )}`}
-                    >
-                      {cat.bucket}
-                    </span>
+                    <div className="min-w-0 flex items-baseline gap-2">
+                      <span className="font-bold text-xs sm:text-sm text-stone-950 dark:text-stone-50 truncate">
+                        {cat.name}
+                      </span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider px-1.5 py-0.5 border border-stone-700 dark:border-stone-400 text-stone-700 dark:text-stone-300 bg-stone-100 dark:bg-stone-900 shrink-0">
+                        {cat.bucket}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+
+                  {/* Middle: Progress Meter Bar */}
+                  <div className="sm:col-span-3 flex items-center gap-2">
+                    <div className="w-full bg-stone-200 dark:bg-stone-800 h-2 border border-stone-900 dark:border-stone-400 p-[1px]">
+                      <div
+                        className="h-full bg-stone-900 dark:bg-stone-200 transition-all duration-500"
+                        style={{ width: `${Math.min(share, 100)}%` }}
+                      />
+                    </div>
+                    <span className="font-mono-num text-[11px] font-bold text-stone-700 dark:text-stone-300 shrink-0 w-9 text-right">
                       {Math.round(share)}%
                     </span>
-                    <span className="font-extrabold text-slate-900 dark:text-white text-xs">
+                  </div>
+
+                  {/* Right: Amount */}
+                  <div className="sm:col-span-3 text-right">
+                    <span className="font-mono-num text-xs sm:text-sm font-black text-stone-950 dark:text-stone-50">
                       {formatIDR(cat.spent)}
                     </span>
                   </div>
                 </div>
+              );
+            })}
+          </div>
 
-                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${Math.min(share, 100)}%`,
-                      backgroundColor: cat.color,
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-
+          {/* Show All / Show Less Button */}
           {activeCategories.length > 5 && (
             <button
               onClick={() => setShowAll(!showAll)}
-              className="w-full py-2.5 mt-2 flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-50 dark:bg-slate-800/60 rounded-xl transition"
+              className="w-full py-2 mt-2 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 border border-stone-900 dark:border-stone-400 bg-stone-200/70 hover:bg-stone-300 dark:bg-stone-800/80 dark:hover:bg-stone-700 transition"
             >
-              <span>{showAll ? 'Show Less' : `Show All (${activeCategories.length} Categories)`}</span>
-              {showAll ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              <span>{showAll ? '▲ Collapse Commodity Ledger' : `▼ Read Complete Commodity Census (${activeCategories.length} Categories)`}</span>
             </button>
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 };

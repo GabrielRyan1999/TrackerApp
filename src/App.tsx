@@ -246,65 +246,44 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-[#080d1a] ambient-glow text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200">
-      {/* Top Navbar */}
-      <Navbar
-        currentMonth={currentMonth}
-        onChangeMonth={setCurrentMonth}
-        onOpenAddModal={() => setIsAddModalOpen(true)}
-        onOpenPlanModal={() => setIsPlanModalOpen(true)}
-        onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
-        income={monthPlan.income}
-        isDark={isDark}
-        onToggleTheme={() => setIsDark((prev) => !prev)}
-        themeMode={themeMode}
-        onToggleThemeMode={() => setThemeMode((prev) => (prev === 'newspaper' ? 'modern' : 'newspaper'))}
-      />
+    <div className="min-h-screen py-0 sm:py-6 px-0 sm:px-4 font-editorial">
+      {/* Newspaper Broadsheet Page (Reference Image 1: Full Broadsheet Container) */}
+      <div className="broadsheet-page max-w-6xl mx-auto p-3.5 sm:p-7 space-y-4 sm:space-y-6">
+        {/* Front-Page Masthead */}
+        <Navbar
+          currentMonth={currentMonth}
+          onChangeMonth={setCurrentMonth}
+          onOpenAddModal={() => setIsAddModalOpen(true)}
+          onOpenPlanModal={() => setIsPlanModalOpen(true)}
+          onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
+          income={monthPlan.income}
+          isDark={isDark}
+          onToggleTheme={() => setIsDark((prev) => !prev)}
+        />
 
-      {/* Main Container */}
-      <main className="max-w-6xl mx-auto p-3.5 sm:p-6 space-y-4 sm:space-y-6 pb-28 md:pb-8">
-        {/* Newspaper Broadsheet Masthead */}
-        {themeMode === 'newspaper' && (
-          <div className="border-b-2 border-t-4 border-stone-800 dark:border-stone-400 py-3 my-1 sm:my-2 text-center select-none bg-stone-50/60 dark:bg-stone-900/40 px-3 rounded-xs transition-all">
-            <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] sm:text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 border-b border-stone-300 dark:border-stone-700 pb-1.5 mb-2 px-1">
-              <span>Vol. XXIV • No. {new Date().getDate()}</span>
-              <span className="hidden sm:inline">★ THE FINANCIAL CHRONICLE • 50/30/20 ALLOCATION ★</span>
-              <span>{new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
-            </div>
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black font-serif tracking-tight text-stone-900 dark:text-stone-100 uppercase py-1">
-              The Budget Gazette
-            </h1>
-            <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-stone-600 dark:text-stone-400 border-t border-stone-300 dark:border-stone-700 pt-1.5 px-1 mt-1">
-              <span>50% Needs • 30% Wants • 20% Savings</span>
-              <span className="hidden md:inline">Rupiah Currency Accounting • Jakarta & Regional Press</span>
-              <span>Daily Edition • Issue {currentMonth}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Smart Financial Intelligence Insight Strip */}
+        {/* Front-Page Lead Story & "DISPATCH TODAY" Box */}
         <SmartInsight summary={summary} />
 
-        {/* Top Section: Gauge & 50/30/20 Cards */}
+        {/* Top Section: Figure I Technical Barometer & 3-Pillar Allocation Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
           {/* Spending Gauge (5 cols on lg) */}
           <div className="lg:col-span-5">
             <SpendingGauge summary={summary} categories={appData.categories} />
           </div>
 
-          {/* 50/30/20 Cards & Cash Flow (7 cols on lg) */}
+          {/* 50/30/20 Continuous Broadsheet Block & Table II Cash Flow (7 cols on lg) */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             <BucketCards summary={summary} planSplit={monthPlan.split} />
             <CashFlowSummary summary={summary} />
           </div>
         </div>
 
-        {/* Middle Section: Category Breakdown */}
+        {/* Middle Section: Section IV Commodity Census */}
         <div>
           <CategoryBreakdown summary={summary} categories={appData.categories} />
         </div>
 
-        {/* Bottom Section: Transactions History */}
+        {/* Bottom Section: Section V The Public Record & Barcode Colophon */}
         <div>
           <TransactionList
             transactions={appData.transactions}
@@ -315,14 +294,14 @@ export function App() {
             onUpdateTransaction={handleUpdateTransaction}
           />
         </div>
-      </main>
+      </div>
 
-      {/* Floating Add Button for Mobile (56px thumb zone, safe bottom offset) */}
+      {/* Floating Add Dispatch Button for Mobile */}
       <button
         onClick={() => setIsAddModalOpen(true)}
-        className="sm:hidden fixed right-4 bottom-5 z-40 w-14 h-14 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-full shadow-lg shadow-emerald-950/40 flex items-center justify-center transition active:scale-95"
-        title="Add Transaction"
-        aria-label="Add Transaction"
+        className="sm:hidden fixed right-4 bottom-5 z-40 w-12 h-12 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 shadow-2xl flex items-center justify-center font-bold transition active:scale-95"
+        title="Record Dispatch"
+        aria-label="Record Dispatch"
       >
         <Plus className="w-6 h-6 stroke-[2.5]" />
       </button>

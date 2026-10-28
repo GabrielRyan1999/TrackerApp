@@ -1,26 +1,66 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
-@custom-variant newspaper (&:where(.theme-newspaper, .theme-newspaper *));
 
 @layer base {
   :root {
-    --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-masthead: 'UnifrakturMaguntia', 'Playfair Display', Georgia, serif;
+    --font-headline: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-editorial: 'Newsreader', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
+
+    /* Light Newsprint Paper Palette (Reference Image 1) */
+    --paper-bg: #f4efe4;
+    --paper-desk: #242320;
+    --paper-card: #f8f5ee;
+    --ink-black: #161513;
+    --ink-secondary: #4a463e;
+    --ink-rule: #1c1a17;
+    --ink-rule-light: #cdc5b3;
+    --ink-red: #8f1d1d;
+    --ink-green: #1b4d3e;
+  }
+
+  .dark {
+    /* Midnight Broadsheet Palette */
+    --paper-bg: #161513;
+    --paper-desk: #0c0c0b;
+    --paper-card: #1c1b18;
+    --ink-black: #f3efe6;
+    --ink-secondary: #b5af9f;
+    --ink-rule: #e5ded0;
+    --ink-rule-light: #38352f;
+    --ink-red: #e05252;
+    --ink-green: #34d399;
   }
 
   html {
-    font-family: var(--font-sans);
+    font-family: var(--font-editorial);
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   body {
-    @apply antialiased bg-slate-100 text-slate-900 dark:bg-[#080d1a] dark:text-slate-100;
+    background-color: var(--paper-desk);
+    color: var(--ink-black);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11", "tnum";
     font-variant-numeric: tabular-nums;
   }
 
   ::selection {
-    @apply bg-emerald-500/25 text-emerald-950 dark:text-emerald-100;
+    background-color: rgba(28, 26, 23, 0.2);
+    color: var(--ink-black);
+  }
+
+  .dark ::selection {
+    background-color: rgba(243, 239, 230, 0.3);
+    color: #ffffff;
   }
 
   ::-webkit-scrollbar {
@@ -34,130 +74,96 @@
 
   ::-webkit-scrollbar-thumb {
     background: rgba(148, 163, 184, 0.3);
-    border-radius: 9999px;
+    border-radius: 2px;
   }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(148, 163, 184, 0.5);
-  }
-}
-
-.ambient-glow {
-  background-image: radial-gradient(circle 900px at 50% -120px, rgba(16, 185, 129, 0.05), transparent 70%);
-}
-
-:where(.dark, .dark *) .ambient-glow {
-  background-image: radial-gradient(circle 900px at 50% -120px, rgba(16, 185, 129, 0.08), transparent 70%);
 }
 
 /* ==========================================================================
-   NEWSPAPER / EDITORIAL THEME STYLES
+   AUTHENTIC NEWSPAPER BROADSHEET SYSTEM
    ========================================================================== */
-html.theme-newspaper {
-  --font-newspaper-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
-  --font-newspaper-body: 'Newsreader', Georgia, serif;
-  --news-paper-bg: #f5f2eb;
-  --news-card-bg: #fffdfa;
-  --news-ink-primary: #1c1917;
-  --news-ink-muted: #57534e;
-  --news-ink-rule: #292524;
-  --news-ink-subtle: #d6cebe;
+
+/* Broadsheet Sheet Container */
+.broadsheet-page {
+  background-color: var(--paper-bg);
+  color: var(--ink-black);
+  border: 1px solid var(--ink-rule);
+  box-shadow: 0 10px 40px -8px rgba(0, 0, 0, 0.22);
 }
 
-html.theme-newspaper.dark {
-  --news-paper-bg: #141311;
-  --news-card-bg: #1c1b18;
-  --news-ink-primary: #f5f2eb;
-  --news-ink-muted: #a8a29e;
-  --news-ink-rule: #57534e;
-  --news-ink-subtle: #32302b;
+/* Authentic Rules */
+.rule-double {
+  border-top: 3px solid var(--ink-rule);
+  border-bottom: 1px solid var(--ink-rule);
 }
 
-/* Base Body in Newspaper Mode */
-html.theme-newspaper body {
-  background-color: var(--news-paper-bg) !important;
-  color: var(--news-ink-primary) !important;
-  font-family: var(--font-newspaper-body), Georgia, serif;
-  background-image: 
-    radial-gradient(#cfc8b6 0.65px, transparent 0.65px),
-    linear-gradient(to bottom, #f4f0e6 0%, #faf8f2 100%) !important;
-  background-size: 16px 16px, 100% 100% !important;
+.rule-double-thick {
+  border-top: 5px solid var(--ink-rule);
+  border-bottom: 2px solid var(--ink-rule);
 }
 
-html.theme-newspaper.dark body {
-  background-color: var(--news-paper-bg) !important;
-  color: var(--news-ink-primary) !important;
-  background-image: 
-    radial-gradient(#282521 0.65px, transparent 0.65px),
-    linear-gradient(to bottom, #11100f 0%, #181715 100%) !important;
-  background-size: 16px 16px, 100% 100% !important;
+.rule-single-b {
+  border-bottom: 1px solid var(--ink-rule);
 }
 
-/* Headings in Newspaper Mode */
-html.theme-newspaper h1,
-html.theme-newspaper h2,
-html.theme-newspaper h3,
-html.theme-newspaper h4,
-html.theme-newspaper .font-bold,
-html.theme-newspaper .font-extrabold,
-html.theme-newspaper .font-black {
-  font-family: var(--font-newspaper-serif) !important;
+.rule-single-t {
+  border-top: 1px solid var(--ink-rule);
 }
 
-/* Cards & Containers: Authentic Broadsheet Press */
-html.theme-newspaper .bg-white,
-html.theme-newspaper .dark\:bg-\[\#0f172a\],
-html.theme-newspaper .dark\:bg-\[\#0e1626\],
-html.theme-newspaper .dark\:bg-\[\#0c121e\]\/95 {
-  background-color: var(--news-card-bg) !important;
-  border-color: var(--news-ink-rule) !important;
-  border-radius: 3px !important;
-  box-shadow: 2px 2px 0px rgba(28, 25, 23, 0.15) !important;
+.rule-dashed-b {
+  border-bottom: 1px dashed var(--ink-rule);
 }
 
-html.theme-newspaper.dark .bg-white,
-html.theme-newspaper.dark .dark\:bg-\[\#0f172a\],
-html.theme-newspaper.dark .dark\:bg-\[\#0e1626\],
-html.theme-newspaper.dark .dark\:bg-\[\#0c121e\]\/95 {
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6) !important;
+.rule-col-r {
+  border-right: 1px solid var(--ink-rule);
 }
 
-/* Newspaper rules replace subtle slate borders */
-html.theme-newspaper .border-slate-200\/90,
-html.theme-newspaper .dark\:border-slate-800\/90,
-html.theme-newspaper .border-slate-200,
-html.theme-newspaper .dark\:border-slate-800,
-html.theme-newspaper .border-slate-100,
-html.theme-newspaper .dark\:border-slate-800\/80,
-html.theme-newspaper .divide-slate-100,
-html.theme-newspaper .dark\:divide-slate-800\/70 {
-  border-color: var(--news-ink-subtle) !important;
+.rule-col-l {
+  border-left: 1px solid var(--ink-rule);
 }
 
-/* Inputs & Form Fields */
-html.theme-newspaper input,
-html.theme-newspaper select {
-  background-color: #fbf9f4 !important;
-  border-color: var(--news-ink-rule) !important;
-  border-radius: 3px !important;
-  font-family: var(--font-newspaper-body);
+/* Custom Typography Helpers */
+.font-masthead {
+  font-family: var(--font-masthead);
 }
 
-html.theme-newspaper.dark input,
-html.theme-newspaper.dark select {
-  background-color: #21201c !important;
-  border-color: var(--news-ink-rule) !important;
-  color: #f5f2eb !important;
+.font-headline {
+  font-family: var(--font-headline);
 }
 
-/* Selection */
-html.theme-newspaper ::selection {
-  background-color: rgba(185, 28, 28, 0.2) !important;
-  color: #1c1917 !important;
+.font-editorial {
+  font-family: var(--font-editorial);
 }
 
-html.theme-newspaper.dark ::selection {
-  background-color: rgba(234, 88, 12, 0.25) !important;
-  color: #f5f2eb !important;
+.font-mono-num {
+  font-family: var(--font-mono);
 }
 
+/* Newspaper Barcode (Graphic CSS) */
+.newspaper-barcode {
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor,
+    currentColor 2px,
+    transparent 2px,
+    transparent 4px,
+    currentColor 4px,
+    currentColor 7px,
+    transparent 7px,
+    transparent 9px,
+    currentColor 9px,
+    currentColor 10px,
+    transparent 10px,
+    transparent 13px,
+    currentColor 13px,
+    currentColor 16px,
+    transparent 16px,
+    transparent 18px
+  );
+  height: 38px;
+  width: 130px;
+}
+
+/* Input Fields in Newspaper theme */
+input, select, textarea {
+  border-radius: 0px !important;
+}

@@ -19,8 +19,10 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
       const over = summary.wantsSpent - summary.wantsBudget;
       return {
         tone: 'danger' as const,
-        title: 'Wants Budget Exceeded (30%)',
-        message: `Discretionary spending is overbudget by ${formatIDR(over)}. Consider pausing dining out and impulse shopping so your savings remain protected.`,
+        headline: `DISCRETIONARY DEFICIT: WANTS EXCEED BUDGETARY LIMIT BY ${formatIDR(over)}`,
+        subhead: 'Household lifestyle outlays outpace 30% quota, demanding immediate expenditure halt.',
+        status: 'DEFICIT ALERT',
+        message: `Discretionary expenditures have exceeded the allocated 30% ceiling by ${formatIDR(over)}. To maintain the inviolability of your capital savings, financial discipline recommends pausing dining and non-essential commerce.`,
       };
     }
 
@@ -29,8 +31,10 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
       const over = summary.needsSpent - summary.needsBudget;
       return {
         tone: 'danger' as const,
-        title: 'Essential Needs Exceeded (50%)',
-        message: `Living essentials exceed 50% by ${formatIDR(over)}. Savings allocation is automatically adjusted to cover essential living costs.`,
+        headline: `ESSENTIAL LIVING COSTS SURPASS 50% CEILING BY ${formatIDR(over)}`,
+        subhead: 'Unprecedented grocery or utility obligations squeeze discretionary and reserve capacity.',
+        status: 'CEILING BREACH',
+        message: `Living necessities have surged ${formatIDR(over)} beyond planned thresholds. Under standard 50/30/20 mechanics, excess obligations automatically drain from secondary allocations to safeguard solvency.`,
       };
     }
 
@@ -39,8 +43,10 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
       const remainingWants = summary.wantsBudget - summary.wantsSpent;
       return {
         tone: 'warning' as const,
-        title: `Wants Nearing Monthly Limit (${Math.round(wantsRatio * 100)}%)`,
-        message: `Remaining lifestyle & discretionary quota: ${formatIDR(remainingWants)}. Pace daily expenses to last until the end of the month.`,
+        headline: `LIFESTYLE QUOTA APPARATUS APPROACHES CRITICAL LIMIT (${Math.round(wantsRatio * 100)}%)`,
+        subhead: `A narrow surplus of ${formatIDR(remainingWants)} remains for discretionary recreation this month.`,
+        status: 'CAUTION ADV.',
+        message: `With ${Math.round(wantsRatio * 100)}% of lifestyle funding exhausted, prudent pacing is strongly advised across all non-essential merchant purchases until the arrival of the subsequent monthly deposit.`,
       };
     }
 
@@ -48,63 +54,84 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
     if (savingsRatio >= 1 && needsRatio <= 0.9 && wantsRatio <= 0.8) {
       return {
         tone: 'success' as const,
-        title: 'Excellent Financial Health',
-        message: `Your 20% savings target (${formatIDR(summary.savingsBudget)}) is fully secured, and daily spending is well disciplined. Safe-to-spend balance: ${formatIDR(remainingSpending)}.`,
+        headline: `FISCAL TRIUMPH: 20% SAVINGS TARGET SECURED AS OPERATING COSTS HOLD`,
+        subhead: `Complete ${formatIDR(summary.savingsBudget)} capital reserve transferred into liquid savings and investments.`,
+        status: 'FULLY FUNDED',
+        message: `The treasury reports robust financial health. Full statutory 20% savings have been safely archived, while operating outlays preserve a resilient cushion of ${formatIDR(remainingSpending)}.`,
       };
     }
 
     // Condition 5: Normal healthy state
     return {
       tone: 'neutral' as const,
-      title: 'Balanced Budget Flow (50/30/20)',
-      message: `Total spending is at ${Math.round(totalSpendBudget > 0 ? (summary.totalSpent / totalSpendBudget) * 100 : 0)}%. Safe-to-spend balance remaining: ${formatIDR(Math.max(0, remainingSpending))}.`,
+      headline: `FINANCIAL EQUILIBRIUM: 50/30/20 ALLOCATION REMAINS STEADY`,
+      subhead: `Total monthly outlays stand at ${Math.round(totalSpendBudget > 0 ? (summary.totalSpent / totalSpendBudget) * 100 : 0)}% of the operating budget ceiling.`,
+      status: 'EQUILIBRIUM',
+      message: `The ongoing accounts exhibit disciplined adherence to the standard tripartite financial doctrine. An available operating balance of ${formatIDR(Math.max(0, remainingSpending))} remains at your command.`,
     };
   }, [summary]);
 
-  const styleMap = {
-    success: {
-      bar: 'border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20',
-      dot: 'bg-emerald-500 shadow-emerald-500/40 shadow-xs',
-      title: 'text-emerald-900 dark:text-emerald-200',
-      text: 'text-emerald-800/80 dark:text-emerald-300/80',
-    },
-    warning: {
-      bar: 'border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20',
-      dot: 'bg-amber-500 shadow-amber-500/40 shadow-xs',
-      title: 'text-amber-950 dark:text-amber-200',
-      text: 'text-amber-900/80 dark:text-amber-300/80',
-    },
-    danger: {
-      bar: 'border-rose-500/30 bg-rose-500/5 dark:bg-rose-950/20',
-      dot: 'bg-rose-500 shadow-rose-500/40 shadow-xs',
-      title: 'text-rose-950 dark:text-rose-200',
-      text: 'text-rose-900/80 dark:text-rose-300/80',
-    },
-    neutral: {
-      bar: 'border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-[#0f172a]',
-      dot: 'bg-emerald-500 shadow-emerald-500/40 shadow-xs',
-      title: 'text-slate-900 dark:text-white',
-      text: 'text-slate-600 dark:text-slate-400',
-    },
-  };
-
-  const currentStyle = styleMap[insight.tone];
+  const totalSpendBudget = summary.needsBudget + summary.wantsBudget;
+  const remainingSpending = totalSpendBudget - summary.totalSpent;
 
   return (
-    <div
-      className={`border rounded-2xl p-4 transition-all duration-300 flex items-start gap-3.5 shadow-xs ${currentStyle.bar}`}
-    >
-      <div className="mt-1 shrink-0">
-        <span className={`block w-2.5 h-2.5 rounded-full ${currentStyle.dot}`} />
+    <article className="border-b border-stone-900 dark:border-stone-400 pb-4 mb-4">
+      {/* Front Page Lead Headline (Reference Image 1: Top Story Headline) */}
+      <h2 className="font-headline text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tight text-stone-950 dark:text-stone-50 leading-[1.1] mb-1.5">
+        {insight.headline}
+      </h2>
+      <p className="font-editorial italic text-sm sm:text-base text-stone-700 dark:text-stone-300 mb-3 border-b border-stone-300 dark:border-stone-700 pb-2">
+        {insight.subhead}
+      </p>
+
+      {/* Story Column + Boxed "NEWS TODAY" Bulletin side-by-side */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+        {/* Left Column: Story with Dropcap */}
+        <div className="md:col-span-8 text-xs sm:text-sm text-stone-800 dark:text-stone-200 leading-relaxed text-justify">
+          <p className="newspaper-dropcap">
+            {insight.message}
+          </p>
+        </div>
+
+        {/* Right Column: Boxed "DISPATCH TODAY" (Reference Image 1: NEWS TODAY Box) */}
+        <div className="md:col-span-4 border border-stone-900 dark:border-stone-400 bg-stone-100/70 dark:bg-stone-900/50 p-2.5 sm:p-3">
+          <div className="flex items-center justify-between border-b border-stone-900 dark:border-stone-400 pb-1 mb-2">
+            <span className="font-headline font-bold text-xs uppercase tracking-wider text-stone-900 dark:text-stone-100">
+              DISPATCH TODAY
+            </span>
+            <span className={`text-[10px] font-bold uppercase px-1.5 py-0.2 border ${
+              insight.tone === 'danger'
+                ? 'border-red-800 text-red-800 dark:text-red-400'
+                : insight.tone === 'warning'
+                ? 'border-amber-800 text-amber-800 dark:text-amber-400'
+                : 'border-stone-900 dark:border-stone-300 text-stone-900 dark:text-stone-100'
+            }`}>
+              {insight.status}
+            </span>
+          </div>
+
+          <div className="space-y-1.5 text-xs">
+            <div className="flex items-baseline justify-between border-b border-dashed border-stone-300 dark:border-stone-700 pb-1">
+              <span className="text-stone-600 dark:text-stone-400 text-[11px]">Safe to Spend:</span>
+              <span className="font-mono-num font-bold text-stone-900 dark:text-stone-100">
+                {formatIDR(Math.max(0, remainingSpending))}
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between border-b border-dashed border-stone-300 dark:border-stone-700 pb-1">
+              <span className="text-stone-600 dark:text-stone-400 text-[11px]">Gross Outlay:</span>
+              <span className="font-mono-num font-bold text-stone-900 dark:text-stone-100">
+                {formatIDR(summary.totalSpent)}
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-stone-600 dark:text-stone-400 text-[11px]">Savings Secured:</span>
+              <span className="font-mono-num font-bold text-stone-900 dark:text-stone-100">
+                {formatIDR(summary.savingsSaved)}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="min-w-0 flex-1">
-        <h2 className={`text-xs font-bold ${currentStyle.title} leading-tight`}>
-          {insight.title}
-        </h2>
-        <p className={`text-xs ${currentStyle.text} mt-1 leading-relaxed`}>
-          {insight.message}
-        </p>
-      </div>
-    </div>
+    </article>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon, Newspaper } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon } from 'lucide-react';
 import { formatIDR } from '../utils/idr';
 
 interface NavbarProps {
@@ -11,8 +11,6 @@ interface NavbarProps {
   income: number;
   isDark: boolean;
   onToggleTheme: () => void;
-  themeMode: 'modern' | 'newspaper';
-  onToggleThemeMode: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -24,12 +22,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   income,
   isDark,
   onToggleTheme,
-  themeMode,
-  onToggleThemeMode,
 }) => {
   const [yearStr, monthStr] = currentMonth.split('-');
   const dateObj = new Date(parseInt(yearStr, 10), parseInt(monthStr, 10) - 1, 1);
-  const monthName = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const monthName = dateObj.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 
   const handlePrevMonth = () => {
     const prevDate = new Date(parseInt(yearStr, 10), parseInt(monthStr, 10) - 2, 1);
@@ -45,110 +41,146 @@ export const Navbar: React.FC<NavbarProps> = ({
     onChangeMonth(`${newYear}-${newMonth}`);
   };
 
+  const todayFormatted = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+
   return (
-    <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#0c121e]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800/90 px-3 sm:px-4 py-2.5 sm:py-3 transition">
-      <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
-        {/* Brand */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-slate-900 dark:bg-emerald-500 flex items-center justify-center text-white dark:text-slate-950 font-black text-sm sm:text-base shadow-sm shrink-0">
-            Rp
+    <header className="border-b-2 border-stone-900 dark:border-stone-400 pb-3 pt-2">
+      {/* Top Ticker & Category Bar (Reference Image 1: Top Bar) */}
+      <div className="border-b border-stone-800 dark:border-stone-500 pb-1.5 mb-2 text-[11px] font-bold tracking-wider uppercase text-stone-700 dark:text-stone-300 flex flex-wrap items-center justify-between gap-2 select-none">
+        <div className="flex items-center gap-2">
+          <span>POLITICAL</span>
+          <span>|</span>
+          <span className="text-stone-950 dark:text-stone-100 font-extrabold underline decoration-1">ECONOMY & BUDGET</span>
+          <span>|</span>
+          <span className="hidden sm:inline">LIVING ESSENTIALS</span>
+          <span className="hidden sm:inline">|</span>
+          <span className="hidden md:inline">SAVINGS & RESERVES</span>
+          <span className="hidden md:inline">|</span>
+          <span className="hidden lg:inline">DISPATCHES</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline">WEATHER: FAVORABLE 78°F</span>
+          <span className="hidden sm:inline">•</span>
+          <span>PRICE: RP 0 (FREE DISPATCH)</span>
+        </div>
+      </div>
+
+      {/* Main Masthead Container with Authentic Ears */}
+      <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-3 py-1">
+        {/* Left Ear */}
+        <div className="hidden md:block md:col-span-3 text-xs text-stone-600 dark:text-stone-400 border-r border-stone-800 dark:border-stone-500 pr-3 leading-snug">
+          <div className="font-headline font-bold text-stone-900 dark:text-stone-100 uppercase text-xs">
+            The Financial Journal
           </div>
-          <div>
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <span className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
-                Budget Tracker
-              </span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                50/30/20
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 hidden xs:block">
-              Rupiah Monthly Spending
-            </p>
+          <div>Published in Jakarta for Indonesian household accounting.</div>
+          <div className="font-mono-num text-xs mt-1 text-stone-500 dark:text-stone-400">
+            VOL. XXIV • NO. {new Date().getDate()}
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Month Selector */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-0.5">
-            <button
-              onClick={handlePrevMonth}
-              className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-300 transition"
-              title="Previous month"
-              aria-label="Previous month"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="px-2 sm:px-3 capitalize text-slate-900 dark:text-slate-100 font-bold text-xs select-none">
-              {monthName}
-            </span>
-            <button
-              onClick={handleNextMonth}
-              className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-300 transition"
-              title="Next month"
-              aria-label="Next month"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+        {/* Center: The Grand Masthead Blackletter Title */}
+        <div className="md:col-span-6 text-center select-none">
+          <h1 className="font-masthead text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-stone-950 dark:text-stone-50 leading-none">
+            The Daily News
+          </h1>
+          <p className="font-headline italic text-xs sm:text-sm text-stone-700 dark:text-stone-300 mt-1">
+            "All the Financial Truths & Balances Fit to Print"
+          </p>
+        </div>
 
-          {/* Plan Button */}
+        {/* Right Ear */}
+        <div className="hidden md:block md:col-span-3 text-xs text-stone-600 dark:text-stone-400 border-l border-stone-800 dark:border-stone-500 pl-3 leading-snug text-right">
+          <div className="font-headline font-bold text-stone-900 dark:text-stone-100 uppercase text-xs">
+            50 / 30 / 20 Accounting
+          </div>
+          <div>Needs 50% • Wants 30% • Savings 20%</div>
+          <div className="font-mono-num font-bold text-stone-900 dark:text-stone-100 mt-1">
+            Base: {formatIDR(income)}
+          </div>
+        </div>
+      </div>
+
+      {/* Dateline Double Rule (Reference Image 1: Thick-and-Thin Rule) */}
+      <div className="border-t-4 border-b border-stone-900 dark:border-stone-400 py-1.5 my-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-bold tracking-wider uppercase text-stone-900 dark:text-stone-100 select-none">
+        <div>
+          <span>YOUR TOWN, {todayFormatted}</span>
+        </div>
+        <div className="hidden sm:block text-center text-stone-600 dark:text-stone-400">
+          <span>SPECIAL 50/30/20 BALANCED ACCOUNTING EDITION</span>
+        </div>
+        <div className="font-mono-num">
+          <span>ISSUE: {currentMonth}</span>
+        </div>
+      </div>
+
+      {/* Editorial Action Bar (Print Navigation Controls) */}
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
+        {/* Left: Issue / Month selector */}
+        <div className="flex items-center border border-stone-900 dark:border-stone-400 bg-stone-100 dark:bg-stone-900">
+          <button
+            onClick={handlePrevMonth}
+            className="w-7 h-7 flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-r border-stone-900 dark:border-stone-400"
+            title="Previous Issue"
+            aria-label="Previous Issue"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="px-3 font-headline font-bold text-xs uppercase text-stone-900 dark:text-stone-100">
+            {monthName}
+          </span>
+          <button
+            onClick={handleNextMonth}
+            className="w-7 h-7 flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-l border-stone-900 dark:border-stone-400"
+            title="Next Issue"
+            aria-label="Next Issue"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Plan Modal Button */}
           <button
             onClick={onOpenPlanModal}
-            className="h-8 sm:h-9 px-2.5 sm:px-3.5 flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-semibold transition"
-            title="Configure Budget Plan"
+            className="h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 font-bold uppercase tracking-wider text-[11px] transition"
+            title="Configure Allocation Ratios"
           >
-            <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-            <span className="hidden md:inline">Income: {formatIDR(income)}</span>
-            <span className="md:hidden">Plan</span>
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Allocation: {formatIDR(income)}</span>
+            <span className="sm:hidden">Plan</span>
           </button>
 
-          {/* Quick Add Button (Desktop: visible in header. Mobile: via floating action button) */}
+          {/* Add Transaction Button */}
           <button
             onClick={onOpenAddModal}
-            className="hidden sm:flex h-9 px-3.5 sm:px-4 items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white rounded-xl text-xs font-bold shadow-xs transition"
-            title="Add Transaction (Shortcut: Press N)"
+            className="h-8 px-3 sm:px-4 flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-200 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-[11px] border border-stone-900 dark:border-stone-300 transition"
+            title="Record New Entry"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
-            <span>Add</span>
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-xs font-mono font-bold bg-emerald-800/90 text-emerald-100 rounded border border-emerald-600/60 ml-0.5 select-none">
-              N
-            </kbd>
+            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>+ Dispatch Entry</span>
           </button>
 
-          {/* Theme Style Toggle (Newspaper vs Modern) */}
-          <button
-            onClick={onToggleThemeMode}
-            className={`h-8 sm:h-9 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl border text-xs font-bold transition ${
-              themeMode === 'newspaper'
-                ? 'bg-amber-100/90 dark:bg-amber-950/80 text-amber-950 dark:text-amber-200 border-amber-300 dark:border-amber-800 shadow-2xs'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80'
-            }`}
-            title={`Switch to ${themeMode === 'newspaper' ? 'Modern' : 'Newspaper'} theme`}
-            aria-label="Toggle Theme Mode"
-          >
-            <Newspaper className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400 shrink-0" />
-            <span className="hidden sm:inline">
-              {themeMode === 'newspaper' ? 'Newspaper' : 'Modern'}
-            </span>
-          </button>
-
-          {/* Theme Light/Dark toggle */}
+          {/* Theme Daylight / Midnight Paper Toggle */}
           <button
             onClick={onToggleTheme}
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            aria-label="Toggle theme"
+            className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
+            title={isDark ? 'Switch to Daylight Newsprint' : 'Switch to Midnight Broadsheet'}
+            aria-label="Toggle Print Mode"
           >
             {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
           </button>
 
-          {/* Settings */}
+          {/* Settings / Archive */}
           <button
             onClick={onOpenSettingsModal}
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            title="Settings"
+            className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
+            title="Archive & Preferences"
             aria-label="Settings"
           >
             <SettingsIcon className="w-4 h-4" />

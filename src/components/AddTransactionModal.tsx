@@ -103,7 +103,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       return;
     }
     if (!description.trim()) {
-      alert('Please enter a merchant or description.');
+      alert('Please enter a description or merchant name.');
       return;
     }
 
@@ -114,7 +114,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       categoryId: type === 'income' ? null : selectedCategoryId,
       date,
       note: note.trim() || undefined,
-      rememberMerchant: rememberMerchant && Boolean(selectedCategoryId),
+      rememberMerchant,
     });
 
     // Reset fields
@@ -131,21 +131,21 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-[#0e1626] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-lg w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-stone-950 dark:text-stone-50">
         {/* Header */}
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between pb-2 border-b-2 border-stone-900 dark:border-stone-400">
           <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Add New Transaction
+            <span className="text-[11px] font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 block">
+              OFFICIAL FINANCIAL DISPATCH
+            </span>
+            <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50">
+              Record New Ledger Entry
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Quick entry with live IDR parser & auto-categorizer
-            </p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -155,11 +155,11 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Amount Field */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Amount (IDR)
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+              Disbursed Sum / Amount (IDR)
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-3 text-sm font-bold text-slate-400 pointer-events-none">
+              <span className="absolute left-3 top-2.5 text-sm font-bold text-stone-500 pointer-events-none">
                 Rp
               </span>
               <input
@@ -167,7 +167,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                 value={amountRaw}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 placeholder="e.g. 500rb, 1.5jt, 85.000"
-                className="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-base font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full pl-10 pr-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-base font-bold font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
                 autoFocus
                 required
               />
@@ -175,16 +175,16 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
             {/* Live parsed badge & Shortcut chips */}
             <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
-              <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                {parsedAmount > 0 ? `Parsed: ${formatIDR(parsedAmount)}` : 'Shortcut hints: rb, jt, k'}
+              <span className="text-xs font-mono-num font-bold text-stone-700 dark:text-stone-300">
+                {parsedAmount > 0 ? `PARSED: ${formatIDR(parsedAmount)}` : 'SHORTCUTS: rb, jt, k'}
               </span>
-              <div className="flex flex-wrap gap-1.5 text-xs">
+              <div className="flex flex-wrap gap-1 text-[11px]">
                 {['25rb', '50rb', '100rb', '250rb', '500rb', '1jt'].map((chip) => (
                   <button
                     key={chip}
                     type="button"
                     onClick={() => handleAmountChange(chip)}
-                    className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 font-semibold border border-slate-200 dark:border-slate-700 transition"
+                    className="px-2 py-0.5 bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-300 dark:hover:bg-stone-700 font-bold border border-stone-900 dark:border-stone-400 transition"
                   >
                     {chip}
                   </button>
@@ -195,49 +195,51 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
           {/* Description & Auto-categorizer */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-              Description / Merchant
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+              Merchant / Transaction Description
             </label>
             <input
               type="text"
               value={description}
               onChange={(e) => handleDescriptionChange(e.target.value)}
               placeholder="e.g. Indomaret, Electricity Bill, Starbucks, Netflix"
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs font-bold text-stone-950 dark:text-stone-50 focus:outline-none"
               required
             />
 
             {/* Auto-detected category chip */}
             {autoDetectedCategory && !isManualCategoryOpen && (
-              <div className="flex items-center gap-2 mt-2.5">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  Category detected:
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400">
+                  Detected Pillar:
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsManualCategoryOpen(true)}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs font-bold text-emerald-800 dark:text-emerald-300 hover:ring-1 hover:ring-emerald-400 transition"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-stone-200 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs font-bold text-stone-900 dark:text-stone-100"
                 >
-                  <CategoryIcon name={autoDetectedCategory.icon} className="text-base" />
+                  <CategoryIcon name={autoDetectedCategory.icon} className="text-sm" />
                   <span>{autoDetectedCategory.name}</span>
-                  <span className="text-xs font-bold uppercase px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-emerald-200 dark:border-emerald-900">
+                  <span className="text-[11px] font-bold uppercase px-1 border border-stone-700">
                     {autoDetectedCategory.bucket}
                   </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-300 ml-0.5" />
+                  <ChevronDown className="w-3.5 h-3.5 ml-0.5" />
                 </button>
               </div>
             )}
 
             {/* Manual selector */}
             {(!autoDetectedCategory || isManualCategoryOpen) && (
-              <div className="mt-2.5 space-y-2">
+              <div className="mt-2 space-y-1.5">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-700 dark:text-slate-300 font-semibold">Select Category:</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
+                    Assign Classification:
+                  </span>
                   {autoDetectedCategory && (
                     <button
                       type="button"
                       onClick={() => setIsManualCategoryOpen(false)}
-                      className="text-emerald-600 dark:text-emerald-400 text-xs font-semibold hover:underline"
+                      className="text-stone-900 dark:text-stone-200 text-xs font-bold underline"
                     >
                       Use detected ({autoDetectedCategory.name})
                     </button>
@@ -249,9 +251,9 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                     setSelectedCategoryId(e.target.value || null);
                     setIsManualCategoryOpen(true);
                   }}
-                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs font-bold text-stone-900 dark:text-stone-100 focus:outline-none"
                 >
-                  <option value="">❓ Uncategorized (Review Later)</option>
+                  <option value="">❓ Uncategorized (Audit Later)</option>
                   <optgroup label="NEEDS (Living Essentials 50%)">
                     {categories
                       .filter((c) => c.bucket === 'needs')
@@ -270,7 +272,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                         </option>
                       ))}
                   </optgroup>
-                  <optgroup label="SAVINGS (Savings 20%)">
+                  <optgroup label="SAVINGS (Capital Reserves 20%)">
                     {categories
                       .filter((c) => c.bucket === 'savings')
                       .map((c) => (
@@ -282,14 +284,14 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                 </select>
 
                 {selectedCategoryId && (
-                  <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 pt-1 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-stone-700 dark:text-stone-300 pt-1 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={rememberMerchant}
                       onChange={(e) => setRememberMerchant(e.target.checked)}
-                      className="rounded text-emerald-600 focus:ring-emerald-500"
+                      className="rounded-none text-stone-900"
                     />
-                    <span>Remember this category for future transactions from this merchant</span>
+                    <span>Remember merchant classification for subsequent dispatches</span>
                   </label>
                 )}
               </div>
@@ -298,17 +300,17 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
           {/* Transaction Type Radio Tabs */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-              Transaction Type
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1.5">
+              Disbursement Type
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => handleTypeChange('expense')}
-                className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                className={`py-2 px-3 text-xs font-bold uppercase border transition ${
                   type === 'expense'
-                    ? 'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-200'
-                    : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                    ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
+                    : 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-400 dark:border-stone-600'
                 }`}
               >
                 Expense
@@ -316,10 +318,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleTypeChange('income')}
-                className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                className={`py-2 px-3 text-xs font-bold uppercase border transition ${
                   type === 'income'
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
-                    : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                    ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
+                    : 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-400 dark:border-stone-600'
                 }`}
               >
                 Income
@@ -327,10 +329,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               <button
                 type="button"
                 onClick={() => handleTypeChange('savings')}
-                className={`py-2 px-3 rounded-xl text-xs font-bold border transition ${
+                className={`py-2 px-3 text-xs font-bold uppercase border transition ${
                   type === 'savings'
-                    ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
-                    : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
+                    ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
+                    : 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-400 dark:border-stone-600'
                 }`}
               >
                 Savings
@@ -346,33 +348,33 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               label="Date (DD/MM/YYYY)"
             />
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                Note (Optional)
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                Note / Memorandum (Optional)
               </label>
               <input
                 type="text"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="e.g. Monthly groceries with family"
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none"
+                className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs text-stone-950 dark:text-stone-50 focus:outline-none"
               />
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-stone-300 dark:border-stone-700">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-xl"
+              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 border border-stone-900 dark:border-stone-400 hover:bg-stone-200 dark:hover:bg-stone-800"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold text-xs rounded-xl shadow-xs transition"
+              className="px-6 py-2 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition"
             >
-              Save Transaction
+              Commit Entry
             </button>
           </div>
         </form>

@@ -15,7 +15,7 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
   const remainingSpending = totalSpendingBudget - totalSpent;
 
   const radius = 80;
-  const strokeWidth = 14;
+  const strokeWidth = 12;
   const arcLength = Math.PI * radius;
 
   const catMap = new Map<string, Category>(categories.map((c) => [c.id, c]));
@@ -29,66 +29,64 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
 
   let accumulatedRatio = 0;
 
-  let statusBadge = {
-    label: `On Track (${percentNumber}%)`,
-    className: 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800',
-    glowColor: 'bg-emerald-500/10 dark:bg-emerald-500/15',
-  };
-  if (ratio > 1) {
-    statusBadge = {
-      label: `Overbudget (+${percentNumber - 100}%)`,
-      className: 'bg-rose-50 dark:bg-rose-950/70 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800',
-      glowColor: 'bg-rose-500/10 dark:bg-rose-500/15',
-    };
-  } else if (ratio >= 0.8) {
-    statusBadge = {
-      label: `Warning (${percentNumber}%)`,
-      className: 'bg-amber-50 dark:bg-amber-950/70 text-amber-900 dark:text-amber-200 border-amber-200 dark:border-amber-800',
-      glowColor: 'bg-amber-500/10 dark:bg-amber-500/15',
-    };
-  }
+  // Needle angle for gauge (-90 deg at 0% to +90 deg at 100%)
+  const clampedRatio = Math.min(Math.max(ratio, 0), 1.25);
+  const needleAngle = -90 + clampedRatio * 180;
 
   return (
-    <div className="relative bg-white dark:bg-[#0f172a] border border-slate-200/90 dark:border-slate-800/90 rounded-2xl p-4 sm:p-6 transition shadow-xs hover:border-slate-300 dark:hover:border-slate-700/80">
-      {/* Ambient background glow behind the gauge */}
-      <div
-        className={`absolute -top-10 left-1/2 -translate-x-1/2 w-56 sm:w-64 h-56 sm:h-64 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${statusBadge.glowColor}`}
-      />
-
-      <div className="relative flex items-center justify-between gap-2 mb-3 sm:mb-4">
+    <section className="border border-stone-900 dark:border-stone-400 bg-stone-100/50 dark:bg-stone-900/40 p-3.5 sm:p-4">
+      {/* Editorial Figure Header */}
+      <div className="flex items-start justify-between border-b border-stone-900 dark:border-stone-400 pb-2 mb-3">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-            Spending Gauge
-          </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 text-pretty">
-            Combined spending against combined Needs and Wants budget
-          </p>
+          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-500 dark:text-stone-400 block">
+            FIGURE I. — TECHNICAL BAROMETER
+          </span>
+          <h3 className="font-headline text-base sm:text-lg font-bold text-stone-950 dark:text-stone-50 leading-tight">
+            Financial Burn Rate Meter
+          </h3>
         </div>
-        <span className={`text-xs px-2.5 py-1 rounded-lg font-bold border shrink-0 ${statusBadge.className}`}>
-          {statusBadge.label}
-        </span>
+        <div className="text-right shrink-0">
+          <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 border ${
+            ratio > 1
+              ? 'border-red-800 text-red-800 dark:text-red-400'
+              : ratio >= 0.8
+              ? 'border-amber-800 text-amber-800 dark:text-amber-400'
+              : 'border-stone-900 dark:border-stone-300 text-stone-900 dark:text-stone-100'
+          }`}>
+            {ratio > 1 ? `DEFICIT (+${percentNumber - 100}%)` : `SOLVENT (${percentNumber}%)`}
+          </span>
+        </div>
       </div>
 
-      {/* Semicircle SVG */}
-      <div className="relative flex flex-col items-center justify-center py-1 sm:py-2">
-        <svg viewBox="0 0 200 115" className="w-full max-w-[260px] sm:max-w-[280px] h-auto aspect-[200/115] drop-shadow-xs">
+      {/* Engraved Semicircle Gauge SVG */}
+      <div className="relative flex flex-col items-center justify-center py-1">
+        <svg viewBox="0 0 200 120" className="w-full max-w-[280px] h-auto aspect-[200/120] select-none">
+          {/* Outer dial ring */}
+          <path
+            d="M 18 100 A 82 82 0 0 1 182 100"
+            fill="none"
+            stroke="currentColor"
+            className="text-stone-300 dark:text-stone-700"
+            strokeWidth="1"
+          />
+
+          {/* Background track */}
           <path
             d="M 20 100 A 80 80 0 0 1 180 100"
             fill="none"
             stroke="currentColor"
-            className="text-slate-100 dark:text-slate-800"
+            className="text-stone-200 dark:text-stone-800"
             strokeWidth={strokeWidth}
-            strokeLinecap="round"
           />
 
+          {/* Category Segments */}
           {expenseCategories.map(([catId, amount]) => {
             const cat = catMap.get(catId);
-            const color = cat ? cat.color : '#64748b';
+            const color = cat ? cat.color : '#57534e';
             const catRatio = totalSpendingBudget > 0 ? amount / totalSpendingBudget : 0;
             const segmentLength = Math.min(catRatio, 1) * arcLength;
             const offset = -(accumulatedRatio * arcLength);
 
-            const isFirst = accumulatedRatio === 0;
             accumulatedRatio += catRatio;
 
             return (
@@ -100,59 +98,91 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${segmentLength} ${arcLength}`}
                 strokeDashoffset={offset}
-                strokeLinecap={isFirst ? 'round' : 'butt'}
                 className="transition-all duration-500"
               />
             );
           })}
+
+          {/* Engraved Dial Needle */}
+          <g transform={`rotate(${needleAngle} 100 100)`} className="transition-transform duration-700 ease-out">
+            {/* Needle line */}
+            <line
+              x1="100"
+              y1="100"
+              x2="100"
+              y2="28"
+              stroke="currentColor"
+              className="text-stone-900 dark:text-stone-100"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            {/* Arrowhead */}
+            <polygon
+              points="100,20 96,30 104,30"
+              fill="currentColor"
+              className="text-stone-900 dark:text-stone-100"
+            />
+          </g>
+
+          {/* Center Pivot Rivet */}
+          <circle cx="100" cy="100" r="7" className="fill-stone-900 dark:fill-stone-100" />
+          <circle cx="100" cy="100" r="3" className="fill-stone-100 dark:fill-stone-900" />
+
+          {/* Scale Markers */}
+          <text x="18" y="114" className="text-[9px] font-bold font-mono-num fill-stone-600 dark:fill-stone-400" textAnchor="middle">
+            0%
+          </text>
+          <text x="100" y="14" className="text-[9px] font-bold font-mono-num fill-stone-600 dark:fill-stone-400" textAnchor="middle">
+            50%
+          </text>
+          <text x="182" y="114" className="text-[9px] font-bold font-mono-num fill-stone-600 dark:fill-stone-400" textAnchor="middle">
+            100%
+          </text>
         </svg>
 
-        {/* Central Numbers */}
-        <div className="absolute bottom-1 sm:bottom-2 text-center pointer-events-none select-none">
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-0.5">
-            Total Spent
+        {/* Central Readout */}
+        <div className="text-center mt-2 border-t border-dashed border-stone-400 dark:border-stone-600 pt-2 w-full">
+          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-500 dark:text-stone-400 block">
+            CURRENT OUTFLOW
           </span>
-          <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight block">
+          <span className="font-headline text-2xl sm:text-3xl font-black text-stone-950 dark:text-stone-50 tracking-tight block">
             {formatIDR(totalSpent)}
           </span>
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block mt-0.5">
-            of {formatIDR(totalSpendingBudget)} budget
+          <span className="text-xs text-stone-600 dark:text-stone-400 block mt-0.5">
+            of <strong className="font-mono-num">{formatIDR(totalSpendingBudget)}</strong> operating ceiling
           </span>
         </div>
       </div>
 
-      {/* Remaining safe-to-spend banner */}
-      <div className="relative mt-2 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs gap-2">
-        <span className="text-slate-600 dark:text-slate-400 font-semibold truncate">
-          Safe to Spend
+      {/* Safe to Spend Ledger Box */}
+      <div className="mt-2.5 pt-2 border-t border-stone-900 dark:border-stone-400 flex items-center justify-between text-xs">
+        <span className="text-stone-600 dark:text-stone-400 font-bold uppercase tracking-wider text-[11px]">
+          Operating Cushion:
         </span>
-        <span
-          className={`font-extrabold text-xs sm:text-sm shrink-0 ${
-            remainingSpending >= 0
-              ? 'text-emerald-700 dark:text-emerald-400'
-              : 'text-rose-700 dark:text-rose-400'
-          }`}
-        >
+        <span className={`font-mono-num font-bold text-xs sm:text-sm ${
+          remainingSpending >= 0
+            ? 'text-stone-900 dark:text-stone-100'
+            : 'text-red-800 dark:text-red-400'
+        }`}>
           {remainingSpending >= 0
             ? formatIDR(remainingSpending)
-            : `Overbudget by ${formatIDR(Math.abs(remainingSpending))}`}
+            : `Deficit: ${formatIDR(Math.abs(remainingSpending))}`}
         </span>
       </div>
 
-      {/* Mini Legend */}
+      {/* Commodity Legend */}
       {expenseCategories.length > 0 && (
-        <div className="relative flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mt-2 pt-2 border-t border-slate-100/60 dark:border-slate-800/60">
+        <div className="mt-2 pt-2 border-t border-stone-300 dark:border-stone-700 grid grid-cols-2 gap-1 text-xs">
           {expenseCategories.slice(0, 4).map(([catId, amount]) => {
             const cat = catMap.get(catId);
             if (!cat) return null;
             return (
-              <div
-                key={catId}
-                className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 text-xs text-slate-700 dark:text-slate-300 font-medium"
-              >
-                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
-                <span className="truncate max-w-[110px] sm:max-w-none">{cat.name}</span>
-                <span className="font-bold text-slate-900 dark:text-white ml-0.5 shrink-0">
+              <div key={catId} className="flex items-center justify-between pr-1 text-stone-700 dark:text-stone-300">
+                <span className="truncate flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 inline-block shrink-0" style={{ backgroundColor: cat.color }} />
+                  <span className="truncate">{cat.name}</span>
+                </span>
+                <span className="font-mono-num font-semibold text-stone-900 dark:text-stone-100 shrink-0 ml-1">
                   {formatIDR(amount)}
                 </span>
               </div>
@@ -160,6 +190,6 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
           })}
         </div>
       )}
-    </div>
+    </section>
   );
 };

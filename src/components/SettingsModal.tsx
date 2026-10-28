@@ -9,11 +9,9 @@ import {
   Download,
   Upload,
   RotateCcw,
-  Settings as SettingsIcon,
   Sun,
   Moon,
   CheckCircle2,
-  Newspaper,
 } from 'lucide-react';
 
 interface SettingsModalProps {
@@ -46,8 +44,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onResetData,
   isDark,
   onToggleTheme,
-  themeMode,
-  onToggleThemeMode,
 }) => {
   const [activeTab, setActiveTab] = useState<'categories' | 'merchantMemory' | 'data'>('categories');
 
@@ -55,7 +51,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [newCatName, setNewCatName] = useState('');
   const [newCatBucket, setNewCatBucket] = useState<Bucket>('wants');
   const [newCatIcon, setNewCatIcon] = useState('🏷️');
-  const [newCatColor, setNewCatColor] = useState('#ec4899');
+  const [newCatColor, setNewCatColor] = useState('#57534e');
   const [newCatKeywords, setNewCatKeywords] = useState('');
 
   // CSV Import states
@@ -115,7 +111,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       }
     };
     reader.readAsText(file);
-    // Reset input so same file can be re-selected if needed
     e.target.value = '';
   };
 
@@ -128,42 +123,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-[#0e1626] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-xl w-full p-4 sm:p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+      <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col text-stone-950 dark:text-stone-50">
         {/* Header */}
-        <div className="flex items-center justify-between shrink-0 pb-2 border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center">
-              <SettingsIcon className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">Settings</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Custom categories, merchant memory & CSV backup</p>
-            </div>
+        <div className="flex items-center justify-between shrink-0 pb-2 border-b-2 border-stone-900 dark:border-stone-400">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 block">
+              EDITORIAL ARCHIVE & PREFERENCES
+            </span>
+            <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50">
+              Gazette Archive & Settings
+            </h3>
           </div>
           <div className="flex items-center gap-1.5">
-            {onToggleThemeMode && (
-              <button
-                type="button"
-                onClick={onToggleThemeMode}
-                className="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-1"
-                title="Switch Theme"
-              >
-                <Newspaper className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span className="hidden xs:inline">{themeMode === 'newspaper' ? 'Newspaper' : 'Modern'}</span>
-              </button>
-            )}
             <button
               onClick={onToggleTheme}
-              className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              aria-label="Toggle theme"
+              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 text-stone-900 dark:text-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
+              title={isDark ? 'Switch to daylight newsprint' : 'Switch to midnight broadsheet'}
+              aria-label="Toggle daylight/midnight mode"
             >
               {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
             </button>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
               aria-label="Close dialog"
             >
               <X className="w-5 h-5" />
@@ -172,36 +155,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 text-xs font-semibold shrink-0">
+        <div className="flex border-b border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider shrink-0">
           <button
             onClick={() => setActiveTab('categories')}
-            className={`px-4 py-2.5 border-b-2 transition ${
+            className={`px-3 sm:px-4 py-2 border-b-2 transition ${
               activeTab === 'categories'
-                ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'border-stone-900 dark:border-stone-100 text-stone-950 dark:text-stone-50 bg-stone-200/60 dark:bg-stone-800/60'
+                : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
             }`}
           >
             Categories ({categories.length})
           </button>
           <button
             onClick={() => setActiveTab('merchantMemory')}
-            className={`px-4 py-2.5 border-b-2 transition ${
+            className={`px-3 sm:px-4 py-2 border-b-2 transition ${
               activeTab === 'merchantMemory'
-                ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'border-stone-900 dark:border-stone-100 text-stone-950 dark:text-stone-50 bg-stone-200/60 dark:bg-stone-800/60'
+                : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
             }`}
           >
-            Merchant Memory ({Object.keys(merchantMemory).length})
+            Merchants ({Object.keys(merchantMemory).length})
           </button>
           <button
             onClick={() => setActiveTab('data')}
-            className={`px-4 py-2.5 border-b-2 transition ${
+            className={`px-3 sm:px-4 py-2 border-b-2 transition ${
               activeTab === 'data'
-                ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400 font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'border-stone-900 dark:border-stone-100 text-stone-950 dark:text-stone-50 bg-stone-200/60 dark:bg-stone-800/60'
+                : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
             }`}
           >
-            Data & Backup
+            CSV Data Archive
           </button>
         </div>
 
@@ -212,10 +195,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Form to add custom category */}
               <form
                 onSubmit={handleCreateCategory}
-                className="p-3.5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2.5"
+                className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2.5"
               >
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">
-                  Add Custom Category:
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 block">
+                  Register Custom Commodity Category:
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                   <input
@@ -223,13 +206,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
                     placeholder="Category Name"
-                    className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs focus:outline-none"
+                    className="px-3 py-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs font-bold focus:outline-none"
                     required
                   />
                   <select
                     value={newCatBucket}
                     onChange={(e) => setNewCatBucket(e.target.value as Bucket)}
-                    className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs focus:outline-none"
+                    className="px-3 py-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs font-bold focus:outline-none"
                   >
                     <option value="needs">Needs (50%)</option>
                     <option value="wants">Wants (30%)</option>
@@ -238,7 +221,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <select
                     value={newCatIcon}
                     onChange={(e) => setNewCatIcon(e.target.value)}
-                    className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs focus:outline-none"
+                    className="px-3 py-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs focus:outline-none"
                   >
                     <option value="🏷️">🏷️ Tag / Other</option>
                     <option value="🏠">🏠 Housing</option>
@@ -262,11 +245,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       type="color"
                       value={newCatColor}
                       onChange={(e) => setNewCatColor(e.target.value)}
-                      className="w-10 h-8 p-0 border border-slate-300 dark:border-slate-700 rounded-lg cursor-pointer"
+                      className="w-10 h-8 p-0 border border-stone-900 dark:border-stone-400 cursor-pointer"
                     />
                     <button
                       type="submit"
-                      className="flex-1 px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg shadow-xs transition"
+                      className="flex-1 px-3 py-1.5 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase text-xs border border-stone-900 dark:border-stone-400 transition"
                     >
                       Add
                     </button>
@@ -277,31 +260,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   value={newCatKeywords}
                   onChange={(e) => setNewCatKeywords(e.target.value)}
                   placeholder="Keywords (comma separated, e.g. gym, fitness, workout)"
-                  className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-xs focus:outline-none"
+                  className="w-full px-3 py-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs focus:outline-none"
                 />
               </form>
 
               {/* List of categories */}
               <div className="space-y-2">
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block">Registered Categories:</span>
-                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 block">
+                  Official Registered Categories:
+                </span>
+                <div className="divide-y divide-stone-300 dark:divide-stone-700">
                   {categories.map((c) => (
-                    <div key={c.id} className="py-2.5 flex items-center justify-between text-xs">
+                    <div key={c.id} className="py-2 flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2.5">
-                        <div
-                          className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ backgroundColor: `${c.color}15`, color: c.color }}
-                        >
+                        <div className="w-7 h-7 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-200 dark:bg-stone-800 shrink-0">
                           <CategoryIcon name={c.icon} className="text-sm" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-900 dark:text-white">{c.name}</span>
-                            <span className="uppercase text-xs font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                            <span className="font-bold text-stone-950 dark:text-stone-50">{c.name}</span>
+                            <span className="uppercase text-[11px] font-bold px-1 border border-stone-700 dark:border-stone-400 text-stone-700 dark:text-stone-300">
                               {c.bucket}
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                          <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
                             {c.keywords.slice(0, 5).join(', ')}
                             {c.keywords.length > 5 ? '...' : ''}
                           </p>
@@ -310,10 +292,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       {!c.isDefault && (
                         <button
                           onClick={() => onDeleteCategory(c.id)}
-                          className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-rose-600 rounded-lg"
+                          className="w-7 h-7 flex items-center justify-center border border-stone-900 dark:border-stone-400 hover:bg-red-100 dark:hover:bg-red-950 text-stone-700 hover:text-red-800"
                           title="Delete Custom Category"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
@@ -325,33 +307,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {activeTab === 'merchantMemory' && (
             <div className="space-y-3">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                The app remembers the following merchants so subsequent transactions are auto-categorized automatically.
+              <p className="text-xs italic text-stone-600 dark:text-stone-400">
+                The gazette remembers the following merchants for automated ledger classification.
               </p>
               {Object.keys(merchantMemory).length === 0 ? (
-                <div className="text-center py-8 text-xs text-slate-400">
-                  No remembered merchants yet
+                <div className="text-center py-8 text-xs text-stone-500 italic">
+                  No remembered merchants recorded in archive yet
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                <div className="divide-y divide-stone-300 dark:divide-stone-700">
                   {Object.entries(merchantMemory).map(([merchant, catId]) => {
                     const cat = categories.find((c) => c.id === catId);
                     return (
-                      <div key={merchant} className="py-2.5 flex items-center justify-between text-xs">
+                      <div key={merchant} className="py-2 flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900 dark:text-white capitalize">
+                          <span className="font-bold text-stone-950 dark:text-stone-50 capitalize">
                             {merchant}
                           </span>
-                          <span className="text-slate-500 dark:text-slate-400">
+                          <span className="text-stone-600 dark:text-stone-400 font-mono-num">
                             → {cat ? cat.name : catId}
                           </span>
                         </div>
                         <button
                           onClick={() => onRemoveMerchantMemory(merchant)}
-                          className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-rose-600 rounded-lg"
+                          className="w-7 h-7 flex items-center justify-center border border-stone-900 dark:border-stone-400 hover:bg-red-100 dark:hover:bg-red-950 text-stone-700 hover:text-red-800"
                           title="Forget Merchant"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     );
@@ -364,55 +346,55 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {activeTab === 'data' && (
             <div className="space-y-4">
               {/* Export Data */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">
-                  Export Data (CSV)
+              <div className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 block">
+                  Export Public Record (CSV Spreadsheet)
                 </span>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Download all your recorded transactions as a clean CSV spreadsheet. Compatible with Microsoft Excel, Google Sheets, or re-importing anytime.
+                <p className="text-xs text-stone-600 dark:text-stone-400">
+                  Download all recorded transactions as an official CSV ledger. Fully readable in Excel, Google Sheets, or for importing back into the Gazette.
                 </p>
                 <button
                   onClick={() => exportToCSV(appData.transactions, categories)}
-                  className="w-full py-2.5 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center justify-center gap-1.5"
+                  className="w-full py-2 px-3 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition flex items-center justify-center gap-2"
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download Transactions CSV ({appData.transactions.length} rows)</span>
+                  <Download className="w-4 h-4" />
+                  <span>Download Ledger CSV ({appData.transactions.length} entries)</span>
                 </button>
               </div>
 
               {/* Import Data */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">
-                  Import Data (CSV)
+              <div className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 block">
+                  Import Ledger Records (CSV)
                 </span>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Upload a CSV spreadsheet with your transactions. Automatically maps categories, dates, and amounts.
+                <p className="text-xs text-stone-600 dark:text-stone-400">
+                  Upload a CSV spreadsheet with financial dispatches. Automatically parses Date, Description, and Amount columns.
                 </p>
 
                 {csvPreview ? (
-                  <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 rounded-xl space-y-3">
-                    <div className="flex items-center justify-between text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                  <div className="p-3 bg-stone-200 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 space-y-2.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-stone-950 dark:text-stone-50">
                       <div className="flex items-center gap-1.5 truncate">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
                         <span className="truncate">{csvPreview.filename}</span>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 text-xs shrink-0">
-                        {csvPreview.count} transactions found
+                      <span className="px-2 py-0.5 border border-stone-900 dark:border-stone-400 text-xs shrink-0 font-mono-num">
+                        {csvPreview.count} dispatches found
                       </span>
                     </div>
 
-                    <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300 bg-white/70 dark:bg-slate-900/50 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900/50">
-                      <span className="font-bold text-slate-900 dark:text-white block">Choose Import Mode:</span>
+                    <div className="space-y-1.5 text-xs text-stone-800 dark:text-stone-200 bg-stone-50 dark:bg-stone-900 p-2 border border-stone-400">
+                      <span className="font-bold uppercase tracking-wider block">Select Ingestion Protocol:</span>
                       <label className="flex items-start gap-2 cursor-pointer">
                         <input
                           type="radio"
                           name="importMode"
                           checked={importMode === 'merge'}
                           onChange={() => setImportMode('merge')}
-                          className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                          className="mt-0.5"
                         />
                         <span>
-                          <strong className="text-slate-900 dark:text-white">Merge</strong> — Keep existing transactions and append new ones without duplicates.
+                          <strong>Merge</strong> — Preserve existing records and append new entries without duplication.
                         </span>
                       </label>
                       <label className="flex items-start gap-2 cursor-pointer">
@@ -421,10 +403,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           name="importMode"
                           checked={importMode === 'replace'}
                           onChange={() => setImportMode('replace')}
-                          className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                          className="mt-0.5"
                         />
                         <span>
-                          <strong className="text-slate-900 dark:text-white">Replace</strong> — Overwrite all current transactions with this CSV file.
+                          <strong>Replace</strong> — Overwrite entire history with this CSV ledger file.
                         </span>
                       </label>
                     </div>
@@ -432,22 +414,22 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <div className="flex gap-2 pt-1">
                       <button
                         onClick={handleConfirmImport}
-                        className="flex-1 py-2 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-lg shadow-xs transition"
+                        className="flex-1 py-2 px-3 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase text-xs border border-stone-900 dark:border-stone-400 transition"
                       >
-                        Confirm Import ({csvPreview.count} items)
+                        Confirm Import ({csvPreview.count} entries)
                       </button>
                       <button
                         onClick={() => setCsvPreview(null)}
-                        className="py-2 px-3 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold rounded-lg text-slate-700 dark:text-slate-300 transition"
+                        className="py-2 px-3 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700"
                       >
                         Cancel
                       </button>
                     </div>
                   </div>
                 ) : (
-                  <label className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold cursor-pointer text-slate-700 dark:text-slate-300 transition shadow-xs">
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Upload CSV File</span>
+                  <label className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider cursor-pointer text-stone-900 dark:text-stone-100 transition">
+                    <Upload className="w-4 h-4" />
+                    <span>Upload CSV Ledger File</span>
                     <input
                       type="file"
                       accept=".csv,text/csv"
@@ -459,12 +441,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
 
               {/* Reset Data */}
-              <div className="p-4 bg-rose-50/50 dark:bg-rose-950/20 rounded-xl border border-rose-200 dark:border-rose-900 space-y-3">
-                <span className="text-xs font-bold text-rose-800 dark:text-rose-200 block">
-                  Reset All Data
+              <div className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-red-800 dark:text-red-400 block">
+                  Expunge All Records (Reset to Factory Defaults)
                 </span>
-                <p className="text-xs text-rose-700/80 dark:text-rose-300/80">
-                  Erase all recorded transactions, plans, and customized categories. Returns application to factory defaults.
+                <p className="text-xs text-stone-600 dark:text-stone-400">
+                  Permanently purge all recorded transactions, budget allocations, and custom merchant memories from local browser storage.
                 </p>
                 <button
                   onClick={() => {
@@ -474,10 +456,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       onClose();
                     }
                   }}
-                  className="px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+                  className="px-4 py-2 bg-red-800 hover:bg-red-900 text-white font-bold uppercase tracking-wider text-xs border border-stone-900 transition flex items-center gap-2"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reset to Factory Defaults</span>
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Expunge Archive & Reset Defaults</span>
                 </button>
               </div>
             </div>

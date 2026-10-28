@@ -129,21 +129,21 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
     <div className="relative space-y-1.5" ref={containerRef}>
       {/* Label and Quick Buttons */}
       <div className="flex items-center justify-between">
-        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
           {label}
         </label>
         <div className="flex items-center gap-1.5 text-[11px]">
           <button
             type="button"
             onClick={setToday}
-            className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 font-semibold border border-slate-200 dark:border-slate-700 transition"
+            className="px-2 py-0.5 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700 font-bold uppercase text-[11px] border border-stone-900 dark:border-stone-400 transition"
           >
             Today
           </button>
           <button
             type="button"
             onClick={setYesterday}
-            className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950/60 font-semibold border border-slate-200 dark:border-slate-700 transition"
+            className="px-2 py-0.5 bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700 font-bold uppercase text-[11px] border border-stone-900 dark:border-stone-400 transition"
           >
             Yesterday
           </button>
@@ -157,7 +157,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           <select
             value={Math.min(selectedDay, daysInCurrentMonth)}
             onChange={(e) => handleDayChange(Number(e.target.value))}
-            className="w-full px-2.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+            className="w-full px-2 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs sm:text-sm font-mono-num font-bold text-stone-900 dark:text-stone-100 cursor-pointer focus:outline-none"
             title="Day (Tanggal)"
           >
             {days.map((d) => (
@@ -173,7 +173,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           <select
             value={selectedMonth}
             onChange={(e) => handleMonthChange(Number(e.target.value))}
-            className="w-full px-2.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+            className="w-full px-2 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs sm:text-sm font-mono-num font-bold text-stone-900 dark:text-stone-100 cursor-pointer focus:outline-none"
             title="Month (Bulan)"
           >
             {MONTHS.map((m) => (
@@ -189,7 +189,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           <select
             value={selectedYear}
             onChange={(e) => handleYearChange(Number(e.target.value))}
-            className="w-full px-2 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer"
+            className="w-full px-2 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs sm:text-sm font-mono-num font-bold text-stone-900 dark:text-stone-100 cursor-pointer focus:outline-none"
             title="Year (Tahun)"
           >
             {years.map((y) => (
@@ -204,10 +204,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
         <button
           type="button"
           onClick={() => setIsCalendarOpen((prev) => !prev)}
-          className={`w-9 h-9 flex items-center justify-center rounded-xl border transition shrink-0 ${
+          className={`w-9 h-9 flex items-center justify-center border border-stone-900 dark:border-stone-400 transition shrink-0 ${
             isCalendarOpen
-              ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
-              : 'bg-slate-50 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+              ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 font-bold'
+              : 'bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-700'
           }`}
           title="Open Visual Calendar"
           aria-label="Open Visual Calendar"
@@ -218,17 +218,17 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
 
       {/* Floating Visual Calendar Popup */}
       {isCalendarOpen && (
-        <div className="absolute left-0 right-0 sm:left-auto sm:right-0 z-50 mt-1 w-full sm:w-72 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-700 rounded-2xl p-3.5 shadow-xl space-y-3 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute left-0 right-0 sm:left-auto sm:right-0 z-50 mt-1 w-full sm:w-72 bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 p-3 shadow-2xl space-y-2.5">
           {/* Calendar Header */}
-          <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-slate-800">
-            <span className="text-xs font-bold text-slate-900 dark:text-white">
+          <div className="flex items-center justify-between pb-1.5 border-b border-stone-900 dark:border-stone-400">
+            <span className="font-headline font-bold text-xs uppercase text-stone-950 dark:text-stone-50">
               {MONTHS[viewMonth - 1].name} {viewYear}
             </span>
             <div className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={prevMonthView}
-                className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                className="w-6 h-6 flex items-center justify-center border border-stone-900 dark:border-stone-400 hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-900 dark:text-stone-100 transition"
                 aria-label="Previous Month"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
@@ -236,7 +236,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               <button
                 type="button"
                 onClick={nextMonthView}
-                className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
+                className="w-6 h-6 flex items-center justify-center border border-stone-900 dark:border-stone-400 hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-900 dark:text-stone-100 transition"
                 aria-label="Next Month"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -244,7 +244,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
               <button
                 type="button"
                 onClick={() => setIsCalendarOpen(false)}
-                className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition ml-1"
+                className="w-6 h-6 flex items-center justify-center border border-stone-900 dark:border-stone-400 hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-900 dark:text-stone-100 transition ml-1"
                 aria-label="Close Calendar"
               >
                 <X className="w-3.5 h-3.5" />
@@ -253,7 +253,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           </div>
 
           {/* Days of week header (Mon - Sun) */}
-          <div className="grid grid-cols-7 text-center text-[11px] font-bold text-slate-400">
+          <div className="grid grid-cols-7 text-center text-[11px] font-bold uppercase text-stone-600 dark:text-stone-400">
             <span>Mo</span>
             <span>Tu</span>
             <span>We</span>
@@ -286,10 +286,10 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
                     emitDate(viewYear, viewMonth, dayNum);
                     setIsCalendarOpen(false);
                   }}
-                  className={`w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition ${
+                  className={`w-7 h-7 font-mono-num text-xs flex items-center justify-center border transition ${
                     isSelected
-                      ? 'bg-emerald-600 text-white font-bold shadow-xs'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 font-bold border-stone-900 dark:border-stone-400'
+                      : 'border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-800'
                   }`}
                 >
                   {dayNum}
