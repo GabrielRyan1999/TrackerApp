@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Transaction, Category, Bucket } from '../types/budget';
 import { formatIDR } from '../utils/idr';
 import { CategoryIcon } from './CategoryIcon';
@@ -26,6 +26,15 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTxForReview, setSelectedTxForReview] = useState<Transaction | null>(null);
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
+
+  useEffect(() => {
+    if (!selectedTxForReview) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [selectedTxForReview]);
 
   const catMap = new Map<string, Category>(categories.map((c) => [c.id, c]));
 
@@ -315,8 +324,8 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 
       {/* Review Modal */}
       {selectedTxForReview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-xs">
-          <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-sm w-full p-4 sm:p-5 space-y-3.5 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-xs overscroll-contain">
+          <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-md w-full p-4 sm:p-5 space-y-3.5 shadow-2xl overscroll-contain">
             <div className="border-b border-stone-900 dark:border-stone-400 pb-2">
               <h3 className="font-headline text-base font-bold text-stone-950 dark:text-stone-50">
                 Categorize: "{selectedTxForReview.description}"

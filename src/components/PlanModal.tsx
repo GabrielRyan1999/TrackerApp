@@ -34,6 +34,11 @@ export const PlanModal: React.FC<PlanModalProps> = ({
       setWantsPct(currentPlan.split.wants);
       setSavingsPct(currentPlan.split.savings);
       setErrorMsg(null);
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
     }
   }, [isOpen, currentPlan]);
 
@@ -175,8 +180,8 @@ export const PlanModal: React.FC<PlanModalProps> = ({
   const hasDeviations = actualNeedsShare > needsPct + 10 || actualWantsShare > wantsPct + 10;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-lg w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-stone-950 dark:text-stone-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-xs animate-in fade-in duration-200 overscroll-contain">
+      <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-stone-950 dark:text-stone-50 overscroll-contain">
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b-2 border-stone-900 dark:border-stone-400">
           <div>

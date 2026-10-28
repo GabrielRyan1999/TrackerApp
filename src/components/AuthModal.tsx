@@ -36,6 +36,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setSuccessMessage(null);
   }, [activeTab]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -158,9 +167,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/75 backdrop-blur-xs font-editorial animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/75 backdrop-blur-xs font-editorial animate-fadeIn overscroll-contain">
       <div
-        className="w-full max-w-md bg-[#f8f6f0] dark:bg-stone-900 border-2 border-stone-900 dark:border-stone-400 p-4 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto"
+        className="w-full max-w-lg bg-[#f8f6f0] dark:bg-stone-900 border-2 border-stone-900 dark:border-stone-400 p-4 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto overscroll-contain"
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-modal-title"

@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   MessageSquare,
-  Send,
 } from 'lucide-react';
 
 interface SettingsModalProps {
@@ -80,6 +79,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         setFeedbackEmail(userEmail);
       }
       setFeedbackError(null);
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
     }
   }, [isOpen, userEmail]);
 
@@ -192,8 +196,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col text-stone-950 dark:text-stone-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-xs animate-in fade-in duration-200 overscroll-contain">
+      <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-2xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col text-stone-950 dark:text-stone-50 overscroll-contain">
         {/* Header */}
         <div className="flex items-center justify-between shrink-0 pb-2 border-b-2 border-stone-900 dark:border-stone-400">
           <div>
@@ -680,9 +684,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       <button
                         type="submit"
                         disabled={isSubmittingFeedback || !feedbackMessage.trim() || !feedbackEmail.trim()}
-                        className="px-5 py-2 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition flex items-center justify-center gap-1.5 disabled:opacity-50"
+                        className="px-5 py-2 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition flex items-center justify-center disabled:opacity-50"
                       >
-                        <Send className="w-3.5 h-3.5" />
                         <span>{isSubmittingFeedback ? 'Sending...' : 'Send Feedback'}</span>
                       </button>
                     </div>

@@ -87,6 +87,24 @@ function BudgetTrackerApp() {
     }
   }, [isRecoveryMode]);
 
+  // Lock body scroll whenever any modal is open
+  useEffect(() => {
+    const isAnyModalOpen =
+      isAddModalOpen ||
+      isPlanModalOpen ||
+      isSettingsModalOpen ||
+      isAuthModalOpen ||
+      Boolean(legalType);
+
+    if (isAnyModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isAddModalOpen, isPlanModalOpen, isSettingsModalOpen, isAuthModalOpen, legalType]);
+
   // Sync theme-newspaper class on <html> document element and persist in localStorage
   useEffect(() => {
     const root = document.documentElement;
