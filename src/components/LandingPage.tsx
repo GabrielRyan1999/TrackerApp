@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Sun, Moon, Eye, EyeOff, AlertCircle, CheckCircle2, Check } from 'lucide-react';
+import { Footer } from './Footer';
+import { LegalModal } from './LegalModal';
 
 interface LandingPageProps {
   isDark: boolean;
@@ -21,6 +23,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [legalType, setLegalType] = useState<'privacy' | 'terms' | null>(null);
 
   const todayFormatted = new Date().toLocaleDateString('en-GB', {
     weekday: 'long',
@@ -446,35 +449,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
           </section>
         </div>
 
-        {/* Minimal Footer */}
-        <footer className="border-t border-stone-300 dark:border-stone-700 pt-3 flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
-          <div className="flex items-center gap-2">
-            <svg className="h-6 w-20 text-stone-800 dark:text-stone-300" viewBox="0 0 100 28" fill="currentColor">
-              <rect x="0" y="0" width="3" height="28" />
-              <rect x="5" y="0" width="1" height="28" />
-              <rect x="8" y="0" width="4" height="28" />
-              <rect x="15" y="0" width="2" height="28" />
-              <rect x="19" y="0" width="1" height="28" />
-              <rect x="23" y="0" width="3" height="28" />
-              <rect x="29" y="0" width="2" height="28" />
-              <rect x="34" y="0" width="4" height="28" />
-              <rect x="41" y="0" width="1" height="28" />
-              <rect x="44" y="0" width="3" height="28" />
-              <rect x="50" y="0" width="2" height="28" />
-              <rect x="55" y="0" width="5" height="28" />
-              <rect x="63" y="0" width="2" height="28" />
-              <rect x="67" y="0" width="1" height="28" />
-              <rect x="71" y="0" width="3" height="28" />
-              <rect x="77" y="0" width="4" height="28" />
-              <rect x="84" y="0" width="1" height="28" />
-              <rect x="88" y="0" width="3" height="28" />
-              <rect x="94" y="0" width="4" height="28" />
-            </svg>
-            <span className="font-mono-num font-bold">50-30-20</span>
-          </div>
-          <span className="italic">The Daily News • Budget Tracker</span>
-        </footer>
+        {/* Footer */}
+        <Footer
+          onOpenPrivacy={() => setLegalType('privacy')}
+          onOpenTerms={() => setLegalType('terms')}
+        />
       </div>
+
+      {/* Legal Information Modal */}
+      <LegalModal
+        isOpen={Boolean(legalType)}
+        onClose={() => setLegalType(null)}
+        type={legalType || 'privacy'}
+      />
     </div>
   );
 };

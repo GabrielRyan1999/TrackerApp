@@ -74,17 +74,14 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 
   return (
     <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5">
-      {/* Editorial Section Header */}
+      {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b-2 border-stone-900 dark:border-stone-400 pb-3 mb-4">
         <div>
-          <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-            THE PUBLIC RECORD • SECTION V.
-          </span>
           <h2 className="font-headline text-lg sm:text-2xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
-            Financial Dispatches & Ledger Entries
+            Transactions
           </h2>
-          <p className="text-xs italic text-stone-600 dark:text-stone-400 mt-0.5">
-            Verified chronological log of all mercantile transactions recorded for {currentMonth}
+          <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
+            History of records for {currentMonth}
           </p>
         </div>
 
@@ -155,7 +152,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="SEARCH PUBLIC RECORD (BY MERCHANT, PURPOSE, OR NOTE)..."
+            placeholder="Search by description, category, or note..."
             className="w-full pl-9 pr-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs font-mono-num text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none"
           />
         </div>
@@ -170,10 +167,10 @@ export const TransactionList: React.FC<TransactionListProps> = ({
       {Object.keys(groupedByDate).length === 0 ? (
         <div className="py-12 text-center border border-dashed border-stone-400 dark:border-stone-600 p-6 space-y-1">
           <div className="font-headline font-bold text-sm uppercase text-stone-700 dark:text-stone-300">
-            No Dispatches Found Matching Specification
+            No Transactions Found
           </div>
-          <p className="text-xs italic text-stone-500 dark:text-stone-400">
-            Verify active keyword search queries or select an alternate allocation category tab.
+          <p className="text-xs text-stone-500 dark:text-stone-400">
+            Try adjusting your search or selecting a different filter tab.
           </p>
         </div>
       ) : (
@@ -301,47 +298,6 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         </div>
       )}
 
-      {/* Reference Image 1: Bottom Authentic Newspaper Barcode & Colophon */}
-      <div className="border-t-2 border-stone-900 dark:border-stone-400 pt-4 mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Left: Barcode Graphic (Crisp SVG) */}
-        <div className="flex items-center gap-3">
-          <svg className="h-9 w-32 text-stone-900 dark:text-stone-200" viewBox="0 0 120 36" fill="currentColor">
-            <rect x="0" y="0" width="3" height="36" />
-            <rect x="5" y="0" width="1" height="36" />
-            <rect x="8" y="0" width="4" height="36" />
-            <rect x="15" y="0" width="2" height="36" />
-            <rect x="19" y="0" width="1" height="36" />
-            <rect x="23" y="0" width="3" height="36" />
-            <rect x="29" y="0" width="2" height="36" />
-            <rect x="34" y="0" width="4" height="36" />
-            <rect x="41" y="0" width="1" height="36" />
-            <rect x="44" y="0" width="3" height="36" />
-            <rect x="50" y="0" width="2" height="36" />
-            <rect x="55" y="0" width="5" height="36" />
-            <rect x="63" y="0" width="2" height="36" />
-            <rect x="67" y="0" width="1" height="36" />
-            <rect x="71" y="0" width="3" height="36" />
-            <rect x="77" y="0" width="4" height="36" />
-            <rect x="84" y="0" width="1" height="36" />
-            <rect x="88" y="0" width="2" height="36" />
-            <rect x="93" y="0" width="3" height="36" />
-            <rect x="99" y="0" width="5" height="36" />
-            <rect x="107" y="0" width="2" height="36" />
-            <rect x="112" y="0" width="3" height="36" />
-            <rect x="117" y="0" width="3" height="36" />
-          </svg>
-          <div className="text-xs font-mono-num font-bold text-stone-600 dark:text-stone-400 leading-tight">
-            <div>SERIAL NO. 8923-503020-JKT</div>
-            <div>VERIFIED EDITORIAL RECORD</div>
-          </div>
-        </div>
-
-        {/* Right: Newspaper Colophon text */}
-        <div className="text-xs text-stone-600 dark:text-stone-400 text-center md:text-right font-editorial italic max-w-md">
-          "The Daily News • Financial & Domestic Budget Gazette • Jakarta & Regional Press • All accounts preserved in local machine memory • Printed on pure recycled newsprint."
-        </div>
-      </div>
-
       {/* Edit Transaction Modal */}
       {editingTx && (
         <EditTransactionModal
@@ -358,17 +314,14 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-xs">
           <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-sm w-full p-4 sm:p-5 space-y-3.5 shadow-2xl">
             <div className="border-b border-stone-900 dark:border-stone-400 pb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 block">
-                EDITORIAL CORRECTION DISPATCH
-              </span>
-              <h4 className="font-headline text-base font-bold text-stone-950 dark:text-stone-50">
-                Classify: "{selectedTxForReview.description}"
-              </h4>
+              <h3 className="font-headline text-base font-bold text-stone-950 dark:text-stone-50">
+                Categorize: "{selectedTxForReview.description}"
+              </h3>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                Assign Commodity Category:
+              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                Select Category:
               </label>
               <select
                 id="reviewCatSelect"
@@ -384,7 +337,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 
             <label className="flex items-center gap-2 text-xs text-stone-700 dark:text-stone-300 cursor-pointer pt-1">
               <input type="checkbox" id="reviewRememberCheck" defaultChecked className="rounded-none text-stone-900" />
-              <span>Remember merchant memory for future issues</span>
+              <span>Remember category for this merchant</span>
             </label>
 
             <div className="flex justify-end gap-2 pt-2 border-t border-stone-300 dark:border-stone-700">
@@ -405,7 +358,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                 }}
                 className="px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400"
               >
-                Save Classification
+                Save Category
               </button>
             </div>
           </div>

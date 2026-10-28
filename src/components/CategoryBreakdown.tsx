@@ -34,32 +34,24 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
   return (
     <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5 h-full flex flex-col justify-between">
       <div>
-        {/* Editorial Section Header */}
+        {/* Section Header */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-stone-900 dark:border-stone-400 pb-2.5 mb-3">
-          <div>
-            <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-              SECTION IV. — COMMODITY & EXPENDITURE CENSUS
-            </span>
-            <h2 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
-              Classification of Outflows by Commodity
-            </h2>
-          </div>
-          <div className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 border border-stone-900 dark:border-stone-400 bg-stone-200/70 dark:bg-stone-800/70 text-stone-900 dark:text-stone-100">
-            RANKED BY VOLUME
-          </div>
+          <h2 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+            Spending by Category
+          </h2>
         </div>
 
       {activeCategories.length === 0 ? (
-        <div className="py-8 text-center text-xs italic text-stone-500 dark:text-stone-400 border border-dashed border-stone-400 dark:border-stone-600 p-4">
-          No mercantile disbursements or commodity expenses have been registered for this issue.
+        <div className="py-8 text-center text-xs text-stone-500 dark:text-stone-400 border border-dashed border-stone-400 dark:border-stone-600 p-4">
+          No expenses recorded this month yet.
         </div>
       ) : (
         <div className="space-y-3">
           {/* Table Header Bar */}
           <div className="hidden sm:grid sm:grid-cols-12 text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 border-b border-stone-300 dark:border-stone-700 pb-1 px-1">
-            <span className="col-span-6">Commodity & Classification Pillar</span>
-            <span className="col-span-3 text-center">Share of Total Outflow</span>
-            <span className="col-span-3 text-right">Disbursed Sum</span>
+            <span className="col-span-6">Category</span>
+            <span className="col-span-3 text-center">Share</span>
+            <span className="col-span-3 text-right">Amount</span>
           </div>
 
           {/* List of categories */}
@@ -113,7 +105,7 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
               onClick={() => setShowAll(!showAll)}
               className="w-full py-2 mt-2 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 border border-stone-900 dark:border-stone-400 bg-stone-200/70 hover:bg-stone-300 dark:bg-stone-800/80 dark:hover:bg-stone-700 transition"
             >
-              <span>{showAll ? '▲ Collapse Commodity Ledger' : `▼ Read Complete Commodity Census (${activeCategories.length} Categories)`}</span>
+              <span>{showAll ? '▲ Show Less' : `▼ Show All (${activeCategories.length})`}</span>
             </button>
           )}
         </div>

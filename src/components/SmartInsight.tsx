@@ -77,10 +77,10 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
   return (
     <article className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5 h-full flex flex-col justify-between">
       <div>
-        {/* Header Eyebrow & Status */}
-        <div className="flex items-center justify-between border-b-2 border-stone-900 dark:border-stone-400 pb-2 mb-3">
-          <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400">
-            FINANCIAL INTELLIGENCE DISPATCH
+        {/* Header Status */}
+        <div className="flex items-center justify-between border-b border-stone-900 dark:border-stone-400 pb-2 mb-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400">
+            Monthly Overview
           </span>
           <span
             className={`text-xs font-bold uppercase px-2 py-0.5 border ${
@@ -95,27 +95,17 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
           </span>
         </div>
 
-        {/* Lead Headline */}
+        {/* Lead Headline & Description */}
         <h2 className="font-headline text-lg sm:text-2xl font-black uppercase tracking-tight text-stone-950 dark:text-stone-50 leading-tight mb-1.5">
           {insight.headline}
         </h2>
-        <p className="font-editorial italic text-xs sm:text-sm text-stone-700 dark:text-stone-300 mb-3">
+        <p className="font-editorial italic text-xs sm:text-sm text-stone-700 dark:text-stone-300 mb-3 max-w-[55ch]">
           {insight.subhead}
         </p>
-
-        {/* Concise Executive Takeaway */}
-        <div className="border-t border-stone-300 dark:border-stone-700 pt-2.5 pb-3">
-          <p className="text-xs sm:text-sm text-stone-800 dark:text-stone-200 leading-relaxed max-w-[55ch]">
-            {insight.message}
-          </p>
-        </div>
       </div>
 
-      {/* Quick Dispatch Ledger Table */}
-      <div className="border-t-2 border-stone-900 dark:border-stone-400 pt-2.5 mt-2">
-        <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block mb-1.5">
-          KEY OPERATING FIGURES:
-        </span>
+      {/* Quick Figures Table */}
+      <div className="border-t border-stone-900 dark:border-stone-400 pt-2.5 mt-2">
         <div className="grid grid-cols-3 gap-2 text-xs">
           <div className="p-2 border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
             <span className="text-xs font-bold uppercase text-stone-600 dark:text-stone-400 block">
@@ -128,7 +118,7 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
 
           <div className="p-2 border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
             <span className="text-xs font-bold uppercase text-stone-600 dark:text-stone-400 block">
-              Gross Outlay
+              Total Outflow
             </span>
             <span className="font-mono-num font-black text-xs sm:text-sm text-stone-950 dark:text-stone-50 block mt-0.5">
               {formatIDR(summary.totalSpent)}

@@ -36,14 +36,11 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
   return (
     <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5 h-full flex flex-col justify-between">
       <div>
-        {/* Editorial Figure Header */}
+        {/* Gauge Header */}
         <div className="flex items-start justify-between border-b-2 border-stone-900 dark:border-stone-400 pb-2 mb-3">
           <div>
-            <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-              FIGURE I. — TECHNICAL BAROMETER
-            </span>
             <h2 className="font-headline text-base sm:text-lg font-bold text-stone-950 dark:text-stone-50 leading-tight">
-              Financial Burn Rate Meter
+              Spending Meter
             </h2>
           </div>
           <div className="text-right shrink-0">
@@ -54,7 +51,7 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
                 ? 'border-amber-800 text-amber-800 dark:text-amber-400'
                 : 'border-stone-900 dark:border-stone-300 text-stone-900 dark:text-stone-100'
             }`}>
-              {ratio > 1 ? `DEFICIT (+${percentNumber - 100}%)` : `SOLVENT (${percentNumber}%)`}
+              {ratio > 1 ? `Over Budget (+${percentNumber - 100}%)` : `${percentNumber}% Used`}
             </span>
           </div>
         </div>
@@ -144,13 +141,13 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
         {/* Central Readout */}
         <div className="text-center mt-2 border-t border-dashed border-stone-400 dark:border-stone-600 pt-2 w-full">
           <span className="text-[11px] font-bold tracking-widest uppercase text-stone-500 dark:text-stone-400 block">
-            CURRENT OUTFLOW
+            Spent This Month
           </span>
           <span className="font-headline text-2xl sm:text-3xl font-black text-stone-950 dark:text-stone-50 tracking-tight block">
             {formatIDR(totalSpent)}
           </span>
           <span className="text-xs text-stone-600 dark:text-stone-400 block mt-0.5">
-            of <strong className="font-mono-num">{formatIDR(totalSpendingBudget)}</strong> operating ceiling
+            of <strong className="font-mono-num">{formatIDR(totalSpendingBudget)}</strong> budget
           </span>
         </div>
       </div>
@@ -158,7 +155,7 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
       {/* Safe to Spend Ledger Box */}
       <div className="mt-2.5 pt-2 border-t border-stone-900 dark:border-stone-400 flex items-center justify-between text-xs">
         <span className="text-stone-600 dark:text-stone-400 font-bold uppercase tracking-wider text-[11px]">
-          Operating Cushion:
+          Remaining:
         </span>
         <span className={`font-mono-num font-bold text-xs sm:text-sm ${
           remainingSpending >= 0
@@ -167,7 +164,7 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
         }`}>
           {remainingSpending >= 0
             ? formatIDR(remainingSpending)
-            : `Deficit: ${formatIDR(Math.abs(remainingSpending))}`}
+            : `Over by ${formatIDR(Math.abs(remainingSpending))}`}
         </span>
       </div>
 

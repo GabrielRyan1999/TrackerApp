@@ -15,6 +15,8 @@ import { PlanModal } from './components/PlanModal';
 import { SettingsModal } from './components/SettingsModal';
 import { AuthModal } from './components/AuthModal';
 import { LandingPage } from './components/LandingPage';
+import { Footer } from './components/Footer';
+import { LegalModal } from './components/LegalModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { loadCloudAppData, saveCloudAppData } from './utils/supabase';
 import { Plus } from 'lucide-react';
@@ -50,6 +52,7 @@ function BudgetTrackerApp() {
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [legalType, setLegalType] = useState<'privacy' | 'terms' | null>(null);
 
   // Auto-open modal if user opened a password reset link
   useEffect(() => {
@@ -387,7 +390,7 @@ function BudgetTrackerApp() {
           <CategoryBreakdown summary={summary} categories={appData.categories} />
         </div>
 
-        {/* 4. Bottom Section: Section V The Public Record & Barcode Colophon */}
+        {/* 4. Transactions List */}
         <div>
           <TransactionList
             transactions={appData.transactions}
@@ -398,6 +401,12 @@ function BudgetTrackerApp() {
             onUpdateTransaction={handleUpdateTransaction}
           />
         </div>
+
+        {/* Footer */}
+        <Footer
+          onOpenPrivacy={() => setLegalType('privacy')}
+          onOpenTerms={() => setLegalType('terms')}
+        />
       </div>
 
       {/* Floating Add Dispatch Button for Mobile */}
@@ -451,6 +460,12 @@ function BudgetTrackerApp() {
         onLoginSuccess={() => {
           setIsCloudSynced(false);
         }}
+      />
+
+      <LegalModal
+        isOpen={Boolean(legalType)}
+        onClose={() => setLegalType(null)}
+        type={legalType || 'privacy'}
       />
     </div>
   );
