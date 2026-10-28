@@ -86,56 +86,60 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         </div>
 
         {/* Filter Navigation Tabs */}
-        <div className="flex items-center gap-1 border border-stone-900 dark:border-stone-400 bg-stone-200/80 dark:bg-stone-800/80 p-0.5 text-xs font-bold uppercase tracking-wider overflow-x-auto">
+        <div className="w-full sm:w-auto grid grid-cols-5 sm:flex sm:items-center gap-0.5 sm:gap-1 border border-stone-900 dark:border-stone-400 bg-stone-200/80 dark:bg-stone-800/80 p-0.5 text-xs font-bold uppercase tracking-wider">
           <button
             onClick={() => setFilterTab('all')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
+            className={`min-h-[32px] px-1 sm:px-3 py-1 transition flex items-center justify-center text-center text-xs ${
               filterTab === 'all'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
             }`}
           >
-            All ({monthTransactions.length})
+            <span>All</span>
+            <span className="font-mono-num ml-0.5 hidden xs:inline sm:inline">({monthTransactions.length})</span>
           </button>
           <button
             onClick={() => setFilterTab('needs')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
+            className={`min-h-[32px] px-1 sm:px-3 py-1 transition flex items-center justify-center text-center text-xs ${
               filterTab === 'needs'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
             }`}
           >
-            Needs (50%)
+            <span className="hidden sm:inline">Needs (50%)</span>
+            <span className="sm:hidden">Needs</span>
           </button>
           <button
             onClick={() => setFilterTab('wants')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
+            className={`min-h-[32px] px-1 sm:px-3 py-1 transition flex items-center justify-center text-center text-xs ${
               filterTab === 'wants'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
             }`}
           >
-            Wants (30%)
+            <span className="hidden sm:inline">Wants (30%)</span>
+            <span className="sm:hidden">Wants</span>
           </button>
           <button
             onClick={() => setFilterTab('savings')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
+            className={`min-h-[32px] px-1 sm:px-3 py-1 transition flex items-center justify-center text-center text-xs ${
               filterTab === 'savings'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
             }`}
           >
-            Savings (20%)
+            <span className="hidden sm:inline">Savings (20%)</span>
+            <span className="sm:hidden">Savings</span>
           </button>
           <button
             onClick={() => setFilterTab('review')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition flex items-center gap-1 whitespace-nowrap text-xs ${
+            className={`min-h-[32px] px-1 sm:px-3 py-1 transition flex items-center justify-center text-center gap-0.5 sm:gap-1 text-xs ${
               filterTab === 'review'
                 ? 'bg-amber-800 text-white dark:bg-amber-400 dark:text-stone-950'
                 : 'text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/40'
             }`}
           >
-            <AlertCircle className="w-3.5 h-3.5" />
+            <AlertCircle className="w-3.5 h-3.5 shrink-0 hidden sm:inline" />
             <span>Review</span>
             {uncategorizedCount > 0 && (
               <span className="font-mono-num font-black ml-0.5">({uncategorizedCount})</span>
@@ -230,18 +234,18 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                             <div className="flex flex-wrap items-center gap-1.5 text-xs text-stone-600 dark:text-stone-400 mt-0.5">
                               {isIncome ? (
                                 <span className="font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">
-                                  [GROSS REVENUE DEPOSIT]
+                                  [Income]
                                 </span>
                               ) : isSavings ? (
                                 <span className="font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">
-                                  [CAPITAL RESERVE • {cat?.name || 'SAVINGS'}]
+                                  [Savings • {cat?.name || 'Savings'}]
                                 </span>
                               ) : isUncategorized ? (
                                 <button
                                   onClick={() => setSelectedTxForReview(tx)}
                                   className="font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400 hover:underline min-h-[28px] flex items-center"
                                 >
-                                  ⚠️ [ACTION REQUIRED: CLASSIFY RECORD]
+                                  ⚠️ [Categorize]
                                 </button>
                               ) : (
                                 <span className="flex items-center gap-1.5 truncate">
