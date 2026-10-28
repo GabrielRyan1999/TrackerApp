@@ -64,7 +64,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
                 {needsRemaining >= 0 ? 'Remaining:' : 'Over Budget:'}
               </span>
               <div
-                className={`font-headline text-xl sm:text-2xl font-black tracking-tight ${
+                className={`font-mono-num text-xl sm:text-2xl font-black tracking-tight ${
                   needsRemaining >= 0
                     ? 'text-stone-950 dark:text-stone-50'
                     : 'text-red-800 dark:text-red-400'
@@ -130,7 +130,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
                 {wantsRemaining >= 0 ? 'Remaining:' : 'Over Budget:'}
               </span>
               <div
-                className={`font-headline text-xl sm:text-2xl font-black tracking-tight ${
+                className={`font-mono-num text-xl sm:text-2xl font-black tracking-tight ${
                   wantsRemaining >= 0
                     ? 'text-stone-950 dark:text-stone-50'
                     : 'text-red-800 dark:text-red-400'
@@ -193,7 +193,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
               <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
                 {savingsRemaining <= 0 ? 'Goal Met:' : 'Remaining:'}
               </span>
-              <div className="font-headline text-xl sm:text-2xl font-black tracking-tight text-stone-950 dark:text-stone-50">
+              <div className="font-mono-num text-xl sm:text-2xl font-black tracking-tight text-stone-950 dark:text-stone-50">
                 {savingsRemaining <= 0 ? 'Goal Reached' : formatIDR(savingsRemaining)}
               </div>
             </div>

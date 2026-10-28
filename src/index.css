@@ -6,9 +6,10 @@
   :root {
     --font-masthead: 'UnifrakturMaguntia', 'Playfair Display', Georgia, serif;
     --font-headline: 'Playfair Display', Georgia, 'Times New Roman', serif;
-    --font-editorial: 'Newsreader', Georgia, serif;
-    --font-number: 'Plus Jakarta Sans', 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --font-mono: 'Plus Jakarta Sans', 'Manrope', monospace;
+    --font-ui: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-editorial: var(--font-ui);
+    --font-number: var(--font-ui);
+    --font-mono: var(--font-ui);
 
     /* Light Newsprint Paper Palette (Reference Image 1) */
     --paper-bg: #f4efe4;
@@ -35,11 +36,12 @@
     --ink-green: #34d399;
   }
 
-  html {
-    font-family: var(--font-editorial);
+  html, body {
+    font-family: var(--font-ui);
   }
 
   h1, h2, h3, h4 {
+    font-family: var(--font-headline);
     text-wrap: balance;
   }
 

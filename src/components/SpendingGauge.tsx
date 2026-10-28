@@ -221,7 +221,7 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
           <span className="text-[11px] font-bold tracking-widest uppercase text-stone-500 dark:text-stone-400 block">
             Spent This Month
           </span>
-          <span className="font-headline text-2xl sm:text-3xl font-black text-stone-950 dark:text-stone-50 tracking-tight block">
+          <span className="font-mono-num text-2xl sm:text-3xl font-black text-stone-950 dark:text-stone-50 tracking-tight block">
             {formatIDR(totalSpent)}
           </span>
           <span className="text-xs text-stone-600 dark:text-stone-400 block mt-0.5">
