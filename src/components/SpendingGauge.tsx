@@ -42,9 +42,9 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
             <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
               FIGURE I. — TECHNICAL BAROMETER
             </span>
-            <h3 className="font-headline text-base sm:text-lg font-bold text-stone-950 dark:text-stone-50 leading-tight">
+            <h2 className="font-headline text-base sm:text-lg font-bold text-stone-950 dark:text-stone-50 leading-tight">
               Financial Burn Rate Meter
-            </h3>
+            </h2>
           </div>
           <div className="text-right shrink-0">
             <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 border ${

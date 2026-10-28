@@ -77,12 +77,12 @@ export const TransactionList: React.FC<TransactionListProps> = ({
       {/* Editorial Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b-2 border-stone-900 dark:border-stone-400 pb-3 mb-4">
         <div>
-          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
+          <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
             THE PUBLIC RECORD • SECTION V.
           </span>
-          <h3 className="font-headline text-lg sm:text-2xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+          <h2 className="font-headline text-lg sm:text-2xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
             Financial Dispatches & Ledger Entries
-          </h3>
+          </h2>
           <p className="text-xs italic text-stone-600 dark:text-stone-400 mt-0.5">
             Verified chronological log of all mercantile transactions recorded for {currentMonth}
           </p>
@@ -92,7 +92,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         <div className="flex items-center gap-1 border border-stone-900 dark:border-stone-400 bg-stone-200/80 dark:bg-stone-800/80 p-0.5 text-xs font-bold uppercase tracking-wider overflow-x-auto">
           <button
             onClick={() => setFilterTab('all')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-[11px] ${
+            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
               filterTab === 'all'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
@@ -102,7 +102,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
           </button>
           <button
             onClick={() => setFilterTab('needs')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-[11px] ${
+            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
               filterTab === 'needs'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
@@ -112,7 +112,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
           </button>
           <button
             onClick={() => setFilterTab('wants')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-[11px] ${
+            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
               filterTab === 'wants'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
@@ -122,7 +122,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
           </button>
           <button
             onClick={() => setFilterTab('savings')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-[11px] ${
+            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition whitespace-nowrap text-xs ${
               filterTab === 'savings'
                 ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
@@ -132,7 +132,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
           </button>
           <button
             onClick={() => setFilterTab('review')}
-            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition flex items-center gap-1 whitespace-nowrap text-[11px] ${
+            className={`min-h-[32px] px-2.5 sm:px-3 py-1 transition flex items-center gap-1 whitespace-nowrap text-xs ${
               filterTab === 'review'
                 ? 'bg-amber-800 text-white dark:bg-amber-400 dark:text-stone-950'
                 : 'text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/40'
@@ -159,7 +159,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
             className="w-full pl-9 pr-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs font-mono-num text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none"
           />
         </div>
-        <div className="flex items-center justify-between sm:justify-start gap-2 py-1 shrink-0 text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400">
+        <div className="flex items-center justify-between sm:justify-start gap-2 py-1 shrink-0 text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400">
           <span>Entries: <strong className="text-stone-950 dark:text-stone-50 font-black">{filtered.length}</strong></span>
           <span>•</span>
           <span>Sum: <strong className="font-mono-num text-stone-950 dark:text-stone-50">{formatIDR(filteredTotal)}</strong></span>

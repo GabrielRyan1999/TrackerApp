@@ -261,8 +261,15 @@ export function App() {
           onToggleTheme={() => setIsDark((prev) => !prev)}
         />
 
-        {/* Front-Page Lead Story & "DISPATCH TODAY" Box */}
-        <SmartInsight summary={summary} />
+        {/* Top Hero Section: Figure I Technical Scale Meter (5 cols) & Front-Page Dispatch Intelligence (7 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+          <div className="lg:col-span-5 flex flex-col">
+            <SpendingGauge summary={summary} categories={appData.categories} />
+          </div>
+          <div className="lg:col-span-7 flex flex-col">
+            <SmartInsight summary={summary} />
+          </div>
+        </div>
 
         {/* 1. Full-Width Table I: Official Financial Ledger (Inflow, Outflow, Savings, Buffer) */}
         <div>
@@ -274,17 +281,12 @@ export function App() {
           <BucketCards summary={summary} planSplit={monthPlan.split} />
         </div>
 
-        {/* 3. Middle Section: Figure I Technical Barometer (5 cols) & Section IV Commodity Census (7 cols) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
-          <div className="lg:col-span-5 flex flex-col">
-            <SpendingGauge summary={summary} categories={appData.categories} />
-          </div>
-          <div className="lg:col-span-7 flex flex-col">
-            <CategoryBreakdown summary={summary} categories={appData.categories} />
-          </div>
+        {/* 3. Full-Width Section IV: Commodity & Expenditure Census */}
+        <div>
+          <CategoryBreakdown summary={summary} categories={appData.categories} />
         </div>
 
-        {/* Bottom Section: Section V The Public Record & Barcode Colophon */}
+        {/* 4. Bottom Section: Section V The Public Record & Barcode Colophon */}
         <div>
           <TransactionList
             transactions={appData.transactions}

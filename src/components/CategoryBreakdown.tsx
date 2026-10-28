@@ -40,9 +40,9 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
             <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
               SECTION IV. — COMMODITY & EXPENDITURE CENSUS
             </span>
-            <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
+            <h2 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
               Classification of Outflows by Commodity
-            </h3>
+            </h2>
           </div>
           <div className="text-xs font-bold uppercase tracking-wider px-2 py-0.5 border border-stone-900 dark:border-stone-400 bg-stone-200/70 dark:bg-stone-800/70 text-stone-900 dark:text-stone-100">
             RANKED BY VOLUME
@@ -56,7 +56,7 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
       ) : (
         <div className="space-y-3">
           {/* Table Header Bar */}
-          <div className="hidden sm:grid sm:grid-cols-12 text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 border-b border-stone-300 dark:border-stone-700 pb-1 px-1">
+          <div className="hidden sm:grid sm:grid-cols-12 text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 border-b border-stone-300 dark:border-stone-700 pb-1 px-1">
             <span className="col-span-6">Commodity & Classification Pillar</span>
             <span className="col-span-3 text-center">Share of Total Outflow</span>
             <span className="col-span-3 text-right">Disbursed Sum</span>
@@ -77,7 +77,7 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
                       <span className="font-bold text-xs sm:text-sm text-stone-950 dark:text-stone-50 truncate">
                         {cat.name}
                       </span>
-                      <span className="text-[11px] font-bold uppercase tracking-wider px-1.5 py-0.5 border border-stone-700 dark:border-stone-400 text-stone-700 dark:text-stone-300 bg-stone-100 dark:bg-stone-900 shrink-0">
+                      <span className="text-xs font-bold uppercase tracking-wider px-1.5 py-0.5 border border-stone-700 dark:border-stone-400 text-stone-700 dark:text-stone-300 bg-stone-100 dark:bg-stone-900 shrink-0">
                         {cat.bucket}
                       </span>
                     </div>
@@ -91,7 +91,7 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ summary, c
                         style={{ width: `${Math.min(share, 100)}%` }}
                       />
                     </div>
-                    <span className="font-mono-num text-[11px] font-bold text-stone-700 dark:text-stone-300 shrink-0 w-9 text-right">
+                    <span className="font-mono-num text-xs font-bold text-stone-700 dark:text-stone-300 shrink-0 w-9 text-right">
                       {Math.round(share)}%
                     </span>
                   </div>

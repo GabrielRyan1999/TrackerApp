@@ -32,7 +32,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
     <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30">
       {/* Editorial Header Strip */}
       <div className="border-b border-stone-900 dark:border-stone-400 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 bg-stone-200/60 dark:bg-stone-800/60">
-        <span>TRIPARTITE FINANCIAL ALLOCATION • THREE PILLARS</span>
+        <h2 className="font-bold tracking-wider">TRIPARTITE FINANCIAL ALLOCATION • THREE PILLARS</h2>
         <span>STANDARD RATIO: {targetNeeds}% / {targetWants}% / {targetSavings}%</span>
       </div>
 
@@ -64,9 +64,9 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Remaining / Overbudget Figure */}
-            <div className="my-3">
+            <div className="my-2.5">
               <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
-                {needsRemaining >= 0 ? 'Operating Balance Remaining:' : 'Budget Deficit Incurred:'}
+                {needsRemaining >= 0 ? 'Remaining Cushion:' : 'Budget Deficit:'}
               </span>
               <div
                 className={`font-headline text-xl sm:text-2xl font-black tracking-tight ${
@@ -80,7 +80,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Progress Bar (Etched Print Rule) */}
-            <div className="my-2.5">
+            <div className="my-2">
               <div className="w-full bg-stone-200 dark:bg-stone-800 h-2.5 border border-stone-900 dark:border-stone-400 p-[1px]">
                 <div
                   className={`h-full transition-all duration-500 ${
@@ -97,7 +97,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
           </div>
 
           {/* Ledger Numbers */}
-          <div className="pt-2.5 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
+          <div className="pt-2 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
               <span className="font-sans uppercase text-xs">Outflow:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.needsSpent)}</span>
@@ -135,9 +135,9 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Remaining / Overbudget Figure */}
-            <div className="my-3">
+            <div className="my-2.5">
               <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
-                {wantsRemaining >= 0 ? 'Operating Balance Remaining:' : 'Budget Deficit Incurred:'}
+                {wantsRemaining >= 0 ? 'Remaining Cushion:' : 'Budget Deficit:'}
               </span>
               <div
                 className={`font-headline text-xl sm:text-2xl font-black tracking-tight ${
@@ -151,7 +151,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Progress Bar (Etched Print Rule) */}
-            <div className="my-2.5">
+            <div className="my-2">
               <div className="w-full bg-stone-200 dark:bg-stone-800 h-2.5 border border-stone-900 dark:border-stone-400 p-[1px]">
                 <div
                   className={`h-full transition-all duration-500 ${
@@ -168,7 +168,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
           </div>
 
           {/* Ledger Numbers */}
-          <div className="pt-2.5 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
+          <div className="pt-2 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
               <span className="font-sans uppercase text-xs">Outflow:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.wantsSpent)}</span>
@@ -204,9 +204,9 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Remaining / Fulfilled Figure */}
-            <div className="my-3">
+            <div className="my-2.5">
               <span className="text-xs uppercase tracking-wider text-stone-600 dark:text-stone-400 block font-bold">
-                {savingsRemaining <= 0 ? 'Statutory Reserve Target Met:' : 'Deficit to Full Quota:'}
+                {savingsRemaining <= 0 ? 'Reserve Goal Met:' : 'Deficit to Goal:'}
               </span>
               <div className="font-headline text-xl sm:text-2xl font-black tracking-tight text-stone-950 dark:text-stone-50">
                 {savingsRemaining <= 0 ? 'Full Quota Archived' : formatIDR(savingsRemaining)}
@@ -214,7 +214,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
             </div>
 
             {/* Progress Bar (Etched Print Rule) */}
-            <div className="my-2.5">
+            <div className="my-2">
               <div className="w-full bg-stone-200 dark:bg-stone-800 h-2.5 border border-stone-900 dark:border-stone-400 p-[1px]">
                 <div
                   className="h-full bg-stone-900 dark:bg-stone-200 transition-all duration-500"
@@ -225,7 +225,7 @@ export const BucketCards: React.FC<BucketCardsProps> = ({ summary, planSplit }) 
           </div>
 
           {/* Ledger Numbers */}
-          <div className="pt-2.5 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
+          <div className="pt-2 border-t border-stone-300 dark:border-stone-700 space-y-1 text-xs font-mono-num">
             <div className="flex justify-between text-stone-600 dark:text-stone-400">
               <span className="font-sans uppercase text-xs">Archived:</span>
               <span className="font-bold text-stone-900 dark:text-stone-100">{formatIDR(summary.savingsSaved)}</span>
