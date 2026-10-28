@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Sun, Moon, Eye, EyeOff, AlertCircle, CheckCircle2, ShieldCheck, Sparkles, Scale } from 'lucide-react';
+import { Sun, Moon, Eye, EyeOff, AlertCircle, CheckCircle2, Check } from 'lucide-react';
 
 interface LandingPageProps {
   isDark: boolean;
@@ -35,7 +35,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
     setSuccessMessage(null);
 
     if (!email || !password) {
-      setErrorMessage('Please furnish both citizen email and authorization password.');
+      setErrorMessage('Please enter both email and password.');
       return;
     }
 
@@ -46,7 +46,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
     if (res.error) {
       setErrorMessage(res.error);
     } else {
-      setSuccessMessage('Citizen identity ratified! Unlocking personal cloud ledger...');
+      setSuccessMessage('Signed in successfully.');
     }
   };
 
@@ -56,17 +56,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
     setSuccessMessage(null);
 
     if (!email || !password) {
-      setErrorMessage('Please furnish all required credential fields.');
+      setErrorMessage('Please fill in all fields.');
       return;
     }
 
     if (password.length < 6) {
-      setErrorMessage('Password must contain at least 6 characters for official security.');
+      setErrorMessage('Password must be at least 6 characters.');
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Password confirmation does not match the entered password.');
+      setErrorMessage('Passwords do not match.');
       return;
     }
 
@@ -77,11 +77,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
     if (res.error) {
       setErrorMessage(res.error);
     } else if (res.needEmailVerification) {
-      setSuccessMessage(
-        'Registration dispatched! A confirmation dispatch has been sent to your email. Please verify before signing in.'
-      );
+      setSuccessMessage('Account created! Please check your email to verify before signing in.');
     } else {
-      setSuccessMessage('Citizen account successfully registered! Initializing your private cloud ledger...');
+      setSuccessMessage('Account created and signed in.');
     }
   };
 
@@ -91,7 +89,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
     setSuccessMessage(null);
 
     if (!email) {
-      setErrorMessage('Please furnish your registered electronic mail address.');
+      setErrorMessage('Please enter your email address.');
       return;
     }
 
@@ -102,183 +100,123 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
     if (res.error) {
       setErrorMessage(res.error);
     } else {
-      setSuccessMessage(
-        `Confidential recovery dispatch has been transmitted to ${email}. Check your inbox for the password reset link!`
-      );
+      setSuccessMessage(`Password reset link sent to ${email}. Check your inbox.`);
     }
   };
 
   return (
     <div className="min-h-screen py-0 sm:py-6 px-0 sm:px-4 font-editorial">
-      <div className="broadsheet-page max-w-6xl mx-auto p-3.5 sm:p-7 space-y-4 sm:space-y-6">
-        {/* Top Broadsheet Ticker */}
+      <div className="broadsheet-page max-w-5xl mx-auto p-4 sm:p-7 space-y-5">
+        {/* Masthead Header */}
         <header className="border-b-2 border-stone-900 dark:border-stone-400 pb-3 pt-2">
-          <div className="border-b border-stone-800 dark:border-stone-500 pb-1.5 mb-2 text-xs font-bold tracking-wider uppercase text-stone-700 dark:text-stone-300 flex flex-wrap items-center justify-between gap-2 select-none">
-            <div className="flex items-center gap-2">
-              <span>INAUGURAL EDITION</span>
-              <span>|</span>
-              <span className="text-stone-950 dark:text-stone-100 font-extrabold underline decoration-1">
-                PUBLIC TREASURY REGISTRY
-              </span>
-              <span>|</span>
-              <span className="hidden sm:inline">50/30/20 BALANCED ACCOUNTING</span>
-              <span>|</span>
-              <span className="hidden md:inline">POSTGRESQL CLOUD</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={onToggleTheme}
-                className="hover:underline flex items-center gap-1.5 text-stone-900 dark:text-stone-100 transition"
-                title="Toggle daylight/midnight newsprint"
-              >
-                {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5" />}
-                <span>PRINT: {isDark ? 'MIDNIGHT' : 'DAYLIGHT'}</span>
-              </button>
-              <span className="hidden sm:inline">•</span>
-              <span>PRICE: RP 0 (FREE DISPATCH)</span>
-            </div>
+          {/* Top Ticker */}
+          <div className="border-b border-stone-300 dark:border-stone-700 pb-1.5 mb-2 text-xs font-bold tracking-wider uppercase text-stone-700 dark:text-stone-300 flex items-center justify-between select-none font-mono-num">
+            <span>50/30/20 BUDGET TRACKER</span>
+            <button
+              onClick={onToggleTheme}
+              className="hover:underline flex items-center gap-1.5 text-stone-900 dark:text-stone-100 transition"
+              title="Toggle theme"
+            >
+              {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5" />}
+              <span>{isDark ? 'Daylight' : 'Midnight'}</span>
+            </button>
           </div>
 
-          {/* Masthead Header */}
-          <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-3 py-1">
-            <div className="hidden md:block md:col-span-3 text-xs text-stone-600 dark:text-stone-400 border-r border-stone-800 dark:border-stone-500 pr-3 leading-snug">
-              <div className="font-headline font-bold text-stone-900 dark:text-stone-100 uppercase text-xs">
-                The Financial Journal
-              </div>
-              <div>Dedicated to balanced Indonesian household economics.</div>
-              <div className="font-mono-num text-xs mt-1 text-stone-500 dark:text-stone-400">
-                VOL. XXIV • SPECIAL ISSUE
-              </div>
-            </div>
-
-            <div className="md:col-span-6 text-center select-none">
-              <h1 className="font-masthead text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-stone-950 dark:text-stone-50 leading-none">
-                The Daily News
-              </h1>
-              <p className="font-headline italic text-xs sm:text-sm text-stone-700 dark:text-stone-300 mt-1">
-                "All the Financial Truths & Balances Fit to Print"
-              </p>
-            </div>
-
-            <div className="hidden md:block md:col-span-3 text-xs text-stone-600 dark:text-stone-400 border-l border-stone-800 dark:border-stone-500 pl-3 leading-snug text-right">
-              <div className="font-headline font-bold text-stone-900 dark:text-stone-100 uppercase text-xs">
-                Private Cloud Ledgers
-              </div>
-              <div>Secure PostgreSQL isolation per citizen account.</div>
-              <div className="font-mono-num font-bold text-stone-900 dark:text-stone-100 mt-1">
-                Jakarta & Regional Press
-              </div>
-            </div>
+          {/* Blackletter Masthead Title */}
+          <div className="text-center py-2 select-none">
+            <h1 className="font-masthead text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-stone-950 dark:text-stone-50 leading-none">
+              The Daily News
+            </h1>
+            <p className="font-headline italic text-xs sm:text-sm text-stone-600 dark:text-stone-400 mt-1">
+              "Simple, disciplined budgeting with the 50/30/20 method."
+            </p>
           </div>
 
-          {/* Dateline Double Rule */}
-          <div className="border-t-4 border-b border-stone-900 dark:border-stone-400 py-1.5 my-2.5 flex flex-wrap items-center justify-between gap-2 text-xs font-bold tracking-wider uppercase text-stone-900 dark:text-stone-100 select-none">
-            <div>
-              <span>YOUR TOWN, {todayFormatted}</span>
-            </div>
-            <div className="hidden sm:block text-center text-stone-600 dark:text-stone-400">
-              <span>THE OFFICIAL CITIZEN ENROLLMENT & DOMESTIC TREASURY DISPATCH</span>
-            </div>
-            <div className="font-mono-num">
-              <span>EDITION: CLOUD 1.0</span>
-            </div>
+          {/* Simple Dateline Rule */}
+          <div className="border-t-2 border-b border-stone-900 dark:border-stone-400 py-1 my-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-stone-800 dark:text-stone-200 select-none">
+            <span>{todayFormatted}</span>
+            <span className="font-mono-num">Personal Finance Edition</span>
           </div>
         </header>
 
-        {/* Main Broadsheet Front Page Grid */}
+        {/* Main Content: Left Overview, Right Auth */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-7 items-stretch">
-          {/* Left Column: The Lead Story & 50/30/20 Principles (7 Cols) */}
+          {/* Left Column: 50/30/20 Principle (7 cols) */}
           <section className="lg:col-span-7 border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-4 sm:p-6 flex flex-col justify-between">
             <div className="space-y-4">
-              <div className="border-b-2 border-stone-900 dark:border-stone-400 pb-2">
-                <h2 className="font-headline text-2xl sm:text-3xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
-                  The Balanced Household: Restoring Solvency via Tripartite Accounting
+              <div className="border-b border-stone-900 dark:border-stone-400 pb-2">
+                <h2 className="font-headline text-2xl sm:text-3xl font-bold text-stone-950 dark:text-stone-50 leading-tight">
+                  Track every rupiah with intention.
                 </h2>
               </div>
 
-              <p className="text-xs sm:text-sm text-stone-800 dark:text-stone-200 leading-relaxed max-w-[65ch]">
-                Take command of your monthly income with the time-tested <strong>50/30/20 budget framework</strong>. Every rupiah is assigned an intentional role, banishing financial guesswork and securing lifelong peace of mind.
+              <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed max-w-[55ch]">
+                Divide your monthly income into three simple buckets. No complicated spreadsheets, no guesswork.
               </p>
 
               {/* Three Pillar Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border border-stone-900 dark:border-stone-400 p-3 bg-stone-200/50 dark:bg-stone-800/40">
                 <div className="border-b sm:border-b-0 sm:border-r border-stone-400 dark:border-stone-600 pb-2 sm:pb-0 sm:pr-2">
                   <div className="flex items-center justify-between text-xs font-black uppercase text-stone-900 dark:text-stone-100 mb-1">
-                    <span>SECTION I</span>
+                    <span>Needs</span>
                     <span className="border border-stone-900 dark:border-stone-400 px-1 py-0.5">50%</span>
                   </div>
-                  <strong className="block font-headline text-xs uppercase text-stone-950 dark:text-stone-50">
-                    Living Necessities
-                  </strong>
                   <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 leading-snug">
-                    Housing, utilities, Indomaret groceries, transit, health liabilities.
+                    Housing, utilities, groceries, transport, healthcare.
                   </p>
                 </div>
 
                 <div className="border-b sm:border-b-0 sm:border-r border-stone-400 dark:border-stone-600 pb-2 sm:pb-0 sm:px-2">
                   <div className="flex items-center justify-between text-xs font-black uppercase text-stone-900 dark:text-stone-100 mb-1">
-                    <span>SECTION II</span>
+                    <span>Wants</span>
                     <span className="border border-stone-900 dark:border-stone-400 px-1 py-0.5">30%</span>
                   </div>
-                  <strong className="block font-headline text-xs uppercase text-stone-950 dark:text-stone-50">
-                    Discretionary Wants
-                  </strong>
                   <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 leading-snug">
-                    Dining, kopi, subscriptions, shopping, leisure outings.
+                    Dining, coffee, subscriptions, shopping, leisure.
                   </p>
                 </div>
 
                 <div className="sm:pl-2">
                   <div className="flex items-center justify-between text-xs font-black uppercase text-stone-900 dark:text-stone-100 mb-1">
-                    <span>SECTION III</span>
+                    <span>Savings</span>
                     <span className="border border-stone-900 dark:border-stone-400 px-1 py-0.5">20%</span>
                   </div>
-                  <strong className="block font-headline text-xs uppercase text-stone-950 dark:text-stone-50">
-                    Capital Reserves
-                  </strong>
                   <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 leading-snug">
-                    Emergency fund cushion, mutual funds, gold, future wealth.
+                    Emergency cushion, investments, long-term goals.
                   </p>
                 </div>
               </div>
 
-              {/* Gazette Guarantees */}
-              <div className="space-y-2 pt-2 text-xs text-stone-700 dark:text-stone-300">
+              {/* Feature Highlights */}
+              <div className="space-y-1.5 pt-1 text-xs text-stone-700 dark:text-stone-300">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
-                  <span><strong>100% Private Cloud Ledger:</strong> Protected by PostgreSQL Row-Level Security encryption.</span>
+                  <Check className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>Real-time burn rate barometer and auto-balancing math</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0" />
-                  <span><strong>Smart Merchant Learning:</strong> Auto-categorizes Indomaret, PLN, Pertamax, and dining.</span>
+                  <Check className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>Automatic merchant categorization (Indomaret, PLN, Gojek)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Scale className="w-4 h-4 text-stone-900 dark:text-stone-100 shrink-0" />
-                  <span><strong>Scale Barometer & Zero Drift:</strong> Real-time burn-rate needle and exact mathematical balance.</span>
+                  <Check className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0 stroke-[2.5]" />
+                  <span>Private cloud backup across all your devices</span>
                 </div>
               </div>
             </div>
 
             <div className="border-t border-stone-300 dark:border-stone-700 pt-3 mt-4 text-xs italic text-stone-500 dark:text-stone-400">
-              "A disciplined ledger transforms uncertainty into confidence." — Jakarta Treasury Gazette
+              Free to use • All accounts backed up securely
             </div>
           </section>
 
-          {/* Right Column: Citizen Registry & Authentication Box (5 Cols) */}
+          {/* Right Column: Auth Form (5 cols) */}
           <section className="lg:col-span-5 border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-4 sm:p-6 flex flex-col justify-between">
             <div>
-              {/* Box Header */}
-              <div className="border-b-2 border-stone-900 dark:border-stone-400 pb-2 mb-3">
-                <h2 className="font-headline text-xl sm:text-2xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight">
-                  {activeTab === 'signin'
-                    ? 'Citizen Sign In'
-                    : activeTab === 'signup'
-                    ? 'Enroll New Account'
-                    : 'Credential Recovery'}
+              {/* Box Title */}
+              <div className="border-b border-stone-900 dark:border-stone-400 pb-2 mb-3">
+                <h2 className="font-headline text-xl font-bold uppercase text-stone-950 dark:text-stone-50 leading-tight">
+                  {activeTab === 'signin' ? 'Sign In' : activeTab === 'signup' ? 'Create Account' : 'Reset Password'}
                 </h2>
-                <p className="text-xs italic text-stone-600 dark:text-stone-400 mt-0.5">
-                  Access your private ledger from any laptop, tablet, or phone terminal.
-                </p>
               </div>
 
               {/* Tab Navigation */}
@@ -317,22 +255,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
 
               {/* Status Notices */}
               {errorMessage && (
-                <div className="mb-3.5 p-2.5 border-2 border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-start gap-2">
+                <div className="mb-3.5 p-2.5 border border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block font-bold uppercase tracking-wider">Access Refused</strong>
-                    <span>{errorMessage}</span>
-                  </div>
+                  <span>{errorMessage}</span>
                 </div>
               )}
 
               {successMessage && (
-                <div className="mb-3.5 p-2.5 border-2 border-emerald-800 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 text-xs flex items-start gap-2">
+                <div className="mb-3.5 p-2.5 border border-emerald-800 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 text-xs flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-800 dark:text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block font-bold uppercase tracking-wider">Official Dispatch</strong>
-                    <span>{successMessage}</span>
-                  </div>
+                  <span>{successMessage}</span>
                 </div>
               )}
 
@@ -341,14 +273,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                 <form onSubmit={handleSignIn} className="space-y-3">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                      Citizen Electronic Mail (Email)
+                      Email
                     </label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="citizen@example.com"
+                      placeholder="name@example.com"
                       className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
                     />
                   </div>
@@ -356,7 +288,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                        Secret Password
+                        Password
                       </label>
                       <button
                         type="button"
@@ -367,7 +299,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                         }}
                         className="text-xs text-stone-600 dark:text-stone-400 hover:text-stone-950 dark:hover:text-stone-100 underline"
                       >
-                        Forgot Password?
+                        Forgot password?
                       </button>
                     </div>
                     <div className="relative">
@@ -393,9 +325,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition"
+                      className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 active:scale-[0.99] transition"
                     >
-                      {isLoading ? 'AUTHENTICATING...' : 'AUTHORIZE & OPEN LEDGER'}
+                      {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
                   </div>
                 </form>
@@ -406,21 +338,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                 <form onSubmit={handleSignUp} className="space-y-3">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                      Citizen Electronic Mail (Email)
+                      Email
                     </label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="citizen@example.com"
+                      placeholder="name@example.com"
                       className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                      Create Password (Min. 6 Characters)
+                      Password (min. 6 characters)
                     </label>
                     <div className="relative">
                       <input
@@ -459,9 +391,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition"
+                      className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 active:scale-[0.99] transition"
                     >
-                      {isLoading ? 'ENROLLING RECORD...' : 'ENROLL NEW CITIZEN ACCOUNT'}
+                      {isLoading ? 'Creating account...' : 'Create Account'}
                     </button>
                   </div>
                 </form>
@@ -470,19 +402,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
               {/* 3. Forgot Password Form */}
               {activeTab === 'forgot' && (
                 <form onSubmit={handleForgotPassword} className="space-y-3">
+                  <p className="text-xs text-stone-600 dark:text-stone-400">
+                    Enter your email to receive a password reset link.
+                  </p>
+
                   <div>
-                    <p className="text-xs italic text-stone-600 dark:text-stone-400 mb-2">
-                      Submit your registered email address. A confidential recovery dispatch will be transmitted to reset your credentials.
-                    </p>
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                      Registered Electronic Mail (Email)
+                      Email
                     </label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="citizen@example.com"
+                      placeholder="name@example.com"
                       className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
                     />
                   </div>
@@ -491,9 +424,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition"
+                      className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 active:scale-[0.99] transition"
                     >
-                      {isLoading ? 'DISPATCHING LINK...' : 'DISPATCH PASSWORD RESET LINK'}
+                      {isLoading ? 'Sending...' : 'Send Reset Link'}
                     </button>
                     <button
                       type="button"
@@ -504,57 +437,42 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                       }}
                       className="w-full py-2 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
                     >
-                      ← RETURN TO SIGN IN
+                      Back to Sign In
                     </button>
                   </div>
                 </form>
               )}
             </div>
-
-            <div className="border-t border-stone-300 dark:border-stone-700 pt-3 mt-4 flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
-              <span className="font-mono-num font-bold">SERIAL: GAZETTE-503020</span>
-              <span className="italic">100% Isolated Citizen Memory</span>
-            </div>
           </section>
         </div>
 
-        {/* Bottom Barcode Colophon */}
-        <footer className="border-t-2 border-stone-900 dark:border-stone-400 pt-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <svg className="h-8 w-28 text-stone-900 dark:text-stone-200" viewBox="0 0 120 36" fill="currentColor">
-              <rect x="0" y="0" width="3" height="36" />
-              <rect x="5" y="0" width="1" height="36" />
-              <rect x="8" y="0" width="4" height="36" />
-              <rect x="15" y="0" width="2" height="36" />
-              <rect x="19" y="0" width="1" height="36" />
-              <rect x="23" y="0" width="3" height="36" />
-              <rect x="29" y="0" width="2" height="36" />
-              <rect x="34" y="0" width="4" height="36" />
-              <rect x="41" y="0" width="1" height="36" />
-              <rect x="44" y="0" width="3" height="36" />
-              <rect x="50" y="0" width="2" height="36" />
-              <rect x="55" y="0" width="5" height="36" />
-              <rect x="63" y="0" width="2" height="36" />
-              <rect x="67" y="0" width="1" height="36" />
-              <rect x="71" y="0" width="3" height="36" />
-              <rect x="77" y="0" width="4" height="36" />
-              <rect x="84" y="0" width="1" height="36" />
-              <rect x="88" y="0" width="2" height="36" />
-              <rect x="93" y="0" width="3" height="36" />
-              <rect x="99" y="0" width="5" height="36" />
-              <rect x="107" y="0" width="2" height="36" />
-              <rect x="112" y="0" width="3" height="36" />
-              <rect x="117" y="0" width="3" height="36" />
+        {/* Minimal Footer */}
+        <footer className="border-t border-stone-300 dark:border-stone-700 pt-3 flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
+          <div className="flex items-center gap-2">
+            <svg className="h-6 w-20 text-stone-800 dark:text-stone-300" viewBox="0 0 100 28" fill="currentColor">
+              <rect x="0" y="0" width="3" height="28" />
+              <rect x="5" y="0" width="1" height="28" />
+              <rect x="8" y="0" width="4" height="28" />
+              <rect x="15" y="0" width="2" height="28" />
+              <rect x="19" y="0" width="1" height="28" />
+              <rect x="23" y="0" width="3" height="28" />
+              <rect x="29" y="0" width="2" height="28" />
+              <rect x="34" y="0" width="4" height="28" />
+              <rect x="41" y="0" width="1" height="28" />
+              <rect x="44" y="0" width="3" height="28" />
+              <rect x="50" y="0" width="2" height="28" />
+              <rect x="55" y="0" width="5" height="28" />
+              <rect x="63" y="0" width="2" height="28" />
+              <rect x="67" y="0" width="1" height="28" />
+              <rect x="71" y="0" width="3" height="28" />
+              <rect x="77" y="0" width="4" height="28" />
+              <rect x="84" y="0" width="1" height="28" />
+              <rect x="88" y="0" width="3" height="28" />
+              <rect x="94" y="0" width="4" height="28" />
             </svg>
-            <div className="text-xs font-mono-num font-bold text-stone-600 dark:text-stone-400 leading-tight">
-              <div>GAZETTE SERIAL NO. 8923-503020-JKT</div>
-              <div>PUBLIC DOMESTIC LEDGER PRESS</div>
-            </div>
+            <span className="font-mono-num font-bold">50-30-20</span>
           </div>
-
-          <div className="text-xs text-stone-600 dark:text-stone-400 text-center md:text-right font-editorial italic max-w-md">
-            "The Daily News • Financial & Domestic Budget Gazette • All accounts preserved in private PostgreSQL cloud memory • Printed on pure digital newsprint."
-          </div>
+          <span className="italic">The Daily News • Budget Tracker</span>
         </footer>
       </div>
     </div>

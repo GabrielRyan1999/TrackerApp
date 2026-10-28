@@ -19,7 +19,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  // Status & Feedback messages (In-modal, without any browser popup!)
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -33,7 +32,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
   }, [isRecoveryMode, user]);
 
   useEffect(() => {
-    // Reset notices when changing tab
     setErrorMessage(null);
     setSuccessMessage(null);
   }, [activeTab]);
@@ -46,7 +44,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setSuccessMessage(null);
 
     if (!email || !password) {
-      setErrorMessage('Please provide both citizen email and authorization password.');
+      setErrorMessage('Please enter both email and password.');
       return;
     }
 
@@ -57,11 +55,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     if (res.error) {
       setErrorMessage(res.error);
     } else {
-      setSuccessMessage('Citizen authorization accepted. Synchronizing cloud ledger...');
+      setSuccessMessage('Signed in successfully.');
       setTimeout(() => {
         if (onLoginSuccess) onLoginSuccess();
         onClose();
-      }, 700);
+      }, 500);
     }
   };
 
@@ -71,17 +69,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setSuccessMessage(null);
 
     if (!email || !password) {
-      setErrorMessage('Please furnish all required credential fields.');
+      setErrorMessage('Please fill in all fields.');
       return;
     }
 
     if (password.length < 6) {
-      setErrorMessage('Password must contain at least 6 characters for official security.');
+      setErrorMessage('Password must be at least 6 characters.');
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Password confirmation does not match the entered password.');
+      setErrorMessage('Passwords do not match.');
       return;
     }
 
@@ -92,15 +90,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     if (res.error) {
       setErrorMessage(res.error);
     } else if (res.needEmailVerification) {
-      setSuccessMessage(
-        'Registration dispatched! An official confirmation dispatch has been sent to your email. Please verify before signing in.'
-      );
+      setSuccessMessage('Account created! Please check your email to verify before signing in.');
     } else {
-      setSuccessMessage('Citizen account successfully enrolled! Local accounts are now backed up to your cloud ledger.');
+      setSuccessMessage('Account created and signed in.');
       setTimeout(() => {
         if (onLoginSuccess) onLoginSuccess();
         onClose();
-      }, 1000);
+      }, 700);
     }
   };
 
@@ -110,7 +106,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setSuccessMessage(null);
 
     if (!email) {
-      setErrorMessage('Please furnish your registered electronic mail address.');
+      setErrorMessage('Please enter your email address.');
       return;
     }
 
@@ -121,9 +117,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     if (res.error) {
       setErrorMessage(res.error);
     } else {
-      setSuccessMessage(
-        `Confidential recovery dispatch has been transmitted to ${email}. Check your inbox for the password reset link!`
-      );
+      setSuccessMessage(`Password reset link sent to ${email}. Check your inbox.`);
     }
   };
 
@@ -133,12 +127,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setSuccessMessage(null);
 
     if (!password || password.length < 6) {
-      setErrorMessage('New password must be at least 6 characters in length.');
+      setErrorMessage('Password must be at least 6 characters.');
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('Password confirmation does not match.');
+      setErrorMessage('Passwords do not match.');
       return;
     }
 
@@ -149,10 +143,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     if (res.error) {
       setErrorMessage(res.error);
     } else {
-      setSuccessMessage('Citizen credentials successfully updated and ratified!');
+      setSuccessMessage('Password updated successfully.');
       setTimeout(() => {
         setActiveTab('signin');
-      }, 1200);
+      }, 1000);
     }
   };
 
@@ -160,16 +154,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setIsLoading(true);
     await signOut();
     setIsLoading(false);
-    setSuccessMessage('Citizen safely logged out. Returning to local standalone gazette.');
-    setTimeout(() => {
-      onClose();
-    }, 600);
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/75 backdrop-blur-xs font-editorial animate-fadeIn">
       <div
-        className="w-full max-w-lg bg-[#f8f6f0] dark:bg-stone-900 border-2 border-stone-900 dark:border-stone-400 p-4 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto"
+        className="w-full max-w-md bg-[#f8f6f0] dark:bg-stone-900 border-2 border-stone-900 dark:border-stone-400 p-4 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto"
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-modal-title"
@@ -183,30 +174,74 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
           <X className="w-4 h-4 stroke-[2.5]" />
         </button>
 
-        {/* Masthead Header */}
-        <div className="border-b-2 border-stone-900 dark:border-stone-400 pb-3 mb-4 pr-10">
-          <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block">
-            BUREAU OF CITIZEN RECORDS • VOL. CIV
-          </span>
+        {/* Header */}
+        <div className="border-b-2 border-stone-900 dark:border-stone-400 pb-2.5 mb-4 pr-10">
           <h2
             id="auth-modal-title"
-            className="font-headline text-xl sm:text-2xl font-black uppercase text-stone-950 dark:text-stone-50 leading-tight"
+            className="font-headline text-xl sm:text-2xl font-bold uppercase text-stone-950 dark:text-stone-50 leading-tight"
           >
-            Citizen Registry & Cloud Storage
+            {user ? 'Account' : activeTab === 'signin' ? 'Sign In' : activeTab === 'signup' ? 'Create Account' : 'Reset Password'}
           </h2>
-          <p className="text-xs italic text-stone-600 dark:text-stone-400 mt-1">
-            Store and synchronize your 50/30/20 monthly budget records securely across devices.
-          </p>
         </div>
 
-        {/* Tab Navigation Strip */}
-        <div className="flex items-center gap-1 border border-stone-900 dark:border-stone-400 bg-stone-200/80 dark:bg-stone-800/80 p-0.5 text-xs font-bold uppercase tracking-wider mb-4 overflow-x-auto">
-          {!user ? (
-            <>
+        {/* Status Notices */}
+        {errorMessage && (
+          <div className="mb-3.5 p-2.5 border border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0 mt-0.5" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="mb-3.5 p-2.5 border border-emerald-800 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 text-xs flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-800 dark:text-emerald-400 shrink-0 mt-0.5" />
+            <span>{successMessage}</span>
+          </div>
+        )}
+
+        {/* Signed In State */}
+        {user ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 border border-stone-300 dark:border-stone-700 p-3 bg-stone-100/60 dark:bg-stone-800/50">
+              <UserCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <div className="min-w-0">
+                <span className="text-xs text-stone-500 dark:text-stone-400 block">Signed in as</span>
+                <span className="text-xs sm:text-sm font-bold text-stone-900 dark:text-stone-100 truncate block">
+                  {user.email}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-1">
               <button
                 type="button"
-                onClick={() => setActiveTab('signin')}
-                className={`min-h-[32px] px-3 py-1 transition whitespace-nowrap text-xs ${
+                onClick={handleSignOut}
+                disabled={isLoading}
+                className="flex-1 py-2 text-xs font-bold uppercase tracking-wider border border-red-800 text-red-800 dark:border-red-400 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 transition"
+              >
+                {isLoading ? 'Signing out...' : 'Sign Out'}
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-xs font-bold uppercase tracking-wider border border-stone-900 dark:border-stone-400 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {/* Tab Strip */}
+            <div className="flex items-center gap-1 border border-stone-900 dark:border-stone-400 bg-stone-200/80 dark:bg-stone-800/80 p-0.5 text-xs font-bold uppercase tracking-wider mb-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('signin');
+                  setErrorMessage(null);
+                  setSuccessMessage(null);
+                }}
+                className={`flex-1 py-1.5 transition text-xs ${
                   activeTab === 'signin'
                     ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                     : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
@@ -216,8 +251,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
               </button>
               <button
                 type="button"
-                onClick={() => setActiveTab('signup')}
-                className={`min-h-[32px] px-3 py-1 transition whitespace-nowrap text-xs ${
+                onClick={() => {
+                  setActiveTab('signup');
+                  setErrorMessage(null);
+                  setSuccessMessage(null);
+                }}
+                className={`flex-1 py-1.5 transition text-xs ${
                   activeTab === 'signup'
                     ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
                     : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
@@ -225,99 +264,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
               >
                 Create Account
               </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('forgot')}
-                className={`min-h-[32px] px-3 py-1 transition whitespace-nowrap text-xs ${
-                  activeTab === 'forgot'
-                    ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
-                    : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
-                }`}
-              >
-                Forgot Password
-              </button>
-            </>
-          ) : (
-            <div className="px-3 py-1 text-xs font-bold text-stone-900 dark:text-stone-100">
-              ACTIVE CITIZEN SESSION
             </div>
-          )}
-        </div>
 
-        {/* In-Modal Alert Notification Banners */}
-        {errorMessage && (
-          <div className="mb-4 p-3 border-2 border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0 mt-0.5" />
-            <div>
-              <strong className="block font-bold uppercase tracking-wider">Authentication Error</strong>
-              <span>{errorMessage}</span>
-            </div>
-          </div>
-        )}
-
-        {successMessage && (
-          <div className="mb-4 p-3 border-2 border-emerald-800 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 text-xs flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-800 dark:text-emerald-400 shrink-0 mt-0.5" />
-            <div>
-              <strong className="block font-bold uppercase tracking-wider">Official Confirmation</strong>
-              <span>{successMessage}</span>
-            </div>
-          </div>
-        )}
-
-        {/* 1. SIGN IN TAB */}
-        {activeTab === 'signin' && (
-          <div>
-            {user ? (
-              <div className="space-y-4 border border-stone-300 dark:border-stone-700 p-4 bg-stone-100/50 dark:bg-stone-800/40">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 border border-stone-900 dark:border-stone-400 bg-stone-200 dark:bg-stone-800 flex items-center justify-center font-bold text-sm">
-                    <UserCheck className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 block">
-                      AUTHORIZED CITIZEN
-                    </span>
-                    <strong className="text-sm font-bold text-stone-950 dark:text-stone-50">
-                      {user.email}
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="text-xs text-stone-600 dark:text-stone-400 italic">
-                  All transactions and budget plans are automatically backed up to your private PostgreSQL cloud ledger.
-                </div>
-
-                <div className="pt-2 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={handleSignOut}
-                    disabled={isLoading}
-                    className="flex-1 py-2 text-xs font-bold uppercase tracking-wider border-2 border-red-900 text-red-900 dark:border-red-400 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950 transition"
-                  >
-                    {isLoading ? 'SIGNING OUT...' : 'SIGN OUT / SWITCH ACCOUNT'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-4 py-2 text-xs font-bold uppercase tracking-wider border-2 border-stone-900 dark:border-stone-400 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 transition"
-                  >
-                    RETURN TO GAZETTE
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSignIn} className="space-y-3.5">
+            {/* 1. Sign In Form */}
+            {activeTab === 'signin' && (
+              <form onSubmit={handleSignIn} className="space-y-3">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                    Citizen Electronic Mail (Email)
+                    Email
                   </label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="citizen@example.com"
+                    placeholder="name@example.com"
                     className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
                   />
                 </div>
@@ -325,14 +286,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                      Secret Password
+                      Password
                     </label>
                     <button
                       type="button"
-                      onClick={() => setActiveTab('forgot')}
+                      onClick={() => {
+                        setActiveTab('forgot');
+                        setErrorMessage(null);
+                        setSuccessMessage(null);
+                      }}
                       className="text-xs text-stone-600 dark:text-stone-400 hover:text-stone-950 dark:hover:text-stone-100 underline"
                     >
-                      Forgot Password?
+                      Forgot password?
                     </button>
                   </div>
                   <div className="relative">
@@ -358,215 +323,172 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition"
+                    className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 active:scale-[0.99] transition"
                   >
-                    {isLoading ? 'VERIFYING CITIZEN CREDENTIALS...' : 'AUTHORIZE & OPEN LEDGER'}
+                    {isLoading ? 'Signing in...' : 'Sign In'}
                   </button>
                 </div>
+              </form>
+            )}
 
-                <div className="text-center pt-1">
-                  <span className="text-xs text-stone-600 dark:text-stone-400">
-                    Not yet enrolled in the public register?{' '}
-                  </span>
+            {/* 2. Create Account Form */}
+            {activeTab === 'signup' && (
+              <form onSubmit={handleSignUp} className="space-y-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                    Password (min. 6 characters)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full px-3 py-2 pr-10 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2.5 top-2.5 text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                    Confirm Password
+                  </label>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 active:scale-[0.99] transition"
+                  >
+                    {isLoading ? 'Creating account...' : 'Create Account'}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* 3. Forgot Password Form */}
+            {activeTab === 'forgot' && (
+              <form onSubmit={handleForgotPassword} className="space-y-3">
+                <p className="text-xs text-stone-600 dark:text-stone-400">
+                  Enter your email to receive a password reset link.
+                </p>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                  />
+                </div>
+
+                <div className="pt-2 space-y-2">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 active:scale-[0.99] transition"
+                  >
+                    {isLoading ? 'Sending...' : 'Send Reset Link'}
+                  </button>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('signup')}
-                    className="text-xs font-bold uppercase text-stone-950 dark:text-stone-100 underline"
+                    onClick={() => {
+                      setActiveTab('signin');
+                      setErrorMessage(null);
+                      setSuccessMessage(null);
+                    }}
+                    className="w-full py-2 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
                   >
-                    Enroll New Account
+                    Back to Sign In
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* 4. Reset Password Form (Recovery) */}
+            {activeTab === 'reset' && (
+              <form onSubmit={handleUpdatePassword} className="space-y-3">
+                <p className="text-xs text-stone-600 dark:text-stone-400">
+                  Enter your new password below.
+                </p>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                    New Password (min. 6 characters)
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 active:scale-[0.99] transition"
+                  >
+                    {isLoading ? 'Updating...' : 'Set New Password'}
                   </button>
                 </div>
               </form>
             )}
           </div>
         )}
-
-        {/* 2. SIGN UP TAB */}
-        {activeTab === 'signup' && (
-          <form onSubmit={handleSignUp} className="space-y-3.5">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                Citizen Electronic Mail (Email)
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="citizen@example.com"
-                className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                Create Password (Min. 6 Characters)
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-3 py-2 pr-10 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2.5 top-2.5 text-stone-500 hover:text-stone-800 dark:hover:text-stone-200"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                Confirm Password
-              </label>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-              />
-            </div>
-
-            <div className="p-3 border border-stone-300 dark:border-stone-700 bg-stone-100/60 dark:bg-stone-800/60 text-xs text-stone-700 dark:text-stone-300">
-              <strong className="block font-bold uppercase tracking-wider mb-0.5">Automated Cloud Migration</strong>
-              Your current transactions and monthly budgets will immediately sync to your new account.
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition"
-              >
-                {isLoading ? 'ENROLLING RECORD...' : 'ENROLL NEW CITIZEN ACCOUNT'}
-              </button>
-            </div>
-
-            <div className="text-center pt-1">
-              <span className="text-xs text-stone-600 dark:text-stone-400">
-                Already registered in the records?{' '}
-              </span>
-              <button
-                type="button"
-                onClick={() => setActiveTab('signin')}
-                className="text-xs font-bold uppercase text-stone-950 dark:text-stone-100 underline"
-              >
-                Sign In
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* 3. FORGOT PASSWORD TAB */}
-        {activeTab === 'forgot' && (
-          <form onSubmit={handleForgotPassword} className="space-y-3.5">
-            <div>
-              <span className="text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 block mb-1">
-                CREDENTIAL RESTORATION SERVICE
-              </span>
-              <p className="text-xs italic text-stone-600 dark:text-stone-400">
-                Submit your registered email address. A confidential recovery dispatch containing password restoration instructions will be transmitted immediately.
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                Registered Electronic Mail (Email)
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="citizen@example.com"
-                className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-              />
-            </div>
-
-            <div className="pt-2 space-y-2">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition"
-              >
-                {isLoading ? 'DISPATCHING RECOVERY INSTRUCTIONS...' : 'DISPATCH PASSWORD RESET LINK'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('signin')}
-                className="w-full py-2 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
-              >
-                ← RETURN TO SIGN IN
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* 4. RESET PASSWORD TAB */}
-        {activeTab === 'reset' && (
-          <form onSubmit={handleUpdatePassword} className="space-y-3.5">
-            <div>
-              <span className="text-xs font-bold tracking-widest uppercase text-amber-700 dark:text-amber-400 block mb-1">
-                RATIFY NEW CITIZEN PASSWORD
-              </span>
-              <p className="text-xs italic text-stone-600 dark:text-stone-400">
-                You have authenticated via recovery token. Please provide your new secure password.
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                New Password (Min. 6 Characters)
-              </label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                Confirm New Password
-              </label>
-              <input
-                type="password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-              />
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-black uppercase tracking-widest hover:opacity-90 active:scale-[0.99] transition"
-              >
-                {isLoading ? 'RATIFYING CREDENTIALS...' : 'CONFIRM & RATIFY NEW PASSWORD'}
-              </button>
-            </div>
-          </form>
-        )}
-
-        {/* Footer Editorial Stamp */}
-        <div className="border-t border-stone-300 dark:border-stone-700 pt-3 mt-5 flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
-          <span className="font-mono-num font-bold">SEAL: POSTGRES-RLS-AUTHENTICATED</span>
-          <span className="italic">100% In-Modal • Zero Browser Popups</span>
-        </div>
       </div>
     </div>
   );
