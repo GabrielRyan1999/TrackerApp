@@ -98,9 +98,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      const redirectUrl = typeof window !== 'undefined' ? window.location.origin : undefined;
       const { data, error } = await client.auth.signUp({
         email: email.trim(),
         password: pass,
+        options: {
+          emailRedirectTo: redirectUrl,
+        },
       });
 
       if (error) {
