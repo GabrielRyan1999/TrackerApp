@@ -147,6 +147,21 @@ const SEED_TRANSACTIONS: Transaction[] = [
   },
 ];
 
+export function createEmptyAppData(monthStr = '2026-10'): AppData {
+  return {
+    plans: {
+      [monthStr]: {
+        month: monthStr,
+        income: 10_000_000,
+        split: { needs: 50, wants: 30, savings: 20 },
+      },
+    },
+    transactions: [],
+    categories: DEFAULT_CATEGORIES,
+    settings: DEFAULT_SETTINGS,
+  };
+}
+
 export function loadAppData(): AppData {
   try {
     const raw = localStorage.getItem(`${STORAGE_KEY_PREFIX}data`);

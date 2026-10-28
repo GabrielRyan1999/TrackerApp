@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { loadAppData, saveAppData } from './utils/storage';
+import { loadAppData, saveAppData, createEmptyAppData } from './utils/storage';
 import type { AppData } from './utils/storage';
 import { calculateMonthBudget } from './utils/calculator';
 import type { Transaction, MonthPlan, Category, TransactionType, ThemeMode } from './types/budget';
@@ -14,13 +14,14 @@ import { AddTransactionModal } from './components/AddTransactionModal';
 import { PlanModal } from './components/PlanModal';
 import { SettingsModal } from './components/SettingsModal';
 import { AuthModal } from './components/AuthModal';
+import { LandingPage } from './components/LandingPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { loadCloudAppData, saveCloudAppData } from './utils/supabase';
 import { Plus } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 function BudgetTrackerApp() {
-  const { user, isRecoveryMode } = useAuth();
+  const { user, isLoading, isRecoveryMode } = useAuth();
 
   const [appData, setAppData] = useState<AppData>(() => loadAppData());
   const [currentMonth, setCurrentMonth] = useState<string>('2026-10');
@@ -119,8 +120,11 @@ function BudgetTrackerApp() {
         isFirstSyncDoneRef.current = true;
         setIsCloudSynced(true);
       } else {
-        // New account or empty cloud: migrate current local session to cloud
-        await saveCloudAppData(user.id, appData);
+        // New account: initialize with clean slate (0 transactions)
+        const cleanInitialData = createEmptyAppData(currentMonth);
+        setAppData(cleanInitialData);
+        saveAppData(cleanInitialData);
+        await saveCloudAppData(user.id, cleanInitialData);
         if (isCancelled) return;
         isFirstSyncDoneRef.current = true;
         setIsCloudSynced(true);
@@ -308,6 +312,36 @@ function BudgetTrackerApp() {
       };
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 font-editorial">
+        <div className="border-2 border-stone-900 dark:border-stone-400 p-6 bg-stone-100/80 dark:bg-stone-900 text-center space-y-2">
+          <h2 className="font-headline font-black text-xl uppercase text-stone-950 dark:text-stone-50">
+            The Daily News
+          </h2>
+          <p className="text-xs text-stone-600 dark:text-stone-400 italic">
+            Retrieving personal domestic treasury ledger...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <>
+        <LandingPage
+          isDark={isDark}
+          onToggleTheme={() => setIsDark((prev) => !prev)}
+        />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen py-0 sm:py-6 px-0 sm:px-4 font-editorial">
