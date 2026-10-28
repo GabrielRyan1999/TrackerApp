@@ -133,6 +133,15 @@ export function App() {
     }));
   };
 
+  const handleUpdateTransaction = (updatedTx: Transaction) => {
+    setAppData((prev) => ({
+      ...prev,
+      transactions: prev.transactions.map((t) =>
+        t.id === updatedTx.id ? updatedTx : t
+      ),
+    }));
+  };
+
   const handleRecategorizeTransaction = (id: string, newCategoryId: string, remember: boolean) => {
     const target = appData.transactions.find((t) => t.id === id);
     if (!target) return;
@@ -260,6 +269,7 @@ export function App() {
             currentMonth={currentMonth}
             onDeleteTransaction={handleDeleteTransaction}
             onRecategorizeTransaction={handleRecategorizeTransaction}
+            onUpdateTransaction={handleUpdateTransaction}
           />
         </div>
       </main>

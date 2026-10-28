@@ -171,3 +171,64 @@ describe('CSV Parser', () => {
     expect(result[1].amount).toBe(500_000);
   });
 });
+
+describe('Transaction Editing and Dynamic Recalculation', () => {
+  const monthPlan: MonthPlan = {
+    month: '2026-10',
+    income: 10_000_000,
+    split: { needs: 50, wants: 30, savings: 20 },
+  };
+
+  const initialTransactions: Transaction[] = [
+    {
+      id: 'tx-1',
+      date: '2026-10-05',
+      description: 'Groceries typo',
+      amount: 100_000, // Typo: was meant to be 1_000_000
+      type: 'expense',
+      categoryId: 'groceries', // Needs
+      autoCategorized: false,
+    },
+    {
+      id: 'tx-2',
+      date: '2026-10-10',
+      description: 'Movie Night',
+      amount: 200_000,
+      type: 'expense',
+      categoryId: 'entertainment', // Wants
+      autoCategorized: false,
+    },
+  ];
+
+  it('correctly updates spending and remaining budget when amount typo is edited', () => {
+    // 1. Initial calculation
+    const initialSummary = calculateMonthBudget(monthPlan, initialTransactions, DEFAULT_CATEGORIES);
+    expect(initialSummary.needsSpent).toBe(100_000);
+    expect(initialSummary.totalSpent).toBe(300_000);
+    expect(initialSummary.remainingToSpend).toBe(8_000_000 - 300_000);
+
+    // 2. Edit tx-1 amount from 100.000 to 1.000.000
+    const editedTransactions = initialTransactions.map((tx) =>
+      tx.id === 'tx-1' ? { ...tx, amount: 1_000_000, description: 'Groceries Corrected' } : tx
+    );
+
+    const updatedSummary = calculateMonthBudget(monthPlan, editedTransactions, DEFAULT_CATEGORIES);
+    expect(updatedSummary.needsSpent).toBe(1_000_000);
+    expect(updatedSummary.totalSpent).toBe(1_200_000);
+    expect(updatedSummary.remainingToSpend).toBe(8_000_000 - 1_200_000);
+    expect(updatedSummary.categorySpent['groceries']).toBe(1_000_000);
+  });
+
+  it('correctly shifts buckets when a transaction category or type is edited', () => {
+    // Edit tx-2 from Entertainment (Wants) to Investments (Savings)
+    const editedTransactions = initialTransactions.map((tx) =>
+      tx.id === 'tx-2' ? { ...tx, type: 'savings' as const, categoryId: 'investments', amount: 500_000 } : tx
+    );
+
+    const updatedSummary = calculateMonthBudget(monthPlan, editedTransactions, DEFAULT_CATEGORIES);
+    expect(updatedSummary.wantsSpent).toBe(0);
+    expect(updatedSummary.savingsSaved).toBe(500_000);
+    expect(updatedSummary.needsSpent).toBe(100_000);
+    expect(updatedSummary.totalSpent).toBe(100_000); // only needs + wants count as spent
+  });
+});

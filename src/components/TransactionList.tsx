@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import type { Transaction, Category, Bucket } from '../types/budget';
 import { formatIDR } from '../utils/idr';
 import { CategoryIcon } from './CategoryIcon';
-import { Search, Trash2, AlertCircle, ArrowUpRight } from 'lucide-react';
+import { Search, Trash2, AlertCircle, ArrowUpRight, Pencil } from 'lucide-react';
+import { EditTransactionModal } from './EditTransactionModal';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -10,6 +11,7 @@ interface TransactionListProps {
   currentMonth: string;
   onDeleteTransaction: (id: string) => void;
   onRecategorizeTransaction: (id: string, newCategoryId: string, remember: boolean) => void;
+  onUpdateTransaction: (updatedTx: Transaction) => void;
 }
 
 export const TransactionList: React.FC<TransactionListProps> = ({
@@ -18,10 +20,12 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   currentMonth,
   onDeleteTransaction,
   onRecategorizeTransaction,
+  onUpdateTransaction,
 }) => {
   const [filterTab, setFilterTab] = useState<'all' | Bucket | 'review'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTxForReview, setSelectedTxForReview] = useState<Transaction | null>(null);
+  const [editingTx, setEditingTx] = useState<Transaction | null>(null);
 
   const catMap = new Map<string, Category>(categories.map((c) => [c.id, c]));
 
@@ -303,6 +307,15 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                           </span>
 
                           <button
+                            onClick={() => setEditingTx(tx)}
+                            className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                            title="Edit Transaction"
+                            aria-label="Edit Transaction"
+                          >
+                            <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          </button>
+
+                          <button
                             onClick={() => onDeleteTransaction(tx.id)}
                             className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
                             title="Delete Transaction"
@@ -319,6 +332,17 @@ export const TransactionList: React.FC<TransactionListProps> = ({
             );
           })}
         </div>
+      )}
+
+      {/* Edit Transaction Modal */}
+      {editingTx && (
+        <EditTransactionModal
+          isOpen={Boolean(editingTx)}
+          onClose={() => setEditingTx(null)}
+          transaction={editingTx}
+          onUpdateTransaction={onUpdateTransaction}
+          categories={categories}
+        />
       )}
 
       {/* Review Modal */}
