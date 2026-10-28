@@ -177,11 +177,8 @@ export const PlanModal: React.FC<PlanModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b-2 border-stone-900 dark:border-stone-400">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 block">
-              STATUTORY ALLOCATION MANDATE
-            </span>
             <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50">
-              Monthly Budget Ratios
+              Budget Allocation Plan
             </h3>
           </div>
           <button
@@ -197,7 +194,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
           {/* Income Input */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-              Monthly Revenue Inflow (IDR)
+              Monthly Income (IDR)
             </label>
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-sm font-bold text-stone-500 pointer-events-none">
@@ -213,14 +210,14 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               />
             </div>
             <span className="text-xs font-mono-num font-bold text-stone-700 dark:text-stone-300 block mt-1">
-              {parsedIncome > 0 ? `CALCULATED BASE: ${formatIDR(parsedIncome)}` : 'SHORTCUTS: 2.5jt, 3.5jt, 5jt, 10jt'}
+              {parsedIncome > 0 ? `Income: ${formatIDR(parsedIncome)}` : 'Shortcuts: 2.5jt, 3.5jt, 5jt, 10jt'}
             </span>
           </div>
 
           {/* Preset Buttons */}
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 block">
-              Salary / Base Inflow Presets:
+              Quick Presets:
             </span>
             <div className="flex flex-wrap gap-1">
               {[2_500_000, 3_500_000, 5_000_000, 7_500_000, 10_000_000].map((preset) => (
@@ -280,7 +277,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               <div className="flex items-center justify-between text-xs gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 truncate">
-                    Needs (Living Essentials)
+                    Needs
                   </span>
                   <button
                     type="button"
@@ -350,7 +347,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               <div className="flex items-center justify-between text-xs gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 truncate">
-                    Wants (Discretionary Desires)
+                    Wants
                   </span>
                   <button
                     type="button"
@@ -420,7 +417,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               <div className="flex items-center justify-between text-xs gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 truncate">
-                    Savings (Capital Reserves)
+                    Savings
                   </span>
                   <button
                     type="button"
@@ -553,7 +550,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               disabled={!isTotal100}
               className="px-6 py-2 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition disabled:opacity-50"
             >
-              Commit Ratios
+              Save Budget Plan
             </button>
           </div>
         </form>
