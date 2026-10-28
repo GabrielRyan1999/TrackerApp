@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useScrollLock } from '../hooks/useScrollLock';
 import type { Category, Transaction, TransactionType } from '../types/budget';
 import { parseIDR, formatIDR } from '../utils/idr';
 import { CategoryIcon } from './CategoryIcon';
@@ -32,6 +33,8 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
 
   // Keep state synced when transaction prop changes
+  useScrollLock(isOpen);
+
   useEffect(() => {
     if (transaction) {
       setAmountRaw(transaction.amount > 0 ? transaction.amount.toLocaleString('id-ID') : '');
@@ -42,13 +45,6 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
       setDate(transaction.date);
       setNote(transaction.note || '');
       setErrorMsg(null);
-    }
-    if (isOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
     }
   }, [transaction, isOpen]);
 

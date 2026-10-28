@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useScrollLock } from '../hooks/useScrollLock';
 import type { MonthPlan, BudgetSummary } from '../types/budget';
 import { parseIDR, formatIDR } from '../utils/idr';
 import { buildPlan } from '../utils/calculator';
@@ -26,6 +27,8 @@ export const PlanModal: React.FC<PlanModalProps> = ({
   const [savingsPct, setSavingsPct] = useState(20);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useScrollLock(isOpen);
+
   useEffect(() => {
     if (isOpen) {
       setParsedIncome(currentPlan.income);
@@ -34,11 +37,6 @@ export const PlanModal: React.FC<PlanModalProps> = ({
       setWantsPct(currentPlan.split.wants);
       setSavingsPct(currentPlan.split.savings);
       setErrorMsg(null);
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
     }
   }, [isOpen, currentPlan]);
 

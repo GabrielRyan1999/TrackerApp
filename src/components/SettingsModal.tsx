@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useScrollLock } from '../hooks/useScrollLock';
 import type { Category, Bucket, Transaction } from '../types/budget';
 import type { AppData } from '../utils/storage';
 import { exportToCSV, parseCSV } from '../utils/storage';
@@ -73,17 +74,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
 
+  useScrollLock(isOpen);
+
   useEffect(() => {
     if (isOpen) {
       if (userEmail && !feedbackEmail) {
         setFeedbackEmail(userEmail);
       }
       setFeedbackError(null);
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
     }
   }, [isOpen, userEmail]);
 

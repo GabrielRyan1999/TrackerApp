@@ -18,6 +18,7 @@ import { LandingPage } from './components/LandingPage';
 import { NotFoundPage } from './components/NotFoundPage';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
+import { resetScrollLock } from './hooks/useScrollLock';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { loadCloudAppData, saveCloudAppData } from './utils/supabase';
 import { Plus } from 'lucide-react';
@@ -87,7 +88,7 @@ function BudgetTrackerApp() {
     }
   }, [isRecoveryMode]);
 
-  // Lock body scroll whenever any modal is open
+  // Guarantee document.body.style.overflow is reset whenever all top-level modals close
   useEffect(() => {
     const isAnyModalOpen =
       isAddModalOpen ||
@@ -96,12 +97,8 @@ function BudgetTrackerApp() {
       isAuthModalOpen ||
       Boolean(legalType);
 
-    if (isAnyModalOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
+    if (!isAnyModalOpen) {
+      resetScrollLock();
     }
   }, [isAddModalOpen, isPlanModalOpen, isSettingsModalOpen, isAuthModalOpen, legalType]);
 

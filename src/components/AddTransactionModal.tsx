@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useScrollLock } from '../hooks/useScrollLock';
 import type { Category, TransactionType } from '../types/budget';
 import { parseIDR, formatIDR } from '../utils/idr';
 import { categorize } from '../utils/categorizer';
@@ -43,15 +44,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const [rememberMerchant, setRememberMerchant] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useScrollLock(isOpen);
+
   useEffect(() => {
     if (isOpen) {
       if (defaultDate) setDate(defaultDate);
       setErrorMsg(null);
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
     }
   }, [isOpen, defaultDate]);
 

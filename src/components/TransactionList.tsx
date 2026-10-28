@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { Transaction, Category, Bucket } from '../types/budget';
 import { formatIDR } from '../utils/idr';
 import { CategoryIcon } from './CategoryIcon';
 import { Search, Trash2, AlertCircle, Pencil } from 'lucide-react';
 import { EditTransactionModal } from './EditTransactionModal';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -27,14 +28,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   const [selectedTxForReview, setSelectedTxForReview] = useState<Transaction | null>(null);
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
 
-  useEffect(() => {
-    if (!selectedTxForReview) return;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = originalOverflow;
-    };
-  }, [selectedTxForReview]);
+  useScrollLock(Boolean(selectedTxForReview));
 
   const catMap = new Map<string, Category>(categories.map((c) => [c.id, c]));
 
