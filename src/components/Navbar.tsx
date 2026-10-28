@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon, User as UserIcon, Cloud, CloudOff } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon } from 'lucide-react';
 import { formatIDR } from '../utils/idr';
 import type { User } from '@supabase/supabase-js';
 
@@ -63,18 +63,30 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           onClick={onOpenAuthModal}
           className="hover:underline flex items-center gap-1.5 text-stone-900 dark:text-stone-100 transition"
-          title="Account details"
+          title={user ? `Signed in as ${user.email} (${isCloudSynced ? 'Synced' : 'Syncing...'})` : 'Sign In'}
         >
           {user ? (
             <>
-              <Cloud className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span
+                className={`w-2 h-2 rounded-full shrink-0 ${
+                  isCloudSynced ? 'bg-emerald-600' : 'bg-amber-500 animate-pulse'
+                }`}
+              />
               <span>{user.email?.split('@')[0]}</span>
-              <span className="text-emerald-700 dark:text-emerald-400 font-bold">[SYNCED]</span>
+              <span
+                className={`font-bold ${
+                  isCloudSynced
+                    ? 'text-emerald-700 dark:text-emerald-400'
+                    : 'text-amber-600 dark:text-amber-400'
+                }`}
+              >
+                {isCloudSynced ? '[SYNCED]' : '[SYNCING...]'}
+              </span>
             </>
           ) : (
             <>
-              <CloudOff className="w-3.5 h-3.5 text-stone-500" />
-              <span>[SIGN IN]</span>
+              <span className="w-2 h-2 rounded-full shrink-0 bg-red-600" />
+              <span className="text-red-700 dark:text-red-400 font-bold">[SIGN IN]</span>
             </>
           )}
         </button>
@@ -126,28 +138,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Utility Icons */}
           <div className="flex sm:hidden items-center gap-1.5">
             <button
-              onClick={onOpenAuthModal}
-              className={`h-8 px-2 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 font-bold uppercase tracking-wider text-xs transition ${
-                user
-                  ? 'bg-stone-200/90 dark:bg-stone-800 text-stone-950 dark:text-stone-50'
-                  : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100'
-              }`}
-              title={user ? `Signed in as ${user.email}` : 'Sign In'}
-              aria-label="Account"
-            >
-              <UserIcon className="w-3.5 h-3.5" />
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  user && isCloudSynced
-                    ? 'bg-emerald-600'
-                    : user
-                    ? 'bg-amber-500 animate-pulse'
-                    : 'bg-stone-400'
-                }`}
-              />
-            </button>
-
-            <button
               onClick={onToggleTheme}
               className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
               title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
@@ -192,30 +182,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Desktop Utility Icons */}
           <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
-            <button
-              onClick={onOpenAuthModal}
-              className={`h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 font-bold uppercase tracking-wider text-xs transition ${
-                user
-                  ? 'bg-stone-200/90 dark:bg-stone-800 text-stone-950 dark:text-stone-50'
-                  : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100'
-              }`}
-              title={user ? `Signed in as ${user.email}` : 'Sign In'}
-            >
-              <UserIcon className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">
-                {user ? user.email?.split('@')[0] : 'Account'}
-              </span>
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  user && isCloudSynced
-                    ? 'bg-emerald-600'
-                    : user
-                    ? 'bg-amber-500 animate-pulse'
-                    : 'bg-stone-400'
-                }`}
-              />
-            </button>
-
             <button
               onClick={onToggleTheme}
               className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"

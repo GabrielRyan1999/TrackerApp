@@ -9,8 +9,6 @@ import {
   Download,
   Upload,
   RotateCcw,
-  Sun,
-  Moon,
   CheckCircle2,
   AlertTriangle,
   MessageSquare,
@@ -28,8 +26,8 @@ interface SettingsModalProps {
   appData: AppData;
   onImportTransactions: (transactions: Transaction[], mode: 'replace' | 'merge') => void;
   onResetData: () => void;
-  isDark: boolean;
-  onToggleTheme: () => void;
+  isDark?: boolean;
+  onToggleTheme?: () => void;
   themeMode?: 'modern' | 'newspaper';
   onToggleThemeMode?: () => void;
   userEmail?: string | null;
@@ -46,8 +44,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   appData,
   onImportTransactions,
   onResetData,
-  isDark,
-  onToggleTheme,
   userEmail,
 }) => {
   const [activeTab, setActiveTab] = useState<'categories' | 'merchantMemory' | 'data' | 'feedback'>('categories');
@@ -205,23 +201,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               Settings & Data
             </h3>
           </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={onToggleTheme}
-              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 text-stone-900 dark:text-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              aria-label="Toggle Theme"
-            >
-              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-            </button>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
-              aria-label="Close dialog"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
+            aria-label="Close dialog"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Tab Navigation */}
