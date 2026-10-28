@@ -365,10 +365,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Import Data */}
               <div className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 block">
-                  Import Ledger Records (CSV)
+                  Import Transactions (CSV)
                 </span>
                 <p className="text-xs text-stone-600 dark:text-stone-400">
-                  Upload a CSV spreadsheet with financial dispatches. Automatically parses Date, Description, and Amount columns.
+                  Upload a CSV spreadsheet with transactions. Automatically parses Date, Description, and Amount columns.
                 </p>
 
                 {csvPreview ? (
@@ -379,7 +379,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         <span className="truncate">{csvPreview.filename}</span>
                       </div>
                       <span className="px-2 py-0.5 border border-stone-900 dark:border-stone-400 text-xs shrink-0 font-mono-num">
-                        {csvPreview.count} dispatches found
+                        {csvPreview.count} transactions found
                       </span>
                     </div>
 

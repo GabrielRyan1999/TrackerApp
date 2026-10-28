@@ -188,8 +188,8 @@ export const TransactionList: React.FC<TransactionListProps> = ({
               <div key={date} className="space-y-1.5">
                 {/* Print Dateline Divider */}
                 <div className="text-xs font-bold uppercase tracking-widest text-stone-700 dark:text-stone-300 border-b border-stone-900 dark:border-stone-400 pb-1 flex items-center justify-between">
-                  <span>DISPATCHES OF {dateLabel.toUpperCase()}</span>
-                  <span className="font-mono-num text-stone-500 dark:text-stone-400">{txs.length} RECORD(S)</span>
+                  <span>{dateLabel.toUpperCase()}</span>
+                  <span className="font-mono-num text-stone-500 dark:text-stone-400">{txs.length} {txs.length === 1 ? 'RECORD' : 'RECORDS'}</span>
                 </div>
 
                 {/* Rows in Classified Table style */}

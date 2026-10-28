@@ -91,50 +91,89 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Dateline Double Rule */}
-      <div className="border-t-2 border-b border-stone-900 dark:border-stone-400 py-1.5 my-2 flex flex-wrap items-center justify-between gap-2 text-xs font-bold tracking-wider uppercase text-stone-900 dark:text-stone-100 select-none">
-        <div>
-          <span>{todayFormatted}</span>
-        </div>
-        <div className="font-mono-num">
-          <span>BASE INCOME: {formatIDR(income)}</span>
-        </div>
-        <div>
-          <span>ISSUE: {currentMonth}</span>
-        </div>
+      <div className="border-t-2 border-b border-stone-900 dark:border-stone-400 py-1.5 my-2 flex items-center justify-between gap-2 text-xs font-bold tracking-wider uppercase text-stone-900 dark:text-stone-100 select-none">
+        <span className="truncate">{todayFormatted}</span>
+        <span className="font-mono-num shrink-0 text-right">BASE INCOME: {formatIDR(income)}</span>
       </div>
 
-      {/* Editorial Action Bar (Print Navigation Controls) */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
-        {/* Left: Issue / Month selector */}
-        <div className="flex items-center h-8 border border-stone-900 dark:border-stone-400 bg-stone-100 dark:bg-stone-900">
-          <button
-            onClick={handlePrevMonth}
-            className="w-8 h-full flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-r border-stone-900 dark:border-stone-400"
-            title="Previous Issue"
-            aria-label="Previous Issue"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="px-3 font-headline font-bold text-xs uppercase tracking-wider text-stone-900 dark:text-stone-100">
-            {monthName}
-          </span>
-          <button
-            onClick={handleNextMonth}
-            className="w-8 h-full flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-l border-stone-900 dark:border-stone-400"
-            title="Next Issue"
-            aria-label="Next Issue"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+      {/* Action Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1 text-xs">
+        {/* Row 1 on mobile: Month Selector on Left, Utilities on Right */}
+        <div className="flex items-center justify-between sm:justify-start gap-2">
+          {/* Month selector */}
+          <div className="flex items-center h-8 border border-stone-900 dark:border-stone-400 bg-stone-100 dark:bg-stone-900">
+            <button
+              onClick={handlePrevMonth}
+              className="w-8 h-full flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-r border-stone-900 dark:border-stone-400"
+              title="Previous Month"
+              aria-label="Previous Month"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="px-3 font-headline font-bold text-xs uppercase tracking-wider text-stone-900 dark:text-stone-100 min-w-[105px] text-center">
+              {monthName}
+            </span>
+            <button
+              onClick={handleNextMonth}
+              className="w-8 h-full flex items-center justify-center hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition border-l border-stone-900 dark:border-stone-400"
+              title="Next Month"
+              aria-label="Next Month"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Mobile Utility Icons */}
+          <div className="flex sm:hidden items-center gap-1.5">
+            <button
+              onClick={onOpenAuthModal}
+              className={`h-8 px-2 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 font-bold uppercase tracking-wider text-xs transition ${
+                user
+                  ? 'bg-stone-200/90 dark:bg-stone-800 text-stone-950 dark:text-stone-50'
+                  : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100'
+              }`}
+              title={user ? `Signed in as ${user.email}` : 'Sign In'}
+              aria-label="Account"
+            >
+              <UserIcon className="w-3.5 h-3.5" />
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  user && isCloudSynced
+                    ? 'bg-emerald-600'
+                    : user
+                    ? 'bg-amber-500 animate-pulse'
+                    : 'bg-stone-400'
+                }`}
+              />
+            </button>
+
+            <button
+              onClick={onToggleTheme}
+              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              aria-label="Toggle Theme"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            <button
+              onClick={onOpenSettingsModal}
+              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
+              title="Settings"
+              aria-label="Settings"
+            >
+              <SettingsIcon className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Row 2 on mobile / Right cluster on desktop */}
+        <div className="flex items-center gap-2">
           {/* Plan Modal Button */}
           <button
             onClick={onOpenPlanModal}
-            className="h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 font-bold uppercase tracking-wider text-xs transition"
-            title="Configure Allocation Ratios"
+            className="h-8 px-3 flex items-center justify-center gap-1.5 border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 font-bold uppercase tracking-wider text-xs transition shrink-0"
+            title="Configure Budget Allocation"
           >
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Allocation: {formatIDR(income)}</span>
@@ -144,58 +183,57 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Add Transaction Button */}
           <button
             onClick={onOpenAddModal}
-            className="h-8 px-3 sm:px-4 flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-200 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-300 transition"
-            title="Record New Entry"
+            className="h-8 px-3 sm:px-4 flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-300 transition"
+            title="Add Transaction"
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>+ Dispatch Entry</span>
+            <span>Add Transaction</span>
           </button>
 
-          {/* Citizen Account / Cloud Storage Button */}
-          <button
-            onClick={onOpenAuthModal}
-            className={`h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 font-bold uppercase tracking-wider text-xs transition ${
-              user
-                ? 'bg-stone-200/90 dark:bg-stone-800 text-stone-950 dark:text-stone-50'
-                : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100'
-            }`}
-            title={user ? `Signed in as ${user.email}` : 'Sign In or Create Citizen Account'}
-          >
-            <UserIcon className="w-3.5 h-3.5" />
-            <span className="hidden lg:inline">
-              {user ? user.email?.split('@')[0] : 'Account'}
-            </span>
-            <span
-              className={`w-2 h-2 rounded-full ${
-                user && isCloudSynced
-                  ? 'bg-emerald-600'
-                  : user
-                  ? 'bg-amber-500 animate-pulse'
-                  : 'bg-stone-400'
+          {/* Desktop Utility Icons */}
+          <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
+            <button
+              onClick={onOpenAuthModal}
+              className={`h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 font-bold uppercase tracking-wider text-xs transition ${
+                user
+                  ? 'bg-stone-200/90 dark:bg-stone-800 text-stone-950 dark:text-stone-50'
+                  : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100'
               }`}
-              title={user ? (isCloudSynced ? 'Cloud Synced' : 'Syncing...') : 'Local Memory Mode'}
-            />
-          </button>
+              title={user ? `Signed in as ${user.email}` : 'Sign In'}
+            >
+              <UserIcon className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">
+                {user ? user.email?.split('@')[0] : 'Account'}
+              </span>
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  user && isCloudSynced
+                    ? 'bg-emerald-600'
+                    : user
+                    ? 'bg-amber-500 animate-pulse'
+                    : 'bg-stone-400'
+                }`}
+              />
+            </button>
 
-          {/* Theme Daylight / Midnight Paper Toggle */}
-          <button
-            onClick={onToggleTheme}
-            className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
-            title={isDark ? 'Switch to Daylight Newsprint' : 'Switch to Midnight Broadsheet'}
-            aria-label="Toggle Print Mode"
-          >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-          </button>
+            <button
+              onClick={onToggleTheme}
+              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              aria-label="Toggle Theme"
+            >
+              {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+            </button>
 
-          {/* Settings / Archive */}
-          <button
-            onClick={onOpenSettingsModal}
-            className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
-            title="Archive & Preferences"
-            aria-label="Settings"
-          >
-            <SettingsIcon className="w-4 h-4" />
-          </button>
+            <button
+              onClick={onOpenSettingsModal}
+              className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition"
+              title="Settings"
+              aria-label="Settings"
+            >
+              <SettingsIcon className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </header>

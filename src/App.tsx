@@ -409,12 +409,12 @@ function BudgetTrackerApp() {
         />
       </div>
 
-      {/* Floating Add Dispatch Button for Mobile */}
+      {/* Floating Add Transaction Button for Mobile */}
       <button
         onClick={() => setIsAddModalOpen(true)}
         className="sm:hidden fixed right-4 bottom-5 z-40 w-12 h-12 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 shadow-2xl flex items-center justify-center font-bold transition active:scale-95"
-        title="Record Dispatch"
-        aria-label="Record Dispatch"
+        title="Add Transaction"
+        aria-label="Add Transaction"
       >
         <Plus className="w-6 h-6 stroke-[2.5]" />
       </button>

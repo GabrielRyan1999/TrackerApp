@@ -136,11 +136,8 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b-2 border-stone-900 dark:border-stone-400">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 block">
-              OFFICIAL FINANCIAL DISPATCH
-            </span>
             <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50">
-              Record New Ledger Entry
+              Add Transaction
             </h3>
           </div>
           <button
@@ -291,7 +288,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                       onChange={(e) => setRememberMerchant(e.target.checked)}
                       className="rounded-none text-stone-900"
                     />
-                    <span>Remember merchant classification for subsequent dispatches</span>
+                    <span>Remember category for this merchant</span>
                   </label>
                 )}
               </div>
@@ -301,7 +298,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           {/* Transaction Type Radio Tabs */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1.5">
-              Disbursement Type
+              Type
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -374,7 +371,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               type="submit"
               className="px-6 py-2 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition"
             >
-              Commit Entry
+              Save Transaction
             </button>
           </div>
         </form>
