@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { saveSupabaseConfig, clearCustomSupabaseConfig, SUPABASE_SQL_SCHEMA } from '../utils/supabase';
-import { X, UserCheck, AlertCircle, CheckCircle2, Database, Copy, Check, Eye, EyeOff } from 'lucide-react';
+import { X, UserCheck, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -9,21 +8,16 @@ interface AuthModalProps {
   onLoginSuccess?: () => void;
 }
 
-type AuthTab = 'signin' | 'signup' | 'forgot' | 'reset' | 'config';
+type AuthTab = 'signin' | 'signup' | 'forgot' | 'reset';
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
-  const { user, config, isRecoveryMode, signIn, signUp, signOut, sendPasswordReset, updatePassword, refreshConfig } = useAuth();
+  const { user, isRecoveryMode, signIn, signUp, signOut, sendPasswordReset, updatePassword } = useAuth();
 
   const [activeTab, setActiveTab] = useState<AuthTab>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  // Setup / Config inputs
-  const [inputUrl, setInputUrl] = useState(config.url || '');
-  const [inputKey, setInputKey] = useState(config.anonKey || '');
-  const [copiedSql, setCopiedSql] = useState(false);
 
   // Status & Feedback messages (In-modal, without any browser popup!)
   const [isLoading, setIsLoading] = useState(false);
@@ -33,12 +27,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
   useEffect(() => {
     if (isRecoveryMode) {
       setActiveTab('reset');
-    } else if (!config.isConfigured) {
-      setActiveTab('config');
     } else if (user) {
       setActiveTab('signin');
     }
-  }, [isRecoveryMode, config.isConfigured, user]);
+  }, [isRecoveryMode, user]);
 
   useEffect(() => {
     // Reset notices when changing tab
@@ -164,42 +156,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     }
   };
 
-  const handleSaveConfig = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    if (!inputUrl.trim() || !inputKey.trim()) {
-      setErrorMessage('Both Supabase Project URL and Public Anon Key are required.');
-      return;
-    }
-
-    const saved = saveSupabaseConfig(inputUrl, inputKey);
-    if (saved) {
-      refreshConfig();
-      setSuccessMessage('Supabase database credentials preserved in terminal memory! Ready for authentication.');
-      setTimeout(() => {
-        setActiveTab('signin');
-      }, 800);
-    } else {
-      setErrorMessage('Failed to save configuration.');
-    }
-  };
-
-  const handleClearConfig = () => {
-    clearCustomSupabaseConfig();
-    refreshConfig();
-    setInputUrl('');
-    setInputKey('');
-    setSuccessMessage('Custom credentials cleared. Now using default environment variables.');
-  };
-
-  const handleCopySql = () => {
-    navigator.clipboard.writeText(SUPABASE_SQL_SCHEMA);
-    setCopiedSql(true);
-    setTimeout(() => setCopiedSql(false), 2000);
-  };
-
   const handleSignOut = async () => {
     setIsLoading(true);
     await signOut();
@@ -283,26 +239,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
             </>
           ) : (
             <div className="px-3 py-1 text-xs font-bold text-stone-900 dark:text-stone-100">
-              ACTIVE SESSION
+              ACTIVE CITIZEN SESSION
             </div>
           )}
-          <button
-            type="button"
-            onClick={() => setActiveTab('config')}
-            className={`min-h-[32px] px-3 py-1 transition whitespace-nowrap text-xs ml-auto flex items-center gap-1.5 ${
-              activeTab === 'config'
-                ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950'
-                : 'text-stone-700 dark:text-stone-300 hover:bg-stone-300 dark:hover:bg-stone-700'
-            }`}
-          >
-            <Database className="w-3.5 h-3.5" />
-            <span>Database Setup</span>
-            <span
-              className={`w-2 h-2 rounded-full ${
-                config.isConfigured ? 'bg-emerald-600' : 'bg-amber-500'
-              }`}
-            />
-          </button>
         </div>
 
         {/* In-Modal Alert Notification Banners */}
@@ -621,102 +560,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
               </button>
             </div>
           </form>
-        )}
-
-        {/* 5. DATABASE CONFIGURATION TAB */}
-        {activeTab === 'config' && (
-          <div className="space-y-4">
-            <div className="border border-stone-300 dark:border-stone-700 p-3 bg-stone-100/50 dark:bg-stone-800/40">
-              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1">
-                <span>Database Connection Status</span>
-                <span
-                  className={`px-2 py-0.5 border ${
-                    config.isConfigured
-                      ? 'border-emerald-800 text-emerald-800 dark:border-emerald-400 dark:text-emerald-400'
-                      : 'border-amber-800 text-amber-800 dark:border-amber-400 dark:text-amber-400'
-                  }`}
-                >
-                  {config.isConfigured ? 'CONNECTED TO SUPABASE POSTGRES' : 'CREDENTIALS NEEDED'}
-                </span>
-              </div>
-              <p className="text-xs text-stone-600 dark:text-stone-400 italic">
-                {config.isConfigured
-                  ? `Active via ${config.source === 'env' ? '.env file' : 'in-app configuration'}. Citizen accounts and monthly tracker records synchronize seamlessly.`
-                  : 'Enter your free Supabase PostgreSQL project credentials below or set them in .env file.'}
-              </p>
-            </div>
-
-            <form onSubmit={handleSaveConfig} className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                  Supabase Project URL
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={inputUrl}
-                  onChange={(e) => setInputUrl(e.target.value)}
-                  placeholder="https://your-project.supabase.co"
-                  className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-                  Supabase Public Anon Key
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={inputKey}
-                  onChange={(e) => setInputKey(e.target.value)}
-                  placeholder="eyJhbGciOiJIUzI1NiIsIn..."
-                  className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-1">
-                <button
-                  type="submit"
-                  className="flex-1 py-2 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-2 border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider hover:opacity-90 transition"
-                >
-                  SAVE & ACTIVATE DATABASE
-                </button>
-                {config.source === 'storage' && (
-                  <button
-                    type="button"
-                    onClick={handleClearConfig}
-                    className="px-3 py-2 border border-red-800 text-red-800 dark:text-red-400 text-xs font-bold uppercase tracking-wider hover:bg-red-100 dark:hover:bg-red-950/40 transition"
-                  >
-                    RESET
-                  </button>
-                )}
-              </div>
-            </form>
-
-            {/* SQL Table Creation Script Helper */}
-            <div className="border-t border-stone-300 dark:border-stone-700 pt-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                  Supabase SQL Setup Script
-                </span>
-                <button
-                  type="button"
-                  onClick={handleCopySql}
-                  className="flex items-center gap-1 px-2 py-1 text-xs font-bold uppercase tracking-wider border border-stone-900 dark:border-stone-400 bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 dark:hover:bg-stone-700 transition"
-                >
-                  {copiedSql ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedSql ? 'COPIED TO CLIPBOARD' : 'COPY SQL SCRIPT'}</span>
-                </button>
-              </div>
-              <p className="text-xs text-stone-500 dark:text-stone-400 italic">
-                Paste and run this 1-click script once in your Supabase SQL Editor to create the <code className="font-mono font-bold">user_budget_data</code> table with Row Level Security.
-              </p>
-              <pre className="p-2.5 bg-stone-200/70 dark:bg-stone-950 border border-stone-400 dark:border-stone-700 text-xs font-mono text-stone-800 dark:text-stone-200 overflow-x-auto max-h-32">
-                {SUPABASE_SQL_SCHEMA}
-              </pre>
-            </div>
-          </div>
         )}
 
         {/* Footer Editorial Stamp */}
