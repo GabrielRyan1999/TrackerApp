@@ -35,6 +35,8 @@ export interface MonthPlan {
   categoryBudgets?: Record<string, number>;
 }
 
+export type ThemeMode = 'modern' | 'newspaper';
+
 export interface Settings {
   currency: 'IDR';
   locale: 'id-ID';
@@ -45,6 +47,7 @@ export interface Settings {
   };
   merchantMemory: Record<string, string>; // lowercase merchant -> categoryId
   theme: 'light' | 'dark' | 'system';
+  themeMode?: ThemeMode;
 }
 
 export interface BudgetSummary {

@@ -253,7 +253,7 @@ export const DateSelector: React.FC<DateSelectorProps> = ({
           </div>
 
           {/* Days of week header (Mon - Sun) */}
-          <div className="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400">
+          <div className="grid grid-cols-7 text-center text-[11px] font-bold text-slate-400">
             <span>Mo</span>
             <span>Tu</span>
             <span>We</span>

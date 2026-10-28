@@ -98,9 +98,9 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
         <span className={`block w-2.5 h-2.5 rounded-full ${currentStyle.dot}`} />
       </div>
       <div className="min-w-0 flex-1">
-        <h3 className={`text-xs font-bold ${currentStyle.title} leading-tight`}>
+        <h2 className={`text-xs font-bold ${currentStyle.title} leading-tight`}>
           {insight.title}
-        </h3>
+        </h2>
         <p className={`text-xs ${currentStyle.text} mt-1 leading-relaxed`}>
           {insight.message}
         </p>

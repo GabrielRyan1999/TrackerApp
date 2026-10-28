@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant newspaper (&:where(.theme-newspaper, .theme-newspaper *));
 
 @layer base {
   :root {
@@ -48,3 +49,115 @@
 :where(.dark, .dark *) .ambient-glow {
   background-image: radial-gradient(circle 900px at 50% -120px, rgba(16, 185, 129, 0.08), transparent 70%);
 }
+
+/* ==========================================================================
+   NEWSPAPER / EDITORIAL THEME STYLES
+   ========================================================================== */
+html.theme-newspaper {
+  --font-newspaper-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+  --font-newspaper-body: 'Newsreader', Georgia, serif;
+  --news-paper-bg: #f5f2eb;
+  --news-card-bg: #fffdfa;
+  --news-ink-primary: #1c1917;
+  --news-ink-muted: #57534e;
+  --news-ink-rule: #292524;
+  --news-ink-subtle: #d6cebe;
+}
+
+html.theme-newspaper.dark {
+  --news-paper-bg: #141311;
+  --news-card-bg: #1c1b18;
+  --news-ink-primary: #f5f2eb;
+  --news-ink-muted: #a8a29e;
+  --news-ink-rule: #57534e;
+  --news-ink-subtle: #32302b;
+}
+
+/* Base Body in Newspaper Mode */
+html.theme-newspaper body {
+  background-color: var(--news-paper-bg) !important;
+  color: var(--news-ink-primary) !important;
+  font-family: var(--font-newspaper-body), Georgia, serif;
+  background-image: 
+    radial-gradient(#cfc8b6 0.65px, transparent 0.65px),
+    linear-gradient(to bottom, #f4f0e6 0%, #faf8f2 100%) !important;
+  background-size: 16px 16px, 100% 100% !important;
+}
+
+html.theme-newspaper.dark body {
+  background-color: var(--news-paper-bg) !important;
+  color: var(--news-ink-primary) !important;
+  background-image: 
+    radial-gradient(#282521 0.65px, transparent 0.65px),
+    linear-gradient(to bottom, #11100f 0%, #181715 100%) !important;
+  background-size: 16px 16px, 100% 100% !important;
+}
+
+/* Headings in Newspaper Mode */
+html.theme-newspaper h1,
+html.theme-newspaper h2,
+html.theme-newspaper h3,
+html.theme-newspaper h4,
+html.theme-newspaper .font-bold,
+html.theme-newspaper .font-extrabold,
+html.theme-newspaper .font-black {
+  font-family: var(--font-newspaper-serif) !important;
+}
+
+/* Cards & Containers: Authentic Broadsheet Press */
+html.theme-newspaper .bg-white,
+html.theme-newspaper .dark\:bg-\[\#0f172a\],
+html.theme-newspaper .dark\:bg-\[\#0e1626\],
+html.theme-newspaper .dark\:bg-\[\#0c121e\]\/95 {
+  background-color: var(--news-card-bg) !important;
+  border-color: var(--news-ink-rule) !important;
+  border-radius: 3px !important;
+  box-shadow: 2px 2px 0px rgba(28, 25, 23, 0.15) !important;
+}
+
+html.theme-newspaper.dark .bg-white,
+html.theme-newspaper.dark .dark\:bg-\[\#0f172a\],
+html.theme-newspaper.dark .dark\:bg-\[\#0e1626\],
+html.theme-newspaper.dark .dark\:bg-\[\#0c121e\]\/95 {
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Newspaper rules replace subtle slate borders */
+html.theme-newspaper .border-slate-200\/90,
+html.theme-newspaper .dark\:border-slate-800\/90,
+html.theme-newspaper .border-slate-200,
+html.theme-newspaper .dark\:border-slate-800,
+html.theme-newspaper .border-slate-100,
+html.theme-newspaper .dark\:border-slate-800\/80,
+html.theme-newspaper .divide-slate-100,
+html.theme-newspaper .dark\:divide-slate-800\/70 {
+  border-color: var(--news-ink-subtle) !important;
+}
+
+/* Inputs & Form Fields */
+html.theme-newspaper input,
+html.theme-newspaper select {
+  background-color: #fbf9f4 !important;
+  border-color: var(--news-ink-rule) !important;
+  border-radius: 3px !important;
+  font-family: var(--font-newspaper-body);
+}
+
+html.theme-newspaper.dark input,
+html.theme-newspaper.dark select {
+  background-color: #21201c !important;
+  border-color: var(--news-ink-rule) !important;
+  color: #f5f2eb !important;
+}
+
+/* Selection */
+html.theme-newspaper ::selection {
+  background-color: rgba(185, 28, 28, 0.2) !important;
+  color: #1c1917 !important;
+}
+
+html.theme-newspaper.dark ::selection {
+  background-color: rgba(234, 88, 12, 0.25) !important;
+  color: #f5f2eb !important;
+}
+

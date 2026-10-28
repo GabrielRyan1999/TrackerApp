@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon, Newspaper } from 'lucide-react';
 import { formatIDR } from '../utils/idr';
 
 interface NavbarProps {
@@ -11,6 +11,8 @@ interface NavbarProps {
   income: number;
   isDark: boolean;
   onToggleTheme: () => void;
+  themeMode: 'modern' | 'newspaper';
+  onToggleThemeMode: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -22,6 +24,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   income,
   isDark,
   onToggleTheme,
+  themeMode,
+  onToggleThemeMode,
 }) => {
   const [yearStr, monthStr] = currentMonth.split('-');
   const dateObj = new Date(parseInt(yearStr, 10), parseInt(monthStr, 10) - 1, 1);
@@ -113,7 +117,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             </kbd>
           </button>
 
-          {/* Theme toggle */}
+          {/* Theme Style Toggle (Newspaper vs Modern) */}
+          <button
+            onClick={onToggleThemeMode}
+            className={`h-8 sm:h-9 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-xl border text-xs font-bold transition ${
+              themeMode === 'newspaper'
+                ? 'bg-amber-100/90 dark:bg-amber-950/80 text-amber-950 dark:text-amber-200 border-amber-300 dark:border-amber-800 shadow-2xs'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80'
+            }`}
+            title={`Switch to ${themeMode === 'newspaper' ? 'Modern' : 'Newspaper'} theme`}
+            aria-label="Toggle Theme Mode"
+          >
+            <Newspaper className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400 shrink-0" />
+            <span className="hidden sm:inline">
+              {themeMode === 'newspaper' ? 'Newspaper' : 'Modern'}
+            </span>
+          </button>
+
+          {/* Theme Light/Dark toggle */}
           <button
             onClick={onToggleTheme}
             className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"

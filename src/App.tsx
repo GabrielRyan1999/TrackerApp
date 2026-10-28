@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { loadAppData, saveAppData } from './utils/storage';
 import type { AppData } from './utils/storage';
 import { calculateMonthBudget } from './utils/calculator';
-import type { Transaction, MonthPlan, Category, TransactionType } from './types/budget';
+import type { Transaction, MonthPlan, Category, TransactionType, ThemeMode } from './types/budget';
 import { Navbar } from './components/Navbar';
 import { SmartInsight } from './components/SmartInsight';
 import { SpendingGauge } from './components/SpendingGauge';
@@ -29,9 +29,31 @@ export function App() {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem('budget_tracker_theme_mode');
+      return saved === 'modern' ? 'modern' : 'newspaper';
+    } catch {
+      return 'newspaper';
+    }
+  });
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  // Sync theme-newspaper class on <html> document element and persist in localStorage
+  useEffect(() => {
+    const root = document.documentElement;
+    if (themeMode === 'newspaper') {
+      root.classList.add('theme-newspaper');
+    } else {
+      root.classList.remove('theme-newspaper');
+    }
+    try {
+      localStorage.setItem('budget_tracker_theme_mode', themeMode);
+    } catch {}
+  }, [themeMode]);
 
   // Global keyboard shortcut: Press 'N' to open Add Transaction Modal
   useEffect(() => {
@@ -235,10 +257,31 @@ export function App() {
         income={monthPlan.income}
         isDark={isDark}
         onToggleTheme={() => setIsDark((prev) => !prev)}
+        themeMode={themeMode}
+        onToggleThemeMode={() => setThemeMode((prev) => (prev === 'newspaper' ? 'modern' : 'newspaper'))}
       />
 
       {/* Main Container */}
       <main className="max-w-6xl mx-auto p-3.5 sm:p-6 space-y-4 sm:space-y-6 pb-28 md:pb-8">
+        {/* Newspaper Broadsheet Masthead */}
+        {themeMode === 'newspaper' && (
+          <div className="border-b-2 border-t-4 border-stone-800 dark:border-stone-400 py-3 my-1 sm:my-2 text-center select-none bg-stone-50/60 dark:bg-stone-900/40 px-3 rounded-xs transition-all">
+            <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] sm:text-xs font-bold tracking-widest uppercase text-stone-600 dark:text-stone-400 border-b border-stone-300 dark:border-stone-700 pb-1.5 mb-2 px-1">
+              <span>Vol. XXIV • No. {new Date().getDate()}</span>
+              <span className="hidden sm:inline">★ THE FINANCIAL CHRONICLE • 50/30/20 ALLOCATION ★</span>
+              <span>{new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black font-serif tracking-tight text-stone-900 dark:text-stone-100 uppercase py-1">
+              The Budget Gazette
+            </h1>
+            <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-stone-600 dark:text-stone-400 border-t border-stone-300 dark:border-stone-700 pt-1.5 px-1 mt-1">
+              <span>50% Needs • 30% Wants • 20% Savings</span>
+              <span className="hidden md:inline">Rupiah Currency Accounting • Jakarta & Regional Press</span>
+              <span>Daily Edition • Issue {currentMonth}</span>
+            </div>
+          </div>
+        )}
+
         {/* Smart Financial Intelligence Insight Strip */}
         <SmartInsight summary={summary} />
 
@@ -315,6 +358,8 @@ export function App() {
         onResetData={handleResetData}
         isDark={isDark}
         onToggleTheme={() => setIsDark((prev) => !prev)}
+        themeMode={themeMode}
+        onToggleThemeMode={() => setThemeMode((prev) => (prev === 'newspaper' ? 'modern' : 'newspaper'))}
       />
     </div>
   );
