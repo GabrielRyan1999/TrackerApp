@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { loadAppData, saveAppData } from './utils/storage';
 import type { AppData } from './utils/storage';
 import { calculateMonthBudget } from './utils/calculator';
@@ -13,13 +13,20 @@ import { TransactionList } from './components/TransactionList';
 import { AddTransactionModal } from './components/AddTransactionModal';
 import { PlanModal } from './components/PlanModal';
 import { SettingsModal } from './components/SettingsModal';
+import { AuthModal } from './components/AuthModal';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { loadCloudAppData, saveCloudAppData } from './utils/supabase';
 import { Plus } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-export function App() {
+function BudgetTrackerApp() {
+  const { user, isRecoveryMode } = useAuth();
+
   const [appData, setAppData] = useState<AppData>(() => loadAppData());
   const [currentMonth, setCurrentMonth] = useState<string>('2026-10');
-  
+  const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
+  const isFirstSyncDoneRef = useRef<boolean>(false);
+
   // Theme state with localStorage persistence
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
@@ -41,6 +48,14 @@ export function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Auto-open modal if user opened a password reset link
+  useEffect(() => {
+    if (isRecoveryMode) {
+      setIsAuthModalOpen(true);
+    }
+  }, [isRecoveryMode]);
 
   // Sync theme-newspaper class on <html> document element and persist in localStorage
   useEffect(() => {
@@ -83,9 +98,58 @@ export function App() {
     }
   }, [isDark]);
 
+  // 1. Cloud Authentication & Initial Data Load
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (!user) {
+      isFirstSyncDoneRef.current = false;
+      setIsCloudSynced(false);
+      return;
+    }
+
+    setIsCloudSynced(false);
+    loadCloudAppData(user.id).then(async (cloudData) => {
+      if (isCancelled) return;
+
+      if (cloudData && (Object.keys(cloudData.plans).length > 0 || cloudData.transactions.length > 0)) {
+        // User has existing records in PostgreSQL
+        setAppData(cloudData);
+        saveAppData(cloudData);
+        isFirstSyncDoneRef.current = true;
+        setIsCloudSynced(true);
+      } else {
+        // New account or empty cloud: migrate current local session to cloud
+        await saveCloudAppData(user.id, appData);
+        if (isCancelled) return;
+        isFirstSyncDoneRef.current = true;
+        setIsCloudSynced(true);
+      }
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [user]);
+
+  // 2. Data Persistence (Local Storage + Debounced Cloud Upsert)
   useEffect(() => {
     saveAppData(appData);
-  }, [appData]);
+
+    if (!user || !isFirstSyncDoneRef.current) {
+      return;
+    }
+
+    setIsCloudSynced(false);
+    const timer = setTimeout(async () => {
+      const res = await saveCloudAppData(user.id, appData);
+      if (res.success) {
+        setIsCloudSynced(true);
+      }
+    }, 700);
+
+    return () => clearTimeout(timer);
+  }, [appData, user]);
 
   const monthPlan = useMemo<MonthPlan>(() => {
     if (appData.plans[currentMonth]) {
@@ -256,6 +320,9 @@ export function App() {
           onOpenAddModal={() => setIsAddModalOpen(true)}
           onOpenPlanModal={() => setIsPlanModalOpen(true)}
           onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          user={user}
+          isCloudSynced={isCloudSynced}
           income={monthPlan.income}
           isDark={isDark}
           onToggleTheme={() => setIsDark((prev) => !prev)}
@@ -343,7 +410,23 @@ export function App() {
         themeMode={themeMode}
         onToggleThemeMode={() => setThemeMode((prev) => (prev === 'newspaper' ? 'modern' : 'newspaper'))}
       />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={() => {
+          setIsCloudSynced(false);
+        }}
+      />
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <AuthProvider>
+      <BudgetTrackerApp />
+    </AuthProvider>
   );
 }
 

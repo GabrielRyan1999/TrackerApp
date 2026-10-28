@@ -1,6 +1,7 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Settings as SettingsIcon, SlidersHorizontal, Sun, Moon, User as UserIcon, Cloud, CloudOff } from 'lucide-react';
 import { formatIDR } from '../utils/idr';
+import type { User } from '@supabase/supabase-js';
 
 interface NavbarProps {
   currentMonth: string;
@@ -8,6 +9,9 @@ interface NavbarProps {
   onOpenAddModal: () => void;
   onOpenPlanModal: () => void;
   onOpenSettingsModal: () => void;
+  onOpenAuthModal: () => void;
+  user: User | null;
+  isCloudSynced: boolean;
   income: number;
   isDark: boolean;
   onToggleTheme: () => void;
@@ -19,6 +23,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAddModal,
   onOpenPlanModal,
   onOpenSettingsModal,
+  onOpenAuthModal,
+  user,
+  isCloudSynced,
   income,
   isDark,
   onToggleTheme,
@@ -51,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="border-b-2 border-stone-900 dark:border-stone-400 pb-3 pt-2">
       {/* Top Ticker & Category Bar (Reference Image 1: Top Bar) */}
-      <div className="border-b border-stone-800 dark:border-stone-500 pb-1.5 mb-2 text-[11px] font-bold tracking-wider uppercase text-stone-700 dark:text-stone-300 flex flex-wrap items-center justify-between gap-2 select-none">
+      <div className="border-b border-stone-800 dark:border-stone-500 pb-1.5 mb-2 text-xs font-bold tracking-wider uppercase text-stone-700 dark:text-stone-300 flex flex-wrap items-center justify-between gap-2 select-none">
         <div className="flex items-center gap-2">
           <span>POLITICAL</span>
           <span>|</span>
@@ -64,9 +71,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           <span className="hidden lg:inline">DISPATCHES</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline">WEATHER: FAVORABLE 78°F</span>
+          <button
+            onClick={onOpenAuthModal}
+            className="hover:underline flex items-center gap-1.5 text-stone-900 dark:text-stone-100 transition"
+            title="Open Citizen Identification & Registry"
+          >
+            {user ? (
+              <>
+                <Cloud className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>CITIZEN: {user.email?.split('@')[0].toUpperCase()}</span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-black">[SYNCED]</span>
+              </>
+            ) : (
+              <>
+                <CloudOff className="w-3.5 h-3.5 text-stone-500" />
+                <span>STORAGE: LOCAL [SIGN IN / ENROLL]</span>
+              </>
+            )}
+          </button>
           <span className="hidden sm:inline">•</span>
-          <span>PRICE: RP 0 (FREE DISPATCH)</span>
+          <span className="hidden sm:inline">PRICE: RP 0 (FREE DISPATCH)</span>
         </div>
       </div>
 
@@ -164,6 +188,32 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             <span>+ Dispatch Entry</span>
+          </button>
+
+          {/* Citizen Account / Cloud Storage Button */}
+          <button
+            onClick={onOpenAuthModal}
+            className={`h-8 px-2.5 sm:px-3 flex items-center gap-1.5 border border-stone-900 dark:border-stone-400 font-bold uppercase tracking-wider text-xs transition ${
+              user
+                ? 'bg-stone-200/90 dark:bg-stone-800 text-stone-950 dark:text-stone-50'
+                : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100'
+            }`}
+            title={user ? `Signed in as ${user.email}` : 'Sign In or Create Citizen Account'}
+          >
+            <UserIcon className="w-3.5 h-3.5" />
+            <span className="hidden lg:inline">
+              {user ? user.email?.split('@')[0] : 'Account'}
+            </span>
+            <span
+              className={`w-2 h-2 rounded-full ${
+                user && isCloudSynced
+                  ? 'bg-emerald-600'
+                  : user
+                  ? 'bg-amber-500 animate-pulse'
+                  : 'bg-stone-400'
+              }`}
+              title={user ? (isCloudSynced ? 'Cloud Synced' : 'Syncing...') : 'Local Memory Mode'}
+            />
           </button>
 
           {/* Theme Daylight / Midnight Paper Toggle */}
