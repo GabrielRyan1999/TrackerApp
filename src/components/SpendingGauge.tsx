@@ -27,11 +27,53 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
     })
     .sort((a, b) => b[1] - a[1]);
 
-  let accumulatedRatio = 0;
-
   // Needle angle for gauge (-90 deg at 0% to +90 deg at 100%)
   const clampedRatio = Math.min(Math.max(ratio, 0), 1.25);
   const needleAngle = -90 + clampedRatio * 180;
+
+  // 4-Zone Indicator Logic: Green (0-50%), Yellow (50-75%), Orange (75-90%), Red (90%+)
+  const getZoneInfo = (r: number) => {
+    if (r > 1) {
+      return {
+        label: `Over Budget (+${percentNumber - 100}%)`,
+        badgeClass: 'border-red-700 text-red-700 bg-red-50 dark:border-red-400 dark:text-red-300 dark:bg-red-950/40',
+        needleColor: '#dc2626',
+        zoneName: 'Deficit',
+      };
+    }
+    if (r >= 0.9) {
+      return {
+        label: `Critical (${percentNumber}%)`,
+        badgeClass: 'border-red-600 text-red-600 bg-red-50 dark:border-red-400 dark:text-red-300 dark:bg-red-950/30',
+        needleColor: '#ef4444',
+        zoneName: 'Critical',
+      };
+    }
+    if (r >= 0.75) {
+      return {
+        label: `Warning (${percentNumber}%)`,
+        badgeClass: 'border-orange-600 text-orange-700 bg-orange-50 dark:border-orange-400 dark:text-orange-300 dark:bg-orange-950/30',
+        needleColor: '#ea580c',
+        zoneName: 'Warning',
+      };
+    }
+    if (r >= 0.5) {
+      return {
+        label: `Moderate (${percentNumber}%)`,
+        badgeClass: 'border-yellow-600 text-yellow-800 bg-yellow-50 dark:border-yellow-400 dark:text-yellow-300 dark:bg-yellow-950/30',
+        needleColor: '#ca8a04',
+        zoneName: 'Moderate',
+      };
+    }
+    return {
+      label: `Safe (${percentNumber}%)`,
+      badgeClass: 'border-emerald-700 text-emerald-700 bg-emerald-50 dark:border-emerald-400 dark:text-emerald-300 dark:bg-emerald-950/30',
+      needleColor: '#16a34a',
+      zoneName: 'Safe',
+    };
+  };
+
+  const currentZone = getZoneInfo(ratio);
 
   return (
     <section className="border-2 border-stone-900 dark:border-stone-400 bg-stone-100/40 dark:bg-stone-900/30 p-3.5 sm:p-5 h-full flex flex-col justify-between">
@@ -44,19 +86,13 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
             </h2>
           </div>
           <div className="text-right shrink-0">
-            <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 border ${
-              ratio > 1
-                ? 'border-red-800 text-red-800 dark:text-red-400'
-                : ratio >= 0.8
-                ? 'border-amber-800 text-amber-800 dark:text-amber-400'
-                : 'border-stone-900 dark:border-stone-300 text-stone-900 dark:text-stone-100'
-            }`}>
-              {ratio > 1 ? `Over Budget (+${percentNumber - 100}%)` : `${percentNumber}% Used`}
+            <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 border ${currentZone.badgeClass}`}>
+              {currentZone.label}
             </span>
           </div>
         </div>
 
-      {/* Engraved Semicircle Gauge SVG */}
+      {/* Engraved Semicircle Gauge SVG with Green, Yellow, Orange, Red Zones */}
       <div className="relative flex flex-col items-center justify-center py-1">
         <svg viewBox="0 0 200 120" className="w-full max-w-[280px] h-auto aspect-[200/120] select-none">
           {/* Outer dial ring */}
@@ -68,7 +104,7 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
             strokeWidth="1"
           />
 
-          {/* Background track */}
+          {/* Background base track */}
           <path
             d="M 20 100 A 80 80 0 0 1 180 100"
             fill="none"
@@ -77,29 +113,49 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
             strokeWidth={strokeWidth}
           />
 
-          {/* Category Segments */}
-          {expenseCategories.map(([catId, amount]) => {
-            const cat = catMap.get(catId);
-            const color = cat ? cat.color : '#57534e';
-            const catRatio = totalSpendingBudget > 0 ? amount / totalSpendingBudget : 0;
-            const segmentLength = Math.min(catRatio, 1) * arcLength;
-            const offset = -(accumulatedRatio * arcLength);
+          {/* 1. Green Zone (0% - 50%) */}
+          <path
+            d="M 20 100 A 80 80 0 0 1 180 100"
+            fill="none"
+            stroke="#16a34a"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${0.5 * arcLength} ${arcLength}`}
+            strokeDashoffset="0"
+            className={`transition-opacity duration-300 ${ratio >= 0.5 ? 'opacity-100' : 'opacity-90'}`}
+          />
 
-            accumulatedRatio += catRatio;
+          {/* 2. Yellow Zone (50% - 75%) */}
+          <path
+            d="M 20 100 A 80 80 0 0 1 180 100"
+            fill="none"
+            stroke="#ca8a04"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${0.25 * arcLength} ${arcLength}`}
+            strokeDashoffset={-(0.5 * arcLength)}
+            className={`transition-opacity duration-300 ${ratio >= 0.5 ? 'opacity-100' : 'opacity-35'}`}
+          />
 
-            return (
-              <path
-                key={catId}
-                d="M 20 100 A 80 80 0 0 1 180 100"
-                fill="none"
-                stroke={color}
-                strokeWidth={strokeWidth}
-                strokeDasharray={`${segmentLength} ${arcLength}`}
-                strokeDashoffset={offset}
-                className="transition-all duration-500"
-              />
-            );
-          })}
+          {/* 3. Orange Zone (75% - 90%) */}
+          <path
+            d="M 20 100 A 80 80 0 0 1 180 100"
+            fill="none"
+            stroke="#ea580c"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${0.15 * arcLength} ${arcLength}`}
+            strokeDashoffset={-(0.75 * arcLength)}
+            className={`transition-opacity duration-300 ${ratio >= 0.75 ? 'opacity-100' : 'opacity-35'}`}
+          />
+
+          {/* 4. Red Zone (90% - 100%) */}
+          <path
+            d="M 20 100 A 80 80 0 0 1 180 100"
+            fill="none"
+            stroke="#dc2626"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${0.10 * arcLength} ${arcLength}`}
+            strokeDashoffset={-(0.9 * arcLength)}
+            className={`transition-opacity duration-300 ${ratio >= 0.9 ? 'opacity-100' : 'opacity-35'}`}
+          />
 
           {/* Engraved Dial Needle */}
           <g transform={`rotate(${needleAngle} 100 100)`} className="transition-transform duration-700 ease-out">
@@ -116,27 +172,49 @@ export const SpendingGauge: React.FC<SpendingGaugeProps> = ({ summary, categorie
             />
             {/* Arrowhead */}
             <polygon
-              points="100,20 96,30 104,30"
-              fill="currentColor"
-              className="text-stone-900 dark:text-stone-100"
+              points="100,18 95,30 105,30"
+              fill={currentZone.needleColor}
+              stroke="currentColor"
+              className="stroke-stone-900 dark:stroke-stone-100"
+              strokeWidth="1"
             />
           </g>
 
           {/* Center Pivot Rivet */}
           <circle cx="100" cy="100" r="7" className="fill-stone-900 dark:fill-stone-100" />
-          <circle cx="100" cy="100" r="3" className="fill-stone-100 dark:fill-stone-900" />
+          <circle cx="100" cy="100" r="3" fill={currentZone.needleColor} />
 
           {/* Scale Markers */}
           <text x="18" y="114" className="text-[9px] font-bold font-mono-num fill-stone-600 dark:fill-stone-400" textAnchor="middle">
             0%
           </text>
-          <text x="100" y="14" className="text-[9px] font-bold font-mono-num fill-stone-600 dark:fill-stone-400" textAnchor="middle">
+          <text x="100" y="13" className="text-[9px] font-bold font-mono-num fill-stone-600 dark:fill-stone-400" textAnchor="middle">
             50%
           </text>
           <text x="182" y="114" className="text-[9px] font-bold font-mono-num fill-stone-600 dark:fill-stone-400" textAnchor="middle">
             100%
           </text>
         </svg>
+
+        {/* 4-Zone Color Legend Strip */}
+        <div className="grid grid-cols-4 gap-1 text-[10px] font-bold uppercase tracking-wider text-center pt-2 mt-2 border-t border-dashed border-stone-300 dark:border-stone-700 w-full">
+          <div className="flex items-center justify-center gap-1 text-emerald-800 dark:text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
+            <span>0–50%</span>
+          </div>
+          <div className="flex items-center justify-center gap-1 text-yellow-800 dark:text-yellow-400">
+            <span className="w-2 h-2 rounded-full bg-yellow-500 shrink-0" />
+            <span>50–75%</span>
+          </div>
+          <div className="flex items-center justify-center gap-1 text-orange-800 dark:text-orange-400">
+            <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
+            <span>75–90%</span>
+          </div>
+          <div className="flex items-center justify-center gap-1 text-red-800 dark:text-red-400">
+            <span className="w-2 h-2 rounded-full bg-red-600 shrink-0" />
+            <span>&gt;90%</span>
+          </div>
+        </div>
 
         {/* Central Readout */}
         <div className="text-center mt-2 border-t border-dashed border-stone-400 dark:border-stone-600 pt-2 w-full">
