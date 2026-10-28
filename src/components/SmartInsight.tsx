@@ -8,8 +8,6 @@ interface SmartInsightProps {
 
 export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
   const insight = useMemo(() => {
-    const totalSpendBudget = summary.needsBudget + summary.wantsBudget;
-    const remainingSpending = totalSpendBudget - summary.totalSpent;
     const needsRatio = summary.needsBudget > 0 ? summary.needsSpent / summary.needsBudget : 0;
     const wantsRatio = summary.wantsBudget > 0 ? summary.wantsSpent / summary.wantsBudget : 0;
     const savingsRatio = summary.savingsBudget > 0 ? summary.savingsSaved / summary.savingsBudget : 0;
@@ -19,10 +17,9 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
       const over = summary.wantsSpent - summary.wantsBudget;
       return {
         tone: 'danger' as const,
-        headline: `DISCRETIONARY DEFICIT: WANTS EXCEED QUOTA BY ${formatIDR(over)}`,
-        subhead: 'Household lifestyle outlays outpace 30% budgetary limit.',
-        status: 'DEFICIT ALERT',
-        message: `Discretionary spending has exceeded the 30% ceiling by ${formatIDR(over)}. Pause non-essential commerce to safeguard capital savings.`,
+        headline: `Wants Over Budget by ${formatIDR(over)}`,
+        subhead: 'Lifestyle spending has exceeded your 30% limit for this month.',
+        status: 'OVER BUDGET',
       };
     }
 
@@ -31,10 +28,9 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
       const over = summary.needsSpent - summary.needsBudget;
       return {
         tone: 'danger' as const,
-        headline: `LIVING COSTS SURPASS 50% CEILING BY ${formatIDR(over)}`,
-        subhead: 'Essential obligations squeeze discretionary and reserve capacity.',
-        status: 'CEILING BREACH',
-        message: `Living necessities have surged ${formatIDR(over)} beyond planned thresholds. Immediate review of recurring liabilities is advised.`,
+        headline: `Needs Over Budget by ${formatIDR(over)}`,
+        subhead: 'Essential living expenses have exceeded your 50% limit for this month.',
+        status: 'OVER BUDGET',
       };
     }
 
@@ -43,10 +39,9 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
       const remainingWants = summary.wantsBudget - summary.wantsSpent;
       return {
         tone: 'warning' as const,
-        headline: `LIFESTYLE OUTFLOW AT CRITICAL LIMIT (${Math.round(wantsRatio * 100)}%)`,
-        subhead: `Narrow surplus of ${formatIDR(remainingWants)} remains for discretionary expenses.`,
-        status: 'CAUTION ADV.',
-        message: `With ${Math.round(wantsRatio * 100)}% of lifestyle funding exhausted, prudent pacing is recommended until next month's deposit.`,
+        headline: `Wants Near Limit (${Math.round(wantsRatio * 100)}%)`,
+        subhead: `${formatIDR(remainingWants)} remaining for discretionary spending.`,
+        status: 'NEAR LIMIT',
       };
     }
 
@@ -54,20 +49,18 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
     if (savingsRatio >= 1 && needsRatio <= 0.9 && wantsRatio <= 0.8) {
       return {
         tone: 'success' as const,
-        headline: `FISCAL TRIUMPH: 20% SAVINGS TARGET SECURED`,
-        subhead: `Statutory ${formatIDR(summary.savingsBudget)} capital reserve transferred into liquid savings.`,
-        status: 'FULLY FUNDED',
-        message: `Full statutory 20% savings target is safely secured. An operating cushion of ${formatIDR(remainingSpending)} remains available.`,
+        headline: 'Savings Target Reached',
+        subhead: `${formatIDR(summary.savingsBudget)} allocated to savings this month.`,
+        status: 'ON TARGET',
       };
     }
 
     // Condition 5: Normal healthy state
     return {
       tone: 'neutral' as const,
-      headline: `FINANCIAL EQUILIBRIUM: 50/30/20 ALLOCATION STEADY`,
-      subhead: `Outlays stand at ${Math.round(totalSpendBudget > 0 ? (summary.totalSpent / totalSpendBudget) * 100 : 0)}% of operating ceiling.`,
-      status: 'EQUILIBRIUM',
-      message: `Domestic accounts adhere to the standard 50/30/20 tripartite doctrine with disciplined operating margins.`,
+      headline: 'Budget On Track',
+      subhead: `Spending is within your planned 50/30/20 allocation.`,
+      status: 'ON TRACK',
     };
   }, [summary]);
 
@@ -118,7 +111,7 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
 
           <div className="p-2 border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
             <span className="text-xs font-bold uppercase text-stone-600 dark:text-stone-400 block">
-              Total Outflow
+              Total Spent
             </span>
             <span className="font-mono-num font-black text-xs sm:text-sm text-stone-950 dark:text-stone-50 block mt-0.5">
               {formatIDR(summary.totalSpent)}
@@ -127,7 +120,7 @@ export const SmartInsight: React.FC<SmartInsightProps> = ({ summary }) => {
 
           <div className="p-2 border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
             <span className="text-xs font-bold uppercase text-stone-600 dark:text-stone-400 block">
-              Capital Saved
+              Total Saved
             </span>
             <span className="font-mono-num font-black text-xs sm:text-sm text-stone-950 dark:text-stone-50 block mt-0.5">
               {formatIDR(summary.savingsSaved)}

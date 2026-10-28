@@ -4,7 +4,7 @@ import { parseIDR, formatIDR } from '../utils/idr';
 import { categorize } from '../utils/categorizer';
 import { CategoryIcon } from './CategoryIcon';
 import { DateSelector } from './DateSelector';
-import { X, ChevronDown } from 'lucide-react';
+import { X, ChevronDown, AlertTriangle } from 'lucide-react';
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -41,10 +41,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const [date, setDate] = useState(() => defaultDate || new Date().toISOString().split('T')[0]);
   const [note, setNote] = useState('');
   const [rememberMerchant, setRememberMerchant] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       if (defaultDate) setDate(defaultDate);
+      setErrorMsg(null);
     }
   }, [isOpen, defaultDate]);
 
@@ -99,11 +101,11 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (parsedAmount <= 0) {
-      alert('Please enter a valid amount greater than 0.');
+      setErrorMsg('Please enter a valid amount greater than 0.');
       return;
     }
     if (!description.trim()) {
-      alert('Please enter a description or merchant name.');
+      setErrorMsg('Please enter a description or merchant name.');
       return;
     }
 
@@ -125,6 +127,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     setAutoDetectedCategory(null);
     setIsManualCategoryOpen(false);
     setNote('');
+    setErrorMsg(null);
     onClose();
   };
 
@@ -150,10 +153,17 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {errorMsg && (
+            <div className="p-2.5 border border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
           {/* Amount Field */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-              Disbursed Sum / Amount (IDR)
+              Amount (IDR)
             </label>
             <div className="relative">
               <span className="absolute left-3 top-2.5 text-sm font-bold text-stone-500 pointer-events-none">
@@ -163,7 +173,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                 type="text"
                 value={amountRaw}
                 onChange={(e) => handleAmountChange(e.target.value)}
-                placeholder="e.g. 500rb, 1.5jt, 85.000"
+                placeholder="e.g. 50rb, 100rb, 1.5jt"
                 className="w-full pl-10 pr-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-base font-bold font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
                 autoFocus
                 required
@@ -173,7 +183,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             {/* Live parsed badge & Shortcut chips */}
             <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
               <span className="text-xs font-mono-num font-bold text-stone-700 dark:text-stone-300">
-                {parsedAmount > 0 ? `PARSED: ${formatIDR(parsedAmount)}` : 'SHORTCUTS: rb, jt, k'}
+                {parsedAmount > 0 ? `Amount: ${formatIDR(parsedAmount)}` : 'Shortcuts: rb, jt, k'}
               </span>
               <div className="flex flex-wrap gap-1 text-[11px]">
                 {['25rb', '50rb', '100rb', '250rb', '500rb', '1jt'].map((chip) => (
@@ -193,7 +203,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           {/* Description & Auto-categorizer */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-              Merchant / Transaction Description
+              Description / Merchant
             </label>
             <input
               type="text"
@@ -208,7 +218,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             {autoDetectedCategory && !isManualCategoryOpen && (
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400">
-                  Detected Pillar:
+                  Category:
                 </span>
                 <button
                   type="button"
@@ -230,7 +240,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
               <div className="mt-2 space-y-1.5">
                 <div className="flex justify-between items-center text-xs">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                    Assign Classification:
+                    Category:
                   </span>
                   {autoDetectedCategory && (
                     <button
@@ -250,8 +260,8 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                   }}
                   className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-xs font-bold text-stone-900 dark:text-stone-100 focus:outline-none"
                 >
-                  <option value="">❓ Uncategorized (Audit Later)</option>
-                  <optgroup label="NEEDS (Living Essentials 50%)">
+                  <option value="">❓ Uncategorized</option>
+                  <optgroup label="NEEDS (50%)">
                     {categories
                       .filter((c) => c.bucket === 'needs')
                       .map((c) => (
@@ -260,7 +270,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                         </option>
                       ))}
                   </optgroup>
-                  <optgroup label="WANTS (Discretionary 30%)">
+                  <optgroup label="WANTS (30%)">
                     {categories
                       .filter((c) => c.bucket === 'wants')
                       .map((c) => (
@@ -269,7 +279,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                         </option>
                       ))}
                   </optgroup>
-                  <optgroup label="SAVINGS (Capital Reserves 20%)">
+                  <optgroup label="SAVINGS (20%)">
                     {categories
                       .filter((c) => c.bucket === 'savings')
                       .map((c) => (

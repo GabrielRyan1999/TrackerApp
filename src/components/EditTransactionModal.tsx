@@ -3,7 +3,7 @@ import type { Category, Transaction, TransactionType } from '../types/budget';
 import { parseIDR, formatIDR } from '../utils/idr';
 import { CategoryIcon } from './CategoryIcon';
 import { DateSelector } from './DateSelector';
-import { X } from 'lucide-react';
+import { X, AlertTriangle } from 'lucide-react';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -27,19 +27,21 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(transaction.categoryId);
   const [date, setDate] = useState(transaction.date);
   const [note, setNote] = useState(transaction.note || '');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
 
   // Keep state synced when transaction prop changes
   useEffect(() => {
     if (transaction) {
-      setAmountRaw(String(transaction.amount));
+      setAmountRaw(transaction.amount > 0 ? transaction.amount.toLocaleString('id-ID') : '');
       setParsedAmount(transaction.amount);
       setDescription(transaction.description);
       setType(transaction.type);
       setSelectedCategoryId(transaction.categoryId);
       setDate(transaction.date);
       setNote(transaction.note || '');
+      setErrorMsg(null);
     }
   }, [transaction]);
 
@@ -66,11 +68,11 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (parsedAmount <= 0) {
-      alert('Please enter a valid amount greater than 0.');
+      setErrorMsg('Please enter a valid amount greater than 0.');
       return;
     }
     if (!description.trim()) {
-      alert('Please enter a description or merchant name.');
+      setErrorMsg('Please enter a description or merchant name.');
       return;
     }
 
@@ -85,6 +87,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
     };
 
     onUpdateTransaction(updatedTx);
+    setErrorMsg(null);
     onClose();
   };
 
@@ -108,6 +111,12 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {errorMsg && (
+            <div className="p-2.5 border border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
           {/* Amount Field */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
@@ -131,7 +140,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
             {/* Live parsed badge & Shortcut chips */}
             <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
               <span className="text-xs font-mono-num font-bold text-stone-700 dark:text-stone-300">
-                {parsedAmount > 0 ? `CURRENT: ${formatIDR(parsedAmount)}` : 'SHORTCUTS: rb, jt, k'}
+                {parsedAmount > 0 ? `Amount: ${formatIDR(parsedAmount)}` : 'Shortcuts: rb, jt, k'}
               </span>
               <div className="flex flex-wrap gap-1 text-[11px]">
                 {['25rb', '50rb', '100rb', '250rb', '500rb', '1jt'].map((chip) => (
@@ -151,7 +160,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
           {/* Description */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
-              Merchant / Transaction Description
+              Description / Merchant
             </label>
             <input
               type="text"
@@ -166,7 +175,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
           {/* Transaction Type Radio Tabs */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1.5">
-              Disbursement Type
+              Type
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -210,7 +219,7 @@ export const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                  Assign Pillar / Category
+                  Category:
                 </label>
                 {selectedCategory && (
                   <span className="flex items-center gap-1.5 text-xs text-stone-600 dark:text-stone-400">

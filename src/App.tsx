@@ -30,13 +30,13 @@ function BudgetTrackerApp() {
   const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
   const isFirstSyncDoneRef = useRef<boolean>(false);
 
-  // Theme state with localStorage persistence
+  // Theme state with localStorage persistence (Default to Light Mode)
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
       const savedTheme = localStorage.getItem('budget_tracker_theme');
       if (savedTheme) return savedTheme === 'dark';
     } catch {}
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return false; // Default to Light Mode
   });
 
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
@@ -323,8 +323,8 @@ function BudgetTrackerApp() {
           <h2 className="font-headline font-black text-xl uppercase text-stone-950 dark:text-stone-50">
             The Daily News
           </h2>
-          <p className="text-xs text-stone-600 dark:text-stone-400 italic">
-            Retrieving personal domestic treasury ledger...
+          <p className="text-xs text-stone-600 dark:text-stone-400">
+            Loading your budget data...
           </p>
         </div>
       </div>

@@ -284,7 +284,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
-                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 dark:placeholder:text-stone-400 focus:outline-none"
                     />
                   </div>
 
@@ -312,7 +312,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full px-3 py-2 pr-10 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                        className="w-full px-3 py-2 pr-10 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 dark:placeholder:text-stone-400 focus:outline-none"
                       />
                       <button
                         type="button"
@@ -349,7 +349,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
-                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 dark:placeholder:text-stone-400 focus:outline-none"
                     />
                   </div>
 
@@ -364,7 +364,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full px-3 py-2 pr-10 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                        className="w-full px-3 py-2 pr-10 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 dark:placeholder:text-stone-400 focus:outline-none"
                       />
                       <button
                         type="button"
@@ -386,7 +386,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 dark:placeholder:text-stone-400 focus:outline-none"
                     />
                   </div>
 
@@ -419,7 +419,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ isDark, onToggleTheme 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="name@example.com"
-                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
+                      className="w-full px-3 py-2 border border-stone-900 dark:border-stone-400 bg-white dark:bg-stone-950 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 dark:placeholder:text-stone-400 focus:outline-none"
                     />
                   </div>
 

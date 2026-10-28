@@ -24,14 +24,16 @@ export const PlanModal: React.FC<PlanModalProps> = ({
   const [needsPct, setNeedsPct] = useState(50);
   const [wantsPct, setWantsPct] = useState(30);
   const [savingsPct, setSavingsPct] = useState(20);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setParsedIncome(currentPlan.income);
-      setIncomeRaw(currentPlan.income.toString());
+      setIncomeRaw(currentPlan.income > 0 ? currentPlan.income.toLocaleString('id-ID') : '');
       setNeedsPct(currentPlan.split.needs);
       setWantsPct(currentPlan.split.wants);
       setSavingsPct(currentPlan.split.savings);
+      setErrorMsg(null);
     }
   }, [isOpen, currentPlan]);
 
@@ -39,6 +41,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
     setIncomeRaw(val);
     const parsed = parseIDR(val);
     setParsedIncome(parsed);
+    if (parsed > 0) setErrorMsg(null);
   };
 
   type BucketKey = 'needs' | 'wants' | 'savings';
@@ -146,11 +149,11 @@ export const PlanModal: React.FC<PlanModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (parsedIncome <= 0) {
-      alert('Please enter a valid monthly income.');
+      setErrorMsg('Please enter a valid monthly income greater than 0.');
       return;
     }
     if (!isTotal100) {
-      alert(`Allocation total must equal 100%! (Currently: ${totalPct}%)`);
+      setErrorMsg(`Allocation total must equal 100%! (Currently: ${totalPct}%)`);
       return;
     }
 
@@ -191,6 +194,13 @@ export const PlanModal: React.FC<PlanModalProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {errorMsg && (
+            <div className="p-2.5 border border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
           {/* Income Input */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
@@ -204,13 +214,18 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                 type="text"
                 value={incomeRaw}
                 onChange={(e) => handleIncomeChange(e.target.value)}
+                onBlur={() => {
+                  if (parsedIncome > 0) {
+                    setIncomeRaw(parsedIncome.toLocaleString('id-ID'));
+                  }
+                }}
                 placeholder="e.g. 5jt, 3.5jt, 2.5jt, 10jt"
                 className="w-full pl-10 pr-3 py-2 bg-stone-50 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 text-base font-bold font-mono-num text-stone-950 dark:text-stone-50 focus:outline-none"
                 required
               />
             </div>
-            <span className="text-xs font-mono-num font-bold text-stone-700 dark:text-stone-300 block mt-1">
-              {parsedIncome > 0 ? `Income: ${formatIDR(parsedIncome)}` : 'Shortcuts: 2.5jt, 3.5jt, 5jt, 10jt'}
+            <span className="text-[11px] text-stone-500 dark:text-stone-400 block mt-1">
+              Shortcuts: 2.5jt, 3.5jt, 5jt, 10jt, or type numbers directly
             </span>
           </div>
 
@@ -224,8 +239,8 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                 <button
                   key={preset}
                   type="button"
-                  onClick={() => handleIncomeChange(preset.toString())}
-                  className={`px-2 py-0.5 text-xs font-bold font-mono-num border transition ${
+                  onClick={() => handleIncomeChange(preset.toLocaleString('id-ID'))}
+                  className={`px-2.5 py-1 text-xs font-bold font-mono-num border transition ${
                     parsedIncome === preset
                       ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
                       : 'bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 border-stone-400 dark:border-stone-600 hover:bg-stone-300'
@@ -238,18 +253,22 @@ export const PlanModal: React.FC<PlanModalProps> = ({
           </div>
 
           {/* Allocation Ratios */}
-          <div className="pt-2 space-y-3.5">
+          <div className="pt-2 space-y-3">
             <div className="flex justify-between items-center text-xs pb-1 border-b border-stone-900 dark:border-stone-400">
-              <span className="font-headline font-bold text-xs uppercase text-stone-900 dark:text-stone-100">
-                Pillar Allocation Ratio (50/30/20 Standard)
+              <span className="font-bold text-xs uppercase tracking-wider text-stone-900 dark:text-stone-100">
+                Allocation Ratios
               </span>
-              <span className="font-bold uppercase tracking-wider px-2 py-0.5 border border-stone-900 dark:border-stone-400 bg-stone-200 dark:bg-stone-800 text-[11px]">
-                100% Balanced
+              <span className={`font-bold uppercase tracking-wider px-2 py-0.5 border text-[11px] ${
+                isTotal100
+                  ? 'border-stone-900 dark:border-stone-400 bg-stone-200 dark:bg-stone-800 text-stone-900 dark:text-stone-100'
+                  : 'border-red-700 bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
+              }`}>
+                {isTotal100 ? '100% Balanced' : `Total: ${totalPct}%`}
               </span>
             </div>
 
             {/* Live Visual Stacked Split Bar */}
-            <div className="space-y-1.5">
+            <div>
               <div className="w-full h-3 border border-stone-900 dark:border-stone-400 overflow-hidden flex bg-stone-200 dark:bg-stone-800">
                 <div
                   style={{ width: `${needsPct}%` }}
@@ -267,27 +286,24 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                   title={`Savings: ${savingsPct}%`}
                 />
               </div>
-              <p className="text-[11px] italic text-stone-600 dark:text-stone-400">
-                Sliders rebalance equally (50/50) to maintain 100%. Lock any bucket (🔒) to keep its quota stationary.
-              </p>
             </div>
 
-            {/* Needs Row */}
-            <div className="space-y-1">
+            {/* Needs Card */}
+            <div className="p-3 bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-700 space-y-2">
               <div className="flex items-center justify-between text-xs gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 truncate">
+                  <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50">
                     Needs
                   </span>
                   <button
                     type="button"
                     onClick={() => toggleLock('needs')}
-                    className={`p-1 border transition text-xs flex items-center gap-1 ${
+                    className={`p-1 border transition text-xs flex items-center justify-center ${
                       locked.needs
-                        ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400 font-bold'
-                        : 'border-stone-400 text-stone-500 hover:text-stone-900'
+                        ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
+                        : 'border-stone-300 dark:border-stone-700 text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
                     }`}
-                    title={locked.needs ? 'Locked: fixed ratio' : 'Unlocked: click to lock'}
+                    title={locked.needs ? 'Locked: fixed ratio' : 'Click to lock ratio'}
                     aria-label={locked.needs ? 'Unlock Needs' : 'Lock Needs'}
                   >
                     {locked.needs ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
@@ -295,7 +311,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <div className="flex items-center border border-stone-900 dark:border-stone-400 overflow-hidden bg-stone-50 dark:bg-stone-900">
+                  <div className="flex items-center border border-stone-900 dark:border-stone-400 overflow-hidden bg-white dark:bg-stone-950">
                     <button
                       type="button"
                       onClick={() => handleStep('needs', -5)}
@@ -342,22 +358,22 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               />
             </div>
 
-            {/* Wants Row */}
-            <div className="space-y-1">
+            {/* Wants Card */}
+            <div className="p-3 bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-700 space-y-2">
               <div className="flex items-center justify-between text-xs gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 truncate">
+                  <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50">
                     Wants
                   </span>
                   <button
                     type="button"
                     onClick={() => toggleLock('wants')}
-                    className={`p-1 border transition text-xs flex items-center gap-1 ${
+                    className={`p-1 border transition text-xs flex items-center justify-center ${
                       locked.wants
-                        ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400 font-bold'
-                        : 'border-stone-400 text-stone-500 hover:text-stone-900'
+                        ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
+                        : 'border-stone-300 dark:border-stone-700 text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
                     }`}
-                    title={locked.wants ? 'Locked: fixed ratio' : 'Unlocked: click to lock'}
+                    title={locked.wants ? 'Locked: fixed ratio' : 'Click to lock ratio'}
                     aria-label={locked.wants ? 'Unlock Wants' : 'Lock Wants'}
                   >
                     {locked.wants ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
@@ -365,7 +381,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <div className="flex items-center border border-stone-900 dark:border-stone-400 overflow-hidden bg-stone-50 dark:bg-stone-900">
+                  <div className="flex items-center border border-stone-900 dark:border-stone-400 overflow-hidden bg-white dark:bg-stone-950">
                     <button
                       type="button"
                       onClick={() => handleStep('wants', -5)}
@@ -412,22 +428,22 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               />
             </div>
 
-            {/* Savings Row */}
-            <div className="space-y-1">
+            {/* Savings Card */}
+            <div className="p-3 bg-stone-50 dark:bg-stone-900 border border-stone-300 dark:border-stone-700 space-y-2">
               <div className="flex items-center justify-between text-xs gap-2">
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 truncate">
+                  <span className="font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50">
                     Savings
                   </span>
                   <button
                     type="button"
                     onClick={() => toggleLock('savings')}
-                    className={`p-1 border transition text-xs flex items-center gap-1 ${
+                    className={`p-1 border transition text-xs flex items-center justify-center ${
                       locked.savings
-                        ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400 font-bold'
-                        : 'border-stone-400 text-stone-500 hover:text-stone-900'
+                        ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
+                        : 'border-stone-300 dark:border-stone-700 text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
                     }`}
-                    title={locked.savings ? 'Locked: fixed ratio' : 'Unlocked: click to lock'}
+                    title={locked.savings ? 'Locked: fixed ratio' : 'Click to lock ratio'}
                     aria-label={locked.savings ? 'Unlock Savings' : 'Lock Savings'}
                   >
                     {locked.savings ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
@@ -435,7 +451,7 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <div className="flex items-center border border-stone-900 dark:border-stone-400 overflow-hidden bg-stone-50 dark:bg-stone-900">
+                  <div className="flex items-center border border-stone-900 dark:border-stone-400 overflow-hidden bg-white dark:bg-stone-950">
                     <button
                       type="button"
                       onClick={() => handleStep('savings', -5)}
@@ -482,15 +498,18 @@ export const PlanModal: React.FC<PlanModalProps> = ({
               />
             </div>
 
-            {/* Preset split buttons */}
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-1.5 text-xs">
-              <div className="flex flex-wrap items-center gap-1">
+            {/* Presets */}
+            <div className="pt-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 block mb-1.5">
+                Ratio Presets:
+              </span>
+              <div className="flex flex-wrap gap-1.5 text-xs">
                 {[
-                  { label: '50/30/20 Standard', n: 50, w: 30, s: 20 },
-                  { label: '60/20/20 Essentials', n: 60, w: 20, s: 20 },
-                  { label: '70/20/10 High Cost', n: 70, w: 20, s: 10 },
-                  { label: '50/20/30 Wealth', n: 50, w: 20, s: 30 },
-                  { label: '40/30/30 Balanced', n: 40, w: 30, s: 30 },
+                  { label: '50/30/20 (Default)', n: 50, w: 30, s: 20 },
+                  { label: '60/20/20', n: 60, w: 20, s: 20 },
+                  { label: '70/20/10', n: 70, w: 20, s: 10 },
+                  { label: '50/20/30', n: 50, w: 20, s: 30 },
+                  { label: '40/30/30', n: 40, w: 30, s: 30 },
                 ].map((preset) => (
                   <button
                     key={preset.label}
@@ -501,28 +520,16 @@ export const PlanModal: React.FC<PlanModalProps> = ({
                       setSavingsPct(preset.s);
                       setLocked({ needs: false, wants: false, savings: false });
                     }}
-                    className={`px-2 py-0.5 text-xs font-bold uppercase border transition ${
+                    className={`px-2.5 py-1 text-xs font-bold font-mono-num border transition ${
                       needsPct === preset.n && wantsPct === preset.w && savingsPct === preset.s
                         ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-950 border-stone-900 dark:border-stone-400'
-                        : 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-400 hover:bg-stone-300'
+                        : 'bg-stone-200/80 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700'
                     }`}
                   >
                     {preset.label}
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setNeedsPct(50);
-                  setWantsPct(30);
-                  setSavingsPct(20);
-                  setLocked({ needs: false, wants: false, savings: false });
-                }}
-                className="text-xs text-stone-600 dark:text-stone-400 font-bold uppercase underline"
-              >
-                Reset Standard
-              </button>
             </div>
           </div>
 

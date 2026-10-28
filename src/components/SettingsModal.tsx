@@ -12,6 +12,7 @@ import {
   Sun,
   Moon,
   CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface SettingsModalProps {
@@ -54,13 +55,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [newCatColor, setNewCatColor] = useState('#57534e');
   const [newCatKeywords, setNewCatKeywords] = useState('');
 
-  // CSV Import states
+  // CSV Import and UI notification states
   const [csvPreview, setCsvPreview] = useState<{
     filename: string;
     count: number;
     transactions: Transaction[];
   } | null>(null);
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge');
+  const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isConfirmingReset, setIsConfirmingReset] = useState(false);
 
   if (!isOpen) return null;
 
@@ -92,6 +95,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setStatusMsg(null);
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
@@ -104,10 +108,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             transactions: parsed,
           });
         } else {
-          alert('No valid transactions found in CSV. Please ensure the file has Date, Description, and Amount columns.');
+          setStatusMsg({
+            type: 'error',
+            text: 'No valid transactions found in CSV. Please ensure the file has Date, Description, and Amount columns.',
+          });
         }
       } catch (err) {
-        alert('Failed to parse CSV file. Please check its formatting.');
+        setStatusMsg({
+          type: 'error',
+          text: 'Failed to parse CSV file. Please check its formatting.',
+        });
       }
     };
     reader.readAsText(file);
@@ -117,7 +127,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const handleConfirmImport = () => {
     if (!csvPreview) return;
     onImportTransactions(csvPreview.transactions, importMode);
-    alert(`Successfully imported ${csvPreview.count} transactions!`);
     setCsvPreview(null);
     onClose();
   };
@@ -128,19 +137,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between shrink-0 pb-2 border-b-2 border-stone-900 dark:border-stone-400">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-stone-600 dark:text-stone-400 block">
-              EDITORIAL ARCHIVE & PREFERENCES
-            </span>
             <h3 className="font-headline text-lg sm:text-xl font-black uppercase text-stone-950 dark:text-stone-50">
-              Gazette Archive & Settings
+              Settings & Data
             </h3>
           </div>
           <div className="flex items-center gap-1.5">
             <button
               onClick={onToggleTheme}
               className="w-8 h-8 flex items-center justify-center border border-stone-900 dark:border-stone-400 text-stone-900 dark:text-stone-100 hover:bg-stone-200 dark:hover:bg-stone-800 transition"
-              title={isDark ? 'Switch to daylight newsprint' : 'Switch to midnight broadsheet'}
-              aria-label="Toggle daylight/midnight mode"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              aria-label="Toggle Theme"
             >
               {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -184,9 +190,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
             }`}
           >
-            CSV Data Archive
+            CSV Data
           </button>
         </div>
+
+        {/* Inline status notice */}
+        {statusMsg && (
+          <div
+            className={`p-2.5 border text-xs flex items-start gap-2 ${
+              statusMsg.type === 'error'
+                ? 'border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300'
+                : 'border-emerald-800 bg-emerald-100/70 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300'
+            }`}
+          >
+            {statusMsg.type === 'error' ? (
+              <AlertTriangle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0 mt-0.5" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4 text-emerald-800 dark:text-emerald-400 shrink-0 mt-0.5" />
+            )}
+            <span>{statusMsg.text}</span>
+          </div>
+        )}
 
         {/* Tab Body */}
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">
@@ -198,7 +222,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2.5"
               >
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 block">
-                  Register Custom Commodity Category:
+                  Add New Category:
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                   <input
@@ -267,7 +291,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* List of categories */}
               <div className="space-y-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-400 block">
-                  Official Registered Categories:
+                  Registered Categories:
                 </span>
                 <div className="divide-y divide-stone-300 dark:divide-stone-700">
                   {categories.map((c) => (
@@ -293,7 +317,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                         <button
                           onClick={() => onDeleteCategory(c.id)}
                           className="w-7 h-7 flex items-center justify-center border border-stone-900 dark:border-stone-400 hover:bg-red-100 dark:hover:bg-red-950 text-stone-700 hover:text-red-800"
-                          title="Delete Custom Category"
+                          title="Delete Category"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -307,12 +331,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {activeTab === 'merchantMemory' && (
             <div className="space-y-3">
-              <p className="text-xs italic text-stone-600 dark:text-stone-400">
-                The gazette remembers the following merchants for automated ledger classification.
+              <p className="text-xs text-stone-600 dark:text-stone-400">
+                Automatic category rules for recognized merchants.
               </p>
               {Object.keys(merchantMemory).length === 0 ? (
                 <div className="text-center py-8 text-xs text-stone-500 italic">
-                  No remembered merchants recorded in archive yet
+                  No remembered merchants yet
                 </div>
               ) : (
                 <div className="divide-y divide-stone-300 dark:divide-stone-700">
@@ -348,17 +372,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Export Data */}
               <div className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 block">
-                  Export Public Record (CSV Spreadsheet)
+                  Export Transactions (CSV)
                 </span>
                 <p className="text-xs text-stone-600 dark:text-stone-400">
-                  Download all recorded transactions as an official CSV ledger. Fully readable in Excel, Google Sheets, or for importing back into the Gazette.
+                  Download all recorded transactions as a CSV spreadsheet for Excel or Google Sheets.
                 </p>
                 <button
                   onClick={() => exportToCSV(appData.transactions, categories)}
                   className="w-full py-2 px-3 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition flex items-center justify-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Download Ledger CSV ({appData.transactions.length} entries)</span>
+                  <span>Download CSV ({appData.transactions.length} entries)</span>
                 </button>
               </div>
 
@@ -368,7 +392,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   Import Transactions (CSV)
                 </span>
                 <p className="text-xs text-stone-600 dark:text-stone-400">
-                  Upload a CSV spreadsheet with transactions. Automatically parses Date, Description, and Amount columns.
+                  Upload a CSV file containing transactions (Date, Description, Amount).
                 </p>
 
                 {csvPreview ? (
@@ -384,7 +408,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </div>
 
                     <div className="space-y-1.5 text-xs text-stone-800 dark:text-stone-200 bg-stone-50 dark:bg-stone-900 p-2 border border-stone-400">
-                      <span className="font-bold uppercase tracking-wider block">Select Ingestion Protocol:</span>
+                      <span className="font-bold uppercase tracking-wider block">Import mode:</span>
                       <label className="flex items-start gap-2 cursor-pointer">
                         <input
                           type="radio"
@@ -394,7 +418,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           className="mt-0.5"
                         />
                         <span>
-                          <strong>Merge</strong> — Preserve existing records and append new entries without duplication.
+                          <strong>Merge</strong> — Keep existing transactions and add new ones.
                         </span>
                       </label>
                       <label className="flex items-start gap-2 cursor-pointer">
@@ -406,7 +430,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           className="mt-0.5"
                         />
                         <span>
-                          <strong>Replace</strong> — Overwrite entire history with this CSV ledger file.
+                          <strong>Replace</strong> — Overwrite all transactions with this file.
                         </span>
                       </label>
                     </div>
@@ -429,7 +453,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 ) : (
                   <label className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-stone-200 hover:bg-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider cursor-pointer text-stone-900 dark:text-stone-100 transition">
                     <Upload className="w-4 h-4" />
-                    <span>Upload CSV Ledger File</span>
+                    <span>Upload CSV File</span>
                     <input
                       type="file"
                       accept=".csv,text/csv"
@@ -443,24 +467,45 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Reset Data */}
               <div className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-red-800 dark:text-red-400 block">
-                  Expunge All Records (Reset to Factory Defaults)
+                  Reset All Data
                 </span>
                 <p className="text-xs text-stone-600 dark:text-stone-400">
-                  Permanently purge all recorded transactions, budget allocations, and custom merchant memories from local browser storage.
+                  Delete all transactions, budget plans, and merchant rules from local storage.
                 </p>
-                <button
-                  onClick={() => {
-                    if (confirm('Are you sure you want to reset all data to default? All recorded transactions will be deleted.')) {
-                      onResetData();
-                      alert('Data has been reset to defaults.');
-                      onClose();
-                    }
-                  }}
-                  className="px-4 py-2 bg-red-800 hover:bg-red-900 text-white font-bold uppercase tracking-wider text-xs border border-stone-900 transition flex items-center gap-2"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>Expunge Archive & Reset Defaults</span>
-                </button>
+
+                {isConfirmingReset ? (
+                  <div className="p-3 bg-red-100 dark:bg-red-950/60 border border-red-700 space-y-2">
+                    <p className="text-xs font-bold text-red-900 dark:text-red-200">
+                      Are you sure? All recorded transactions and custom settings will be deleted.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          onResetData();
+                          setIsConfirmingReset(false);
+                          onClose();
+                        }}
+                        className="px-3 py-1.5 bg-red-800 hover:bg-red-900 text-white font-bold uppercase text-xs transition"
+                      >
+                        Yes, Delete All
+                      </button>
+                      <button
+                        onClick={() => setIsConfirmingReset(false)}
+                        className="px-3 py-1.5 border border-stone-900 dark:border-stone-400 text-xs font-bold uppercase text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsConfirmingReset(true)}
+                    className="px-4 py-2 bg-red-800 hover:bg-red-900 text-white font-bold uppercase tracking-wider text-xs border border-stone-900 transition flex items-center gap-2"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span>Reset to Defaults</span>
+                  </button>
+                )}
               </div>
             </div>
           )}
