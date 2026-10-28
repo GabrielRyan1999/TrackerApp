@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Category, Bucket, Transaction } from '../types/budget';
 import type { AppData } from '../utils/storage';
 import { exportToCSV, parseCSV } from '../utils/storage';
@@ -13,6 +13,8 @@ import {
   Moon,
   CheckCircle2,
   AlertTriangle,
+  MessageSquare,
+  Send,
 } from 'lucide-react';
 
 interface SettingsModalProps {
@@ -30,6 +32,7 @@ interface SettingsModalProps {
   onToggleTheme: () => void;
   themeMode?: 'modern' | 'newspaper';
   onToggleThemeMode?: () => void;
+  userEmail?: string | null;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -45,8 +48,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onResetData,
   isDark,
   onToggleTheme,
+  userEmail,
 }) => {
-  const [activeTab, setActiveTab] = useState<'categories' | 'merchantMemory' | 'data'>('categories');
+  const [activeTab, setActiveTab] = useState<'categories' | 'merchantMemory' | 'data' | 'feedback'>('categories');
 
   // Form states for adding custom category
   const [newCatName, setNewCatName] = useState('');
@@ -64,6 +68,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge');
   const [statusMsg, setStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isConfirmingReset, setIsConfirmingReset] = useState(false);
+
+  // Feedback form states
+  const [feedbackName, setFeedbackName] = useState('');
+  const [feedbackEmail, setFeedbackEmail] = useState('');
+  const [feedbackCategory, setFeedbackCategory] = useState('General Feedback');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (userEmail && !feedbackEmail) {
+        setFeedbackEmail(userEmail);
+      }
+      setFeedbackError(null);
+    }
+  }, [isOpen, userEmail]);
 
   if (!isOpen) return null;
 
@@ -131,6 +153,48 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     onClose();
   };
 
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!feedbackEmail.trim() || !feedbackMessage.trim()) return;
+
+    setIsSubmittingFeedback(true);
+    setFeedbackError(null);
+
+    try {
+      const res = await fetch('https://formspree.io/f/myeyyyaj', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: feedbackName.trim() || 'Anonymous',
+          email: feedbackEmail.trim(),
+          category: feedbackCategory,
+          message: feedbackMessage.trim(),
+          source: 'The Daily News - 50/30/20 Budget Tracker',
+          submittedAt: new Date().toISOString(),
+        }),
+      });
+
+      if (res.ok) {
+        setFeedbackSent(true);
+        setFeedbackMessage('');
+      } else {
+        const data = await res.json().catch(() => null);
+        if (data && data.errors && data.errors.length > 0) {
+          setFeedbackError(data.errors.map((err: { message: string }) => err.message).join(', '));
+        } else {
+          setFeedbackError('Unable to send feedback right now. Please try again.');
+        }
+      }
+    } catch {
+      setFeedbackError('Network error. Please check your internet connection.');
+    } finally {
+      setIsSubmittingFeedback(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="bg-[#f4efe4] dark:bg-[#161513] border-2 border-stone-900 dark:border-stone-400 max-w-xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col text-stone-950 dark:text-stone-50">
@@ -161,10 +225,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider shrink-0">
+        <div className="flex border-b border-stone-900 dark:border-stone-400 text-xs font-bold uppercase tracking-wider shrink-0 overflow-x-auto">
           <button
             onClick={() => setActiveTab('categories')}
-            className={`px-3 sm:px-4 py-2 border-b-2 transition ${
+            className={`px-2.5 sm:px-4 py-2 border-b-2 transition whitespace-nowrap ${
               activeTab === 'categories'
                 ? 'border-stone-900 dark:border-stone-100 text-stone-950 dark:text-stone-50 bg-stone-200/60 dark:bg-stone-800/60'
                 : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
@@ -174,7 +238,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('merchantMemory')}
-            className={`px-3 sm:px-4 py-2 border-b-2 transition ${
+            className={`px-2.5 sm:px-4 py-2 border-b-2 transition whitespace-nowrap ${
               activeTab === 'merchantMemory'
                 ? 'border-stone-900 dark:border-stone-100 text-stone-950 dark:text-stone-50 bg-stone-200/60 dark:bg-stone-800/60'
                 : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
@@ -184,13 +248,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('data')}
-            className={`px-3 sm:px-4 py-2 border-b-2 transition ${
+            className={`px-2.5 sm:px-4 py-2 border-b-2 transition whitespace-nowrap ${
               activeTab === 'data'
                 ? 'border-stone-900 dark:border-stone-100 text-stone-950 dark:text-stone-50 bg-stone-200/60 dark:bg-stone-800/60'
                 : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
             }`}
           >
             CSV Data
+          </button>
+          <button
+            onClick={() => setActiveTab('feedback')}
+            className={`px-2.5 sm:px-4 py-2 border-b-2 transition whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'feedback'
+                ? 'border-stone-900 dark:border-stone-100 text-stone-950 dark:text-stone-50 bg-stone-200/60 dark:bg-stone-800/60'
+                : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900'
+            }`}
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Feedback</span>
           </button>
         </div>
 
@@ -505,6 +580,127 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <RotateCcw className="w-4 h-4" />
                     <span>Reset to Defaults</span>
                   </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'feedback' && (
+            <div className="space-y-4">
+              <div className="p-3.5 bg-stone-100 dark:bg-stone-900 border border-stone-900 dark:border-stone-400 space-y-3">
+                <div className="border-b border-stone-300 dark:border-stone-700 pb-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-stone-950 dark:text-stone-50 block">
+                    Feedback for Chromaksa Studio
+                  </span>
+                  <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
+                    Have an idea, found a bug, or want to share your thoughts? Send your message directly to our team.
+                  </p>
+                </div>
+
+                {feedbackSent ? (
+                  <div className="py-6 px-4 text-center space-y-3 border border-emerald-700 bg-emerald-50 dark:bg-emerald-950/30">
+                    <div className="w-10 h-10 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300">
+                      <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-emerald-900 dark:text-emerald-200 uppercase tracking-wider">
+                        Feedback Sent!
+                      </h4>
+                      <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-1 max-w-[45ch] mx-auto">
+                        Thank you! Your feedback has been sent directly to the Chromaksa Studio team.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFeedbackSent(false)}
+                      className="px-4 py-1.5 border border-emerald-800 dark:border-emerald-400 text-xs font-bold uppercase tracking-wider hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition"
+                    >
+                      Send Another Note
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleFeedbackSubmit} className="space-y-3">
+                    {feedbackError && (
+                      <div className="p-2.5 border border-red-800 bg-red-100/70 dark:bg-red-950/40 text-red-900 dark:text-red-300 text-xs flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-red-800 dark:text-red-400 shrink-0" />
+                        <span>{feedbackError}</span>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                          Name (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={feedbackName}
+                          onChange={(e) => setFeedbackName(e.target.value)}
+                          placeholder="e.g. Budi"
+                          className="w-full px-3 py-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 focus:outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                          Email <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={feedbackEmail}
+                          onChange={(e) => setFeedbackEmail(e.target.value)}
+                          placeholder="name@example.com"
+                          className="w-full px-3 py-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs font-mono-num text-stone-950 dark:text-stone-50 placeholder:text-stone-500 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                        Category / Topic
+                      </label>
+                      <select
+                        value={feedbackCategory}
+                        onChange={(e) => setFeedbackCategory(e.target.value)}
+                        className="w-full px-3 py-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs font-bold text-stone-950 dark:text-stone-50 focus:outline-none"
+                      >
+                        <option value="General Feedback">💬 General Feedback</option>
+                        <option value="Feature Request">💡 Feature Request / Idea</option>
+                        <option value="Bug Report">🐛 Bug / Issue Report</option>
+                        <option value="Design & Typography">🎨 Design & Typography</option>
+                        <option value="Other">🏷️ Other</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 mb-1">
+                        Message <span className="text-red-600">*</span>
+                      </label>
+                      <textarea
+                        required
+                        rows={4}
+                        value={feedbackMessage}
+                        onChange={(e) => setFeedbackMessage(e.target.value)}
+                        placeholder="Write your feedback, ideas, or report here..."
+                        className="w-full px-3 py-2 bg-stone-50 dark:bg-stone-800 border border-stone-900 dark:border-stone-400 text-xs text-stone-950 dark:text-stone-50 placeholder:text-stone-500 focus:outline-none resize-none"
+                      />
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+                      <span className="text-[11px] text-stone-500 dark:text-stone-400">
+                        Delivered directly to Chromaksa Studio
+                      </span>
+                      <button
+                        type="submit"
+                        disabled={isSubmittingFeedback || !feedbackMessage.trim() || !feedbackEmail.trim()}
+                        className="px-5 py-2 bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 font-bold uppercase tracking-wider text-xs border border-stone-900 dark:border-stone-400 transition flex items-center justify-center gap-1.5 disabled:opacity-50"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>{isSubmittingFeedback ? 'Sending...' : 'Send Feedback'}</span>
+                      </button>
+                    </div>
+                  </form>
                 )}
               </div>
             </div>

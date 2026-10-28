@@ -452,6 +452,7 @@ function BudgetTrackerApp() {
         onToggleTheme={() => setIsDark((prev) => !prev)}
         themeMode={themeMode}
         onToggleThemeMode={() => setThemeMode((prev) => (prev === 'newspaper' ? 'modern' : 'newspaper'))}
+        userEmail={user?.email}
       />
 
       <AuthModal
