@@ -15,6 +15,7 @@ import { PlanModal } from './components/PlanModal';
 import { SettingsModal } from './components/SettingsModal';
 import { AuthModal } from './components/AuthModal';
 import { LandingPage } from './components/LandingPage';
+import { NotFoundPage } from './components/NotFoundPage';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -53,6 +54,31 @@ function BudgetTrackerApp() {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [legalType, setLegalType] = useState<'privacy' | 'terms' | null>(null);
+
+  // Path state for simple client-side routing & 404 detection
+  const [currentPath, setCurrentPath] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.pathname;
+    }
+    return '/';
+  });
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleGoHome = () => {
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', '/');
+      setCurrentPath('/');
+    }
+  };
+
+  const is404 = currentPath !== '/' && currentPath !== '' && currentPath !== '/index.html';
 
   // Auto-open modal if user opened a password reset link
   useEffect(() => {
@@ -315,6 +341,17 @@ function BudgetTrackerApp() {
       };
     });
   };
+
+  if (is404) {
+    return (
+      <NotFoundPage
+        path={currentPath}
+        onGoHome={handleGoHome}
+        isDark={isDark}
+        onToggleTheme={() => setIsDark((prev) => !prev)}
+      />
+    );
+  }
 
   if (isLoading) {
     return (
