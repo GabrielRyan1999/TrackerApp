@@ -3,6 +3,7 @@ import type { Category, TransactionType } from '../types/budget';
 import { parseIDR, formatIDR } from '../utils/idr';
 import { categorize } from '../utils/categorizer';
 import { CategoryIcon } from './CategoryIcon';
+import { DateSelector } from './DateSelector';
 import { X, ChevronDown } from 'lucide-react';
 
 interface AddTransactionModalProps {
@@ -338,19 +339,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           </div>
 
           {/* Date & Note Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                Date
-              </label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none"
-                required
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+            <DateSelector
+              value={date}
+              onChange={setDate}
+              label="Date (DD/MM/YYYY)"
+            />
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                 Note (Optional)

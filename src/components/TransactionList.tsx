@@ -210,10 +210,10 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         <div className="space-y-5 sm:space-y-6">
           {Object.entries(groupedByDate).map(([date, txs]) => {
             const dateObj = new Date(date);
-            const dateLabel = dateObj.toLocaleDateString('en-US', {
+            const dateLabel = dateObj.toLocaleDateString('en-GB', {
               weekday: 'long',
-              month: 'long',
               day: 'numeric',
+              month: 'long',
               year: 'numeric',
             });
 
